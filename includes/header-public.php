@@ -15,6 +15,8 @@
         <div class="nav-links" role="navigation">
           <button class="nav-link" type="button" onclick="scrollToSection('features')">Features</button>
           <button class="nav-link" type="button" onclick="scrollToSection('download')">Download</button>
+          <a href="/about.php" class="nav-link">About</a>
+          <a href="/contact.php" class="nav-link">Contact</a>
           <a href="/privacy.php" class="nav-link">Privacy</a>
           <button class="btn btn-outline" type="button" onclick="handleLogin()">
             <span class="quietgo-brand" style="font-size: 0.875rem;">
@@ -36,6 +38,8 @@
       <div class="mobile-menu" id="mobileMenu">
         <button class="nav-link" type="button" onclick="scrollToSection('features')">Features</button>
         <button class="nav-link" type="button" onclick="scrollToSection('download')">Download</button>
+        <a href="/about.php" class="nav-link">About</a>
+        <a href="/contact.php" class="nav-link">Contact</a>
         <a href="/privacy.php" class="nav-link">Privacy</a>
         <button class="btn btn-outline" type="button" onclick="handleLogin()" style="margin-top: 16px;">
           <span class="quietgo-brand">

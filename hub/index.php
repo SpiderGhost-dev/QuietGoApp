@@ -107,22 +107,6 @@ include __DIR__ . '/includes/header-hub.php';
             </div>
         </div>
     </section>
-
-    <!-- App Promotion -->
-    <section class="hub-cta">
-        <div class="container text-center">
-            <h2>Get the Full Experience</h2>
-            <p>Download the QuietGo mobile app for advanced AI analysis and pattern recognition.</p>
-            <div class="app-buttons">
-                <a href="#" class="app-store-btn">
-                    <span>📱</span> Download iOS App
-                </a>
-                <a href="#" class="app-store-btn">
-                    <span>🤖</span> Download Android App
-                </a>
-            </div>
-        </div>
-    </section>
 </main>
 
 <script>
