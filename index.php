@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><?php echo $pageTitle; ?></title>
   <meta name="description" content="Discover digestive health insights with private, AI-powered stool and meal tracking. Download QuietGo on iOS and Android.">
-  <link rel="icon" type="image/x-icon" href="/assets/images/favicon.ico">
+  <link rel="icon" type="image/x-icon" href="/assets/images/favicon_io/favicon.ico">
   <link rel="stylesheet" href="/css/public.css">
   <script src="/js/site.js" defer></script>
 </head>
@@ -17,7 +17,7 @@
     <section class="section-hero">
         <div class="container text-center">
             <!-- QuietGo Company Logo -->
-            <img src="assets/logo_1757613890711.png" alt="QuietGo" class="hero-logo">
+            <img src="assets/images/logo.png" alt="QuietGo" class="hero-logo">
             
             <!-- Main Headline -->
             <h1 class="hero-title">
