@@ -26,13 +26,13 @@ function scrollToSection(sectionId) {
 // Handle login redirect
 function handleLogin() {
     // Redirect to QuietGo Hub or authentication
-    window.location.href = '/api/login';
+    window.location.href = '/hub/login.php';
 }
 
 // Handle get started action
 function handleGetStarted() {
     // Redirect to sign up or login
-    window.location.href = '/api/login';
+    window.location.href = '/hub/login.php';
 }
 
 // Handle app store links

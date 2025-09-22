@@ -16,7 +16,7 @@
    <!-- Hero Section -->
     <section class="section-hero">
         <div class="container text-center">
-            <h1 class="hero-title" style="font-size: 2.5rem;">Privacy & Legal</h1>
+            <h1 class="hero-title" style="font-size: 2.5rem;">Privacy &amp; Legal</h1>
             <p class="hero-subtitle">Your privacy and security are our top priorities</p>
         </div>
     </section>
@@ -124,7 +124,7 @@
             <p style="margin-top: 16px;">
                 <strong>privacy@quietgo.com</strong>
             </p>
-            <a href="index.html" class="btn btn-primary" style="margin-top: 24px;">Back to Home</a>
+            <a href="/" class="btn btn-primary" style="margin-top: 24px;">Back to Home</a>
         </div>
     </section>
     </main>

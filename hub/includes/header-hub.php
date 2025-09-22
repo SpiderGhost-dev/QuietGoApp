@@ -1,6 +1,6 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/includes/impersonation.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/includes/hub-auth.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/impersonation.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/hub/includes/hub-auth.php';
 
 $hubUser = hub_current_user();
 

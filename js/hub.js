@@ -24,13 +24,13 @@ async function checkAuthentication() {
             await loadDashboardData();
         } else {
             // User not authenticated, redirect to login
-            window.location.href = '/api/login';
+            window.location.href = '/hub/login.php';
         }
     } catch (error) {
         console.error('Authentication check failed:', error);
         showError('Failed to check authentication. Please try again.');
         setTimeout(() => {
-            window.location.href = '/api/login';
+            window.location.href = '/hub/login.php';
         }, 3000);
     }
 }
