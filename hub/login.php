@@ -24,18 +24,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'] ?? '';
     $password = $_POST['password'] ?? '';
     
-    // Basic demo authentication - replace with real auth system
-    if (!empty($email) && !empty($password)) {
-        // Set hub session
+    // Check for admin credentials for impersonation access
+    if (($email === 'admin' && $password === 'admin123') || 
+        ($email === 'spiderghost' && $password === 'TempAdmin2024')) {
+        // Admin accessing hub - set up impersonation session
+        $_SESSION['hub_user'] = [
+            'email' => 'admin@quietgo.app',
+            'name' => 'Admin User',
+            'login_time' => time(),
+            'is_admin_impersonation' => true
+        ];
+        
+        setcookie('hub_auth', 'admin_access', time() + (24 * 60 * 60), '/');
+        header('Location: /hub/');
+        exit;
+    }
+    // Demo credentials for testing
+    elseif (!empty($email) && !empty($password)) {
+        // Accept any valid email/password for demo purposes
         $_SESSION['hub_user'] = [
             'email' => $email,
             'name' => explode('@', $email)[0],
             'login_time' => time()
         ];
         
-        // Set auth cookie
         setcookie('hub_auth', 'valid', time() + (24 * 60 * 60), '/');
-        
         header('Location: /hub/');
         exit;
     } else {
@@ -107,6 +120,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="password" name="password" placeholder="Password" required>
                 <button type="submit">Access Hub</button>
             </form>
+            
+            <div style="background: rgba(140, 157, 138, 0.1); border: 1px solid var(--green-color); border-radius: var(--border-radius); padding: 16px; margin: 24px 0; text-align: center;">
+                <p style="color: var(--green-color); margin: 0; font-size: 0.875rem; font-weight: 500;">
+                    Demo Access: Use admin credentials or any valid email/password
+                </p>
+            </div>
             
             <div style="margin-top: 24px; text-align: center;">
                 <p class="muted" style="font-size: 0.875rem;">

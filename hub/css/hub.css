@@ -1033,6 +1033,66 @@ html {
   flex-wrap: wrap;
 }
 
+/* Hub Login Header Styles (for standalone login page) */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background-color: var(--bg-color);
+  border-bottom: 1px solid var(--border-color);
+  padding: var(--spacing-md) 0;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  text-decoration: none;
+  color: var(--text-color);
+}
+
+.header-brand img {
+  width: 36px;
+  height: 36px;
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.hub-text {
+  font-size: 0.875rem;
+  color: var(--muted-text);
+  font-weight: 400;
+}
+
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+}
+
+.header-nav-link {
+  color: var(--text-color);
+  text-decoration: none;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+  font-size: 1rem;
+}
+
+.header-nav-link:hover {
+  opacity: 1;
+}
+
 @media (max-width: 768px) {
   .footer-top {
     flex-direction: column;

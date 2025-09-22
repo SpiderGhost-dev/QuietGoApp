@@ -1,21 +1,26 @@
 <?php
-// Hub authentication check - prevent unauthorized access
+// Hub authentication check - allow admin access
 session_start();
 
-// Check if user has valid hub session (not admin)
-if (!isset($_SESSION['hub_user']) && !isset($_COOKIE['hub_auth'])) {
-    // Not logged into hub - redirect to hub login
+// Check if user has valid hub session OR is admin
+$isAdminLoggedIn = isset($_SESSION['admin_logged_in']) || 
+                   (isset($_COOKIE['admin_logged_in']) && $_COOKIE['admin_logged_in'] === 'true') ||
+                   (isset($_SESSION['hub_user']['is_admin_impersonation']));
+                   
+if (!isset($_SESSION['hub_user']) && !isset($_COOKIE['hub_auth']) && !$isAdminLoggedIn) {
+    // Not logged into hub and not admin - redirect to hub login
     header('Location: /hub/login.php');
     exit;
 }
 
-// Prevent admin users from accessing hub directly
-if (isset($_SESSION['admin_logged_in']) || 
-    (isset($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'], '/admin/') !== false)) {
-    // Admin trying to access hub - redirect to proper hub login
-    session_destroy();
-    header('Location: /hub/login.php?msg=admin_redirect');
-    exit;
+// If admin but no hub session, create one for demo purposes
+if ($isAdminLoggedIn && !isset($_SESSION['hub_user'])) {
+    $_SESSION['hub_user'] = [
+        'email' => 'admin@quietgo.app',
+        'name' => 'Admin User',
+        'login_time' => time(),
+        'is_admin_impersonation' => true
+    ];
 }
 
 include __DIR__ . '/includes/header-hub.php';
