@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuietGo Hub - Sync & Manage Your Data</title>
+    <meta name="description" content="Sync, organize, store, view, and send your digestive health data with QuietGo Hub.">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;amily=Playfair+Display:wght@400;600;700&amp;display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/logo-graphic_1757613896603.png">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="nav-brand">
+                    <img src="assets/logo-graphic_1757613896603.png" alt="QuietGo Logo">
+                    <div>
+                        <span class="quietgo-brand">
+                            <span class="quiet">Quiet</span><span class="go">Go</span>
+                        </span>
+                        <span class="muted" style="margin-left: 8px; font-size: 0.875rem;">Hub</span>
+                    </div>
+                </div>
+                
+                <div class="nav-links">
+                    <a href="index.html" class="nav-link">Home</a>
+                    <span id="userProfile" class="nav-profile" style="display: flex; align-items: center; gap: 12px;">
+                        <img id="userAvatar" src="" alt="Profile" style="width: 32px; height: 32px; border-radius: 50%; display: none;">
+                        <div style="display: flex; flex-direction: column; align-items: flex-end;">
+                            <span id="userName" class="muted" style="font-size: 0.875rem; font-weight: 500;"></span>
+                            <span id="userSubscription" class="status-badge status-free" style="font-size: 0.625rem;">Free</span>
+                        </div>
+                    </span>
+                    <button class="btn btn-outline" onclick="handleSignOut()">Sign Out</button>
+                </div>
+                
+                <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Mobile Menu -->
+            <div class="mobile-menu" id="mobileMenu">
+                <a href="index.html" class="nav-link">Home</a>
+                <div style="padding: 16px 0; border-bottom: 1px solid var(--border-color);">
+                    <div id="userProfileMobile" style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                        <img id="userAvatarMobile" src="" alt="Profile" style="width: 32px; height: 32px; border-radius: 50%; display: none;">
+                        <span id="userNameMobile" class="muted"></span>
+                    </div>
+                    <span id="userSubscriptionMobile" class="status-badge status-free">Free</span>
+                </div>
+                <button class="btn btn-outline" onclick="handleSignOut()" style="margin-top: 16px;">Sign Out</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Loading State -->
+    <div id="loadingState" class="section text-center">
+        <div class="container">
+            <div style="padding: 64px 0;">
+                <div style="font-size: 1.125rem;">Loading your data...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Hub Content -->
+    <div id="hubContent" style="display: none;">
+        <!-- Hero Section -->
+        <section class="section-hero">
+            <div class="container">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px;">
+                    <div>
+                        <h1 class="hero-title" style="font-size: 2.25rem; margin-bottom: 8px;">
+                            Welcome back, <span id="welcomeName" style="color: var(--accent-color);">Friend</span>!
+                        </h1>
+                        <p class="hero-subtitle" style="font-size: 1rem; margin-bottom: 16px;">
+                            Your digestive health insights are waiting for you
+                        </p>
+                        <div style="display: flex; gap: 16px; align-items: center;">
+                            <span id="lastVisit" class="muted" style="font-size: 0.875rem;">Last visit: Today</span>
+                            <span id="healthStreak" style="color: var(--green-color); font-size: 0.875rem; font-weight: 500;">🔥 3 day tracking streak</span>
+                        </div>
+                    </div>
+                    <div class="card card-featured" style="padding: 24px; text-align: center; min-width: 200px;">
+                        <div style="font-size: 2rem; margin-bottom: 8px;">📊</div>
+                        <div style="font-size: 1.5rem; font-weight: bold; color: var(--accent-dark); margin-bottom: 4px;" id="totalInsights">12</div>
+                        <div class="muted" style="font-size: 0.875rem;">Health Insights</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Actions Section -->
+        <section class="section">
+            <div class="container">
+                <h2 style="margin-bottom: 24px; text-align: center;">Your Health Dashboard</h2>
+                
+                <!-- Health Tracking Actions -->
+                <div class="grid grid-3" style="margin-bottom: 48px; gap: 24px;">
+                    <div class="card card-featured text-center" data-testid="card-log-stool">
+                        <div class="card-icon" style="background: linear-gradient(135deg, var(--accent-dark), var(--accent-color)); color: white; border-radius: 50%; padding: 16px; margin: 0 auto 16px;">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="width: 32px; height: 32px;">
+                                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                            </svg>
+                        </div>
+                        <h3 style="color: var(--accent-dark); margin-bottom: 8px;">Log Stool Entry</h3>
+                        <p class="muted" style="margin-bottom: 16px;">Track with Bristol Scale & AI analysis</p>
+                        <button class="btn btn-blue btn-large" data-testid="button-log-stool" onclick="openStoolEntry()">Quick Log</button>
+                        <div class="status-badge status-premium" style="margin-top: 12px;">Pro Feature</div>
+                    </div>
+
+                    <div class="card card-premium text-center" data-testid="card-log-meal">
+                        <div class="card-icon" style="background: linear-gradient(135deg, var(--green-color), #a8b8a0); color: white; border-radius: 50%; padding: 16px; margin: 0 auto 16px;">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="width: 32px; height: 32px;">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                <path d="M12 2v15.77"/>
+                            </svg>
+                        </div>
+                        <h3 style="color: var(--green-color); margin-bottom: 8px;">Log Meal</h3>
+                        <p class="muted" style="margin-bottom: 16px;">Photo analysis & nutrition tracking</p>
+                        <button class="btn btn-primary btn-large" data-testid="button-log-meal" onclick="openMealEntry()">Add Meal</button>
+                        <div class="status-badge status-pro" style="margin-top: 12px;">+ Meal AI</div>
+                    </div>
+
+                    <div class="card text-center" data-testid="card-insights">
+                        <div class="card-icon" style="background: linear-gradient(135deg, var(--heading-color), #d4c5ad); color: var(--bg-color); border-radius: 50%; padding: 16px; margin: 0 auto 16px;">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="width: 32px; height: 32px;">
+                                <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                            </svg>
+                        </div>
+                        <h3 style="margin-bottom: 8px;">View Insights</h3>
+                        <p class="muted" style="margin-bottom: 16px;">Patterns, trends & correlations</p>
+                        <button class="btn btn-accent btn-large" data-testid="button-view-insights" onclick="openInsights()">See Patterns</button>
+                        <div class="muted" style="margin-top: 12px; font-size: 0.75rem;">Available to all users</div>
+                    </div>
+                </div>
+                
+                <!-- Data Management -->
+                <div class="grid grid-3" style="margin-bottom: 48px; gap: 24px;">
+                    <div class="card text-center" data-testid="card-upload">
+                        <h3 style="margin-bottom: 8px;">Upload Data</h3>
+                        <p class="muted" style="margin-bottom: 16px;">Sync from mobile app</p>
+                        <button class="btn btn-outline" data-testid="button-upload" onclick="openUploadModal()">Upload Files</button>
+                    </div>
+
+                    <div class="card text-center" data-testid="card-export">
+                        <h3 style="margin-bottom: 8px;">Export Data</h3>
+                        <p class="muted" style="margin-bottom: 16px;">Download your health data</p>
+                        <button class="btn btn-outline" data-testid="button-export" onclick="exportData()">Export CSV</button>
+                    </div>
+
+                    <div class="card text-center" data-testid="card-share">
+                        <h3 style="margin-bottom: 8px;">Smart Sharing</h3>
+                        <p class="muted" style="margin-bottom: 16px;">Reports for professionals</p>
+                        <button class="btn btn-outline" data-testid="button-share" onclick="generateReport()">Create Report</button>
+                    </div>
+                </div>
+
+                <!-- Health Overview & Subscription -->
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 48px;">
+                    <!-- Data Overview -->
+                    <div class="card card-premium" data-testid="card-overview">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                            <h2 style="color: var(--accent-color);">📊 Your Health Overview</h2>
+                            <button class="btn btn-outline" data-testid="button-refresh" onclick="refreshData()">
+                                <svg style="width: 16px; height: 16px; margin-right: 8px;" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M23 4v6h-6M1 20v-6h6M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/>
+                                </svg>
+                                Refresh
+                            </button>
+                        </div>
+                        
+                        <div class="grid grid-3" style="gap: 24px;">
+                            <div class="text-center">
+                                <div style="font-size: 2.5rem; font-weight: bold; color: var(--green-color); margin-bottom: 8px;" id="totalEntries" data-testid="stat-entries">24</div>
+                                <div class="subheading">Health Entries</div>
+                                <div class="muted" style="font-size: 0.75rem; margin-top: 4px;">This month</div>
+                            </div>
+                            <div class="text-center">
+                                <div style="font-size: 2.5rem; font-weight: bold; color: var(--accent-color); margin-bottom: 8px;" id="lastSync" data-testid="stat-sync">2h</div>
+                                <div class="subheading">Last Sync</div>
+                                <div class="muted" style="font-size: 0.75rem; margin-top: 4px;">From mobile app</div>
+                            </div>
+                            <div class="text-center">
+                                <div style="font-size: 2.5rem; font-weight: bold; color: var(--accent-dark); margin-bottom: 8px;" id="insights" data-testid="stat-insights">7</div>
+                                <div class="subheading">AI Insights</div>
+                                <div class="muted" style="font-size: 0.75rem; margin-top: 4px;">Pattern discoveries</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Health Progress Bar -->\n                        <div style="margin-top: 24px; padding: 16px; background: rgba(189, 205, 222, 0.1); border-radius: 8px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span style="font-size: 0.875rem; font-weight: 500;">Monthly Goal Progress</span>
+                                <span style="font-size: 0.875rem; color: var(--accent-dark);">24/30 entries</span>
+                            </div>
+                            <div style="background: var(--border-color); border-radius: 4px; height: 8px; overflow: hidden;">
+                                <div style="background: linear-gradient(90deg, var(--accent-color), var(--accent-dark)); height: 100%; width: 80%; transition: width 0.3s;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Subscription Status -->\n                    <div class="card card-featured" data-testid="card-subscription">
+                        <div style="text-align: center; margin-bottom: 20px;">
+                            <div style="width: 48px; height: 48px; background: linear-gradient(135deg, var(--accent-dark), var(--accent-color)); border-radius: 50%; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem;">✨</div>
+                            <div id="subscriptionTier" class="status-badge status-free" style="margin-bottom: 12px;">Free Plan</div>
+                            <h3 style="color: var(--heading-color); margin-bottom: 8px;">Upgrade to Pro</h3>
+                            <p class="muted" style="font-size: 0.875rem; margin-bottom: 20px;">Unlock unlimited tracking & AI analysis</p>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <div style="display: flex; justify-content: space-between; font-size: 0.875rem; margin-bottom: 4px;">
+                                <span>Daily entries</span>
+                                <span class="muted">3/5 used</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; font-size: 0.875rem; margin-bottom: 4px;">
+                                <span>AI analysis</span>
+                                <span class="muted">1/2 used</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; font-size: 0.875rem;">
+                                <span>Export/sharing</span>
+                                <span style="color: var(--accent-color);">Limited</span>
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-blue btn-large" data-testid="button-upgrade" onclick="openMobileApp()" style="width: 100%;">
+                            Upgrade in App
+                        </button>
+                        <div class="muted text-center" style="font-size: 0.75rem; margin-top: 8px;">
+                            Managed through mobile app
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Files -->
+                <div class="card">
+                    <h3 style="margin-bottom: 24px;">Recent Files</h3>
+                    <div id="filesList">
+                        <div class="text-center muted" style="padding: 32px;">
+                            No files uploaded yet. Use the upload button above to sync your first data.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Upload Modal -->
+    <div id="uploadModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeUploadModal()">&times;</button>
+            <div class="modal-header">
+                <h2 class="modal-title">Upload Data Files</h2>
+                <p class="muted">Upload CSV files exported from your QuietGo mobile app</p>
+            </div>
+            
+            <form id="uploadForm" enctype="multipart/form-data">
+                <div style="margin-bottom: 24px;">
+                    <label style="font-weight: 500; margin-bottom: 8px; display: block;">Select Files</label>
+                    <input type="file" id="fileInput" name="files" multiple accept=".csv,.json" 
+                           style="width: 100%; padding: 12px; border: 2px dashed var(--border-color); border-radius: var(--border-radius); background-color: var(--bg-color); color: var(--text-color);">
+                    <div style="font-size: 0.875rem; opacity: 0.7; margin-top: 8px;">
+                        Supported formats: CSV, JSON (Max 10MB per file)
+                    </div>
+                </div>
+                
+                <div id="uploadProgress" style="display: none; margin-bottom: 24px;">
+                    <div style="background-color: var(--border-color); border-radius: 4px; overflow: hidden;">
+                        <div id="progressBar" style="height: 8px; background-color: var(--green-color); width: 0%; transition: width 0.3s;"></div>
+                    </div>
+                    <div style="font-size: 0.875rem; margin-top: 8px; opacity: 0.8;" id="uploadStatus">Preparing upload...</div>
+                </div>
+                
+                <div class="flex gap-md">
+                    <button type="button" class="btn btn-outline" onclick="closeUploadModal()" style="flex: 1;">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="uploadBtn" style="flex: 1;">Upload Files</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer" style="margin-top: 64px;">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>© 2024 QuietGo. All rights reserved.</p>
+                <div class="footer-meta">
+                    <span>Secure • Private • HIPAA-aware</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/site.js"></script>
+    <script src="js/hub.js"></script>
+</body>
+</html>

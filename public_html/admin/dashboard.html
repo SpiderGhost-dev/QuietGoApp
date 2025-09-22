@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuietGo Hub - Admin Dashboard</title>
+    <meta name="description" content="QuietGo administration dashboard for managing users, content, and system settings.">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Base Styles -->
+    <link href="../css/styles.css" rel="stylesheet">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="../assets/logo-graphic_1757613896603.png">
+    
+    <style>
+        /* Override base styles for admin dark theme */
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-sans);
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Universal Header - matches main site but with admin nav */
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background-color: var(--bg-color);
+            border-bottom: 1px solid var(--border-color);
+            padding: var(--spacing-md) 0;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .header-brand img {
+            width: 32px;
+            height: 32px;
+        }
+
+        .header-brand .brand-text {
+            font-family: var(--font-serif);
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .header-brand .quiet {
+            color: var(--quiet-color);
+        }
+
+        .header-brand .go {
+            color: var(--go-color);
+        }
+
+        .header-brand .hub-text {
+            color: var(--muted-text);
+            font-size: 0.875rem;
+            margin-left: var(--spacing-sm);
+            font-family: var(--font-sans);
+            font-weight: 400;
+        }
+
+        .header-nav {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xl);
+        }
+
+        .header-nav-link {
+            color: var(--text-color);
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+
+        .header-nav-link:hover {
+            opacity: 1;
+        }
+
+        .header-nav-link.active {
+            color: var(--accent-color);
+            opacity: 1;
+        }
+
+        .admin-user-info {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            padding: var(--spacing-sm) var(--spacing-md);
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+        }
+
+        .admin-user-info span {
+            color: var(--text-color);
+            font-size: 0.875rem;
+        }
+
+        .logout-btn {
+            background: #dc2626;
+            color: white;
+            padding: var(--spacing-sm) var(--spacing-md);
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: background-color 0.2s;
+        }
+
+        .logout-btn:hover {
+            background: #b91c1c;
+        }
+
+        /* Mobile menu */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            padding: var(--spacing-sm);
+        }
+
+        .mobile-nav {
+            display: none;
+            padding: var(--spacing-lg) 0;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .mobile-nav.open {
+            display: block;
+        }
+
+        /* Main admin layout */
+        .admin-layout {
+            display: flex;
+            min-height: calc(100vh - 137px); /* Account for header + footer */
+        }
+
+        .admin-sidebar {
+            width: 280px;
+            background: var(--card-bg);
+            border-right: 1px solid var(--border-color);
+            padding: var(--spacing-xl) 0;
+        }
+
+        .sidebar-section {
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .sidebar-title {
+            color: var(--heading-color);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 0 var(--spacing-xl);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: var(--spacing-md) var(--spacing-xl);
+            color: var(--text-color);
+            cursor: pointer;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+            text-decoration: none;
+            font-size: 0.875rem;
+        }
+
+        .nav-item:hover {
+            background: rgba(189, 205, 222, 0.1);
+            color: var(--accent-color);
+            border-left-color: var(--accent-color);
+        }
+
+        .nav-item.active {
+            background: rgba(189, 205, 222, 0.15);
+            color: var(--accent-color);
+            border-left-color: var(--accent-color);
+            font-weight: 600;
+        }
+
+        .nav-item-icon {
+            margin-right: var(--spacing-sm);
+            font-size: 1rem;
+        }
+
+        /* Main content area */
+        .admin-content {
+            flex: 1;
+            padding: var(--spacing-2xl);
+            overflow-y: auto;
+            background: var(--bg-color);
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .content-header {
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        .content-title {
+            color: var(--heading-color);
+            font-family: var(--font-serif);
+            font-size: 2rem;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .content-subtitle {
+            color: var(--muted-text);
+            font-size: 1rem;
+        }
+
+        /* Stats grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: var(--spacing-lg);
+            transition: box-shadow 0.3s, transform 0.2s;
+        }
+
+        .stat-card:hover {
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .stat-card.featured {
+            background: linear-gradient(135deg, var(--card-bg) 0%, rgba(189, 205, 222, 0.1) 100%);
+            border: 1px solid var(--accent-color);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(189, 205, 222, 0.1);
+            font-size: 1.5rem;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--heading-color);
+            line-height: 1;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .stat-label {
+            color: var(--muted-text);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .stat-change {
+            font-size: 0.75rem;
+            margin-top: var(--spacing-xs);
+        }
+
+        .stat-change.positive {
+            color: var(--green-color);
+        }
+
+        .stat-change.negative {
+            color: #ef4444;
+        }
+
+        /* Data tables */
+        .data-section {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .section-header {
+            background: rgba(39, 39, 42, 0.5);
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .section-title {
+            color: var(--heading-color);
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .section-content {
+            overflow-x: auto;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th,
+        .data-table td {
+            text-align: left;
+            padding: var(--spacing-md) var(--spacing-lg);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .data-table th {
+            background: rgba(39, 39, 42, 0.3);
+            font-weight: 600;
+            color: var(--heading-color);
+            font-size: 0.875rem;
+        }
+
+        .data-table td {
+            color: var(--text-color);
+            font-size: 0.875rem;
+        }
+
+        .data-table tbody tr:hover {
+            background: rgba(189, 205, 222, 0.05);
+        }
+
+        /* Status badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: calc(var(--border-radius) / 2);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-free {
+            background-color: rgba(153, 153, 153, 0.2);
+            color: var(--muted-text);
+        }
+
+        .status-pro {
+            background-color: rgba(140, 157, 138, 0.2);
+            color: var(--green-color);
+        }
+
+        .status-active {
+            background-color: rgba(189, 205, 222, 0.2);
+            color: var(--accent-color);
+        }
+
+        /* Management buttons */
+        .management-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-md);
+            padding: var(--spacing-xl);
+        }
+
+        .management-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-lg) var(--spacing-xl);
+            background: var(--accent-color);
+            color: var(--bg-color);
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .management-btn:hover {
+            background: var(--accent-dark);
+            transform: translateY(-1px);
+        }
+
+        .management-btn-icon {
+            margin-right: var(--spacing-sm);
+            font-size: 1rem;
+        }
+
+        /* Loading states */
+        .loading-state {
+            text-align: center;
+            padding: var(--spacing-2xl);
+            color: var(--muted-text);
+        }
+
+        .error-state {
+            background: rgba(239, 68, 68, 0.1);
+            color: #fca5a5;
+            padding: var(--spacing-lg);
+            border-radius: var(--border-radius);
+            margin-bottom: var(--spacing-lg);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        /* Universal Footer */
+        .site-footer {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: var(--spacing-xl) 0;
+            border-top: 1px solid var(--border-color);
+            margin-top: auto;
+        }
+
+        .footer-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: var(--spacing-md);
+        }
+
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .footer-brand img {
+            width: 24px;
+            height: 24px;
+        }
+
+        .footer-links {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-lg);
+            font-size: 0.875rem;
+        }
+
+        .footer-links a,
+        .footer-links button {
+            color: var(--text-color);
+            text-decoration: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: inherit;
+        }
+
+        .footer-links a:hover,
+        .footer-links button:hover {
+            opacity: 1;
+        }
+
+        .footer-meta {
+            font-size: 0.875rem;
+            opacity: 0.7;
+        }
+
+        /* Responsive design */
+        @media (max-width: 1024px) {
+            .admin-sidebar {
+                width: 240px;
+            }
+            
+            .admin-content {
+                padding: var(--spacing-xl);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-nav {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .admin-layout {
+                flex-direction: column;
+            }
+            
+            .admin-sidebar {
+                width: 100%;
+                order: 2;
+            }
+            
+            .admin-content {
+                order: 1;
+                padding: var(--spacing-lg);
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .management-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Universal Header -->
+    <header class="site-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="header-brand">
+                    <img src="../assets/logo-graphic_1757613896603.png" alt="QuietGo Logo">
+                    <div class="brand-text">
+                        <span class="quiet">Quiet</span><span class="go">Go</span>
+                    </div>
+                    <span class="hub-text">Hub • Admin</span>
+                </div>
+                
+                <div class="header-nav">
+                    <a href="../hub.html" class="header-nav-link">Dashboard</a>
+                    <button class="header-nav-link active">Admin</button>
+                    <a href="../index.html" class="header-nav-link">Main Site</a>
+                    
+                    <div class="admin-user-info">
+                        <span id="admin-info">Admin User</span>
+                        <button class="logout-btn" onclick="logout()">Logout</button>
+                    </div>
+                </div>
+                
+                <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Mobile Menu -->
+            <div class="mobile-nav" id="mobileNav">
+                <a href="../hub.html" class="header-nav-link">Dashboard</a>
+                <button class="header-nav-link active">Admin</button>
+                <a href="../index.html" class="header-nav-link">Main Site</a>
+                <div style="margin-top: var(--spacing-md); padding-top: var(--spacing-md); border-top: 1px solid var(--border-color);">
+                    <button class="logout-btn" onclick="logout()">Logout</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Admin Layout -->
+    <div class="admin-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="admin-sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-title">Overview</div>
+                <a href="#analytics" class="nav-item active" onclick="showSection('analytics')">
+                    <span class="nav-item-icon">📊</span>
+                    Analytics Dashboard
+                </a>
+                <a href="#users" class="nav-item" onclick="showSection('users')">
+                    <span class="nav-item-icon">👥</span>
+                    User Management
+                </a>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="sidebar-title">Content</div>
+                <a href="#content" class="nav-item" onclick="showSection('content')">
+                    <span class="nav-item-icon">📝</span>
+                    Content Management
+                </a>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="sidebar-title">System</div>
+                <a href="#settings" class="nav-item" onclick="showSection('settings')">
+                    <span class="nav-item-icon">⚙️</span>
+                    System Settings
+                </a>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="admin-content">
+            <!-- Analytics Dashboard -->
+            <div id="analytics" class="content-section active">
+                <div class="content-header">
+                    <h1 class="content-title">Analytics Dashboard</h1>
+                    <p class="content-subtitle">Monitor your <span class="quietgo-brand"><span class="quiet">Quiet</span><span class="go">Go</span></span> platform performance and user engagement</p>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card featured">
+                        <div class="stat-header">
+                            <div class="stat-icon">👥</div>
+                        </div>
+                        <div class="stat-value">247</div>
+                        <div class="stat-label">Total Users</div>
+                        <div class="stat-change positive">+12% this month</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon">📈</div>
+                        </div>
+                        <div class="stat-value">23</div>
+                        <div class="stat-label">New Users (30 days)</div>
+                        <div class="stat-change positive">+8% vs last month</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon">📋</div>
+                        </div>
+                        <div class="stat-value">1,543</div>
+                        <div class="stat-label">Total Health Logs</div>
+                        <div class="stat-change positive">+25% this month</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon">📁</div>
+                        </div>
+                        <div class="stat-value">89</div>
+                        <div class="stat-label">File Uploads</div>
+                        <div class="stat-change positive">+5% this week</div>
+                    </div>
+                </div>
+                
+                <div class="data-section">
+                    <div class="section-header">
+                        <h3 class="section-title">Recent User Activity</h3>
+                    </div>
+                    <div class="loading-state">
+                        Real-time analytics data will be displayed here when connected to your backend systems.
+                    </div>
+                </div>
+            </div>
+            
+            <!-- User Management -->
+            <div id="users" class="content-section">
+                <div class="content-header">
+                    <h1 class="content-title">User Management</h1>
+                    <p class="content-subtitle">Manage <span class="quietgo-brand"><span class="quiet">Quiet</span><span class="go">Go</span></span> user accounts and subscriptions</p>
+                </div>
+                
+                <div class="data-section">
+                    <div class="section-header">
+                        <h3 class="section-title">All Users</h3>
+                    </div>
+                    <div class="section-content">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Email</th>
+                                    <th>Name</th>
+                                    <th>Subscription</th>
+                                    <th>Meal AI</th>
+                                    <th>Created</th>
+                                    <th>Last Active</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>user1@example.com</td>
+                                    <td>John Doe</td>
+                                    <td><span class="status-badge status-pro">Pro</span></td>
+                                    <td>✅</td>
+                                    <td>Jan 15, 2024</td>
+                                    <td>2 hours ago</td>
+                                </tr>
+                                <tr>
+                                    <td>user2@example.com</td>
+                                    <td>Jane Smith</td>
+                                    <td><span class="status-badge status-free">Free</span></td>
+                                    <td>❌</td>
+                                    <td>Feb 20, 2024</td>
+                                    <td>1 day ago</td>
+                                </tr>
+                                <tr>
+                                    <td>user3@example.com</td>
+                                    <td>Mike Johnson</td>
+                                    <td><span class="status-badge status-pro">Pro</span></td>
+                                    <td>✅</td>
+                                    <td>Mar 10, 2024</td>
+                                    <td>5 minutes ago</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Content Management -->
+            <div id="content" class="content-section">
+                <div class="content-header">
+                    <h1 class="content-title">Content Management</h1>
+                    <p class="content-subtitle">Manage <span class="quietgo-brand"><span class="quiet">Quiet</span><span class="go">Go</span></span> website content and configuration</p>
+                </div>
+                
+                <div class="data-section">
+                    <div class="section-header">
+                        <h3 class="section-title">Site Configuration</h3>
+                    </div>
+                    <div class="management-grid">
+                        <button class="management-btn" onclick="manageHomepage()">
+                            <span class="management-btn-icon">🏠</span>
+                            Homepage Content
+                        </button>
+                        <button class="management-btn" onclick="manageFeatures()">
+                            <span class="management-btn-icon">✨</span>
+                            Features Section
+                        </button>
+                        <button class="management-btn" onclick="manageTestimonials()">
+                            <span class="management-btn-icon">💬</span>
+                            Testimonials
+                        </button>
+                        <button class="management-btn" onclick="manageFAQ()">
+                            <span class="management-btn-icon">❓</span>
+                            FAQ Section
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- System Settings -->
+            <div id="settings" class="content-section">
+                <div class="content-header">
+                    <h1 class="content-title">System Settings</h1>
+                    <p class="content-subtitle">Configure <span class="quietgo-brand"><span class="quiet">Quiet</span><span class="go">Go</span></span> system settings and administration</p>
+                </div>
+                
+                <div class="data-section">
+                    <div class="section-header">
+                        <h3 class="section-title">Admin Accounts</h3>
+                    </div>
+                    <div class="section-content">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Email</th>
+                                    <th>Name</th>
+                                    <th>Status</th>
+                                    <th>Last Login</th>
+                                    <th>Created</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>admin</td>
+                                    <td>admin@quietgo.app</td>
+                                    <td>System Administrator</td>
+                                    <td><span class="status-badge status-active">Active</span></td>
+                                    <td>Now</td>
+                                    <td>Jan 1, 2024</td>
+                                </tr>
+                                <tr>
+                                    <td>spiderghost</td>
+                                    <td>spiderghost@quietgo.app</td>
+                                    <td>Spider Ghost</td>
+                                    <td><span class="status-badge status-active">Active</span></td>
+                                    <td>Now</td>
+                                    <td>Jan 1, 2024</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="data-section">
+                    <div class="section-header">
+                        <h3 class="section-title">System Configuration</h3>
+                    </div>
+                    <div class="management-grid">
+                        <button class="management-btn" onclick="manageDatabase()">
+                            <span class="management-btn-icon">🗄️</span>
+                            Database Status
+                        </button>
+                        <button class="management-btn" onclick="manageBackups()">
+                            <span class="management-btn-icon">💾</span>
+                            Backup System
+                        </button>
+                        <button class="management-btn" onclick="manageLogs()">
+                            <span class="management-btn-icon">📋</span>
+                            System Logs
+                        </button>
+                        <button class="management-btn" onclick="manageAPI()">
+                            <span class="management-btn-icon">🔌</span>
+                            API Settings
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Universal Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <img src="../assets/logo-graphic_1757613896603.png" alt="QuietGo Logo">
+                    <div class="brand-text">
+                        <span class="quiet">Quiet</span><span class="go">Go</span>
+                    </div>
+                </div>
+                
+                <div class="footer-links">
+                    <a href="../index.html">Home</a>
+                    <a href="../hub.html">Hub</a>
+                    <a href="../privacy.html">Privacy</a>
+                    <button onclick="logout()">Logout</button>
+                </div>
+                
+                <div class="footer-meta">
+                    © 2024 <span class="quietgo-brand"><span class="quiet">Quiet</span><span class="go">Go</span></span>. Admin Portal.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Check authentication on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const isLoggedIn = localStorage.getItem('admin_logged_in');
+            if (isLoggedIn !== 'true') {
+                window.location.href = '/admin/login.html';
+                return;
+            }
+            
+            // Update admin info
+            document.getElementById('admin-info').textContent = 'Admin User';
+        });
+
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const mobileNav = document.getElementById('mobileNav');
+            mobileNav.classList.toggle('open');
+        }
+
+        // Navigation function
+        function showSection(sectionName) {
+            // Remove active class from all nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Add active class to clicked nav item
+            event.target.classList.add('active');
+            
+            // Hide all content sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show selected content section
+            document.getElementById(sectionName).classList.add('active');
+        }
+
+        // Logout function
+        function logout() {
+            localStorage.removeItem('admin_logged_in');
+            window.location.href = '/admin/login.html';
+        }
+
+        // Content Management Functions
+        function manageHomepage() {
+            alert('Homepage content management will open here. This would connect to your content management system.');
+        }
+
+        function manageFeatures() {
+            alert('Features section management will open here. Edit feature descriptions and benefits.');
+        }
+
+        function manageTestimonials() {
+            alert('Testimonials management will open here. Add, edit, or remove user testimonials.');
+        }
+
+        function manageFAQ() {
+            alert('FAQ management will open here. Manage frequently asked questions and answers.');
+        }
+
+        // System Settings Functions
+        function manageDatabase() {
+            alert('Database management will open here. Monitor database health and performance.');
+        }
+
+        function manageBackups() {
+            alert('Backup system will open here. Schedule and manage data backups.');
+        }
+
+        function manageLogs() {
+            alert('System logs will open here. View application logs and error reports.');
+        }
+
+        function manageAPI() {
+            alert('API settings will open here. Manage API keys and integration settings.');
+        }
+    </script>
+</body>
+</html>
