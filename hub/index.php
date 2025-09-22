@@ -1,4 +1,25 @@
-<?php include __DIR__ . '/includes/header-hub.php'; ?>
+<?php
+// Hub authentication check - prevent unauthorized access
+session_start();
+
+// Check if user has valid hub session (not admin)
+if (!isset($_SESSION['hub_user']) && !isset($_COOKIE['hub_auth'])) {
+    // Not logged into hub - redirect to hub login
+    header('Location: /hub/login.php');
+    exit;
+}
+
+// Prevent admin users from accessing hub directly
+if (isset($_SESSION['admin_logged_in']) || 
+    (isset($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'], '/admin/') !== false)) {
+    // Admin trying to access hub - redirect to proper hub login
+    session_destroy();
+    header('Location: /hub/login.php?msg=admin_redirect');
+    exit;
+}
+
+include __DIR__ . '/includes/header-hub.php';
+?>
 
 <main class="hub-main">
     <section class="hub-hero">

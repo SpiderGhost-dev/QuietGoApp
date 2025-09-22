@@ -1,17 +1,47 @@
 <?php
+session_start();
+
 // Handle logout
 if (isset($_GET['logout'])) {
-    // Clear any hub session data
-    session_start();
+    // Clear hub session data
     session_destroy();
-    
-    // Clear any cookies or local storage (would be handled by JavaScript)
+    setcookie('hub_auth', '', time() - 3600, '/');
     header('Location: /');
     exit;
 }
 
-// Set header mode for login
-$hubHeaderMode = 'login';
+// Handle admin redirect message
+$adminRedirect = isset($_GET['msg']) && $_GET['msg'] === 'admin_redirect';
+
+// Check if already logged into hub
+if (isset($_SESSION['hub_user']) || isset($_COOKIE['hub_auth'])) {
+    header('Location: /hub/');
+    exit;
+}
+
+// Handle login form submission
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = $_POST['email'] ?? '';
+    $password = $_POST['password'] ?? '';
+    
+    // Basic demo authentication - replace with real auth system
+    if (!empty($email) && !empty($password)) {
+        // Set hub session
+        $_SESSION['hub_user'] = [
+            'email' => $email,
+            'name' => explode('@', $email)[0],
+            'login_time' => time()
+        ];
+        
+        // Set auth cookie
+        setcookie('hub_auth', 'valid', time() + (24 * 60 * 60), '/');
+        
+        header('Location: /hub/');
+        exit;
+    } else {
+        $error = 'Please enter both email and password.';
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -50,14 +80,31 @@ $hubHeaderMode = 'login';
 
     <main class="login-container">
         <div class="login-card">
-            <h1>Access QuietGo Hub</h1>
-            <p class="muted" style="margin-bottom: 24px;">
-                Sign in to view your health tracking dashboard and insights.
-            </p>
+            <div style="text-align: center; margin-bottom: 24px;">
+                <img src="/assets/images/logo-graphic.png" alt="QuietGo logo" width="48" height="48" style="margin-bottom: 16px;">
+                <h1>QuietGo Hub</h1>
+                <p class="muted">Access your health tracking dashboard</p>
+            </div>
             
-            <form id="hubLoginForm" onsubmit="handleHubLogin(event)">
-                <input type="email" placeholder="Email address" required>
-                <input type="password" placeholder="Password" required>
+            <?php if ($adminRedirect): ?>
+                <div style="background: rgba(206, 152, 140, 0.1); border: 1px solid var(--go-color); border-radius: var(--border-radius); padding: 16px; margin-bottom: 24px; text-align: center;">
+                    <p style="color: var(--go-color); margin: 0; font-size: 0.875rem;">
+                        Please log in with your QuietGo Hub account (not admin credentials).
+                    </p>
+                </div>
+            <?php endif; ?>
+            
+            <?php if (isset($error)): ?>
+                <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; border-radius: var(--border-radius); padding: 16px; margin-bottom: 24px; text-align: center;">
+                    <p style="color: #ef4444; margin: 0; font-size: 0.875rem;">
+                        <?php echo htmlspecialchars($error); ?>
+                    </p>
+                </div>
+            <?php endif; ?>
+            
+            <form method="POST">
+                <input type="email" name="email" placeholder="Email address" required value="<?php echo htmlspecialchars($_POST['email'] ?? ''); ?>">
+                <input type="password" name="password" placeholder="Password" required>
                 <button type="submit">Access Hub</button>
             </form>
             
@@ -65,21 +112,11 @@ $hubHeaderMode = 'login';
                 <p class="muted" style="font-size: 0.875rem;">
                     New to QuietGo? <a href="/" style="color: var(--green-color);">Download the app</a>
                 </p>
+                <a href="/" style="color: var(--muted-text); font-size: 0.875rem; text-decoration: none;">
+                    ← Return to QuietGo
+                </a>
             </div>
         </div>
     </main>
-
-    <script>
-        function handleHubLogin(event) {
-            event.preventDefault();
-            
-            // This would connect to your authentication system
-            // For now, just redirect to hub
-            alert('Hub login functionality would connect to your authentication system here.');
-            
-            // Example redirect to hub after successful login:
-            // window.location.href = '/hub/';
-        }
-    </script>
 </body>
 </html>
