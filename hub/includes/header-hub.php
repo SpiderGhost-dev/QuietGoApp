@@ -27,6 +27,24 @@ if (!empty($hubUser['subscription_plan']) && in_array($hubUser['subscription_pla
 
 $switchHref = hub_logged_in() || is_impersonating() ? '/hub/login.php?logout=1' : '/hub/login.php';
 ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuietGo Hub - Your Health Dashboard</title>
+    <meta name="description" content="Access your QuietGo health tracking dashboard with AI-powered insights and pattern analysis.">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Hub Styles -->
+    <link href="/hub/css/hub.css" rel="stylesheet">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/assets/images/favicon_io/favicon.ico">
+</head>
+<body>
 <?php if (is_impersonating()): ?>
 <div class="impersonation-banner">
   Impersonating <strong><?php echo htmlspecialchars(impersonated_email()); ?></strong>
@@ -86,3 +104,19 @@ $switchHref = hub_logged_in() || is_impersonating() ? '/hub/login.php?logout=1' 
     </div>
   </nav>
 </header>
+
+<script>
+// Mobile menu toggle
+function toggleMobileMenu(button) {
+    const mobileMenu = document.getElementById('mobileMenu');
+    const isOpen = mobileMenu.classList.contains('open');
+    
+    if (isOpen) {
+        mobileMenu.classList.remove('open');
+        button.setAttribute('aria-expanded', 'false');
+    } else {
+        mobileMenu.classList.add('open');
+        button.setAttribute('aria-expanded', 'true');
+    }
+}
+</script>
