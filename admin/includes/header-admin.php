@@ -24,10 +24,10 @@ $showAdminActions = $adminHeaderMode !== 'login';
         <div class="container">
             <div class="header-content">
                 <a class="header-brand" href="/admin/dashboard.php">
-                    <img src="/assets/images/logo-graphic.png" alt="QuietGo logo" width="36" height="36" loading="lazy">
-                    <div class="brand-text">
+                    <img src="/assets/images/logo-graphic.png" alt="QuietGo logo" width="48" height="48" loading="lazy">
+                    <div class="brand-stack">
                         <span class="quietgo-brand"><span class="quiet">Quiet</span><span class="go">Go</span></span>
-                        <span class="hub-text">Admin</span>
+                        <span class="brand-tagline">Plate to Pattern</span>
                     </div>
                 </a>
                 <nav class="header-nav" aria-label="Admin navigation">

@@ -813,3 +813,65 @@ html {
   font-weight: normal !important;
   color: var(--text-color) !important;
 }
+
+/* Standardized Brand Styling Across All Headers */
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  text-decoration: none;
+}
+
+.nav-brand img {
+  width: 48px !important;
+  height: 48px !important;
+  flex-shrink: 0;
+}
+
+.brand-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.brand-stack .quietgo-brand {
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1;
+  font-family: var(--font-serif);
+}
+
+.brand-stack .quiet {
+  color: var(--quiet-color);
+}
+
+.brand-stack .go {
+  color: var(--go-color);
+}
+
+.brand-tagline {
+  font-size: 0.875rem;
+  color: var(--green-color) !important;
+  font-weight: 400;
+  opacity: 0.9;
+  font-style: italic;
+  line-height: 1;
+  margin-top: 2px;
+}
+
+/* Responsive brand scaling */
+@media (max-width: 768px) {
+  .nav-brand img {
+    width: 40px !important;
+    height: 40px !important;
+  }
+  
+  .brand-stack .quietgo-brand {
+    font-size: 1.5rem;
+  }
+  
+  .brand-tagline {
+    font-size: 0.75rem;
+  }
+}

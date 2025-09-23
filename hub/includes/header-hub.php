@@ -56,10 +56,10 @@ $switchHref = hub_logged_in() || is_impersonating() ? '/hub/login.php?logout=1' 
     <div class="container">
       <div class="nav-content">
         <a class="nav-brand" href="/hub/">
-          <img src="/assets/images/logo-graphic.png" alt="QuietGo logo" width="40" height="40" loading="lazy">
+          <img src="/assets/images/logo-graphic.png" alt="QuietGo logo" width="48" height="48" loading="lazy">
           <div class="brand-stack">
             <span class="quietgo-brand"><span class="quiet">Quiet</span><span class="go">Go</span></span>
-            <span class="brand-subtitle">Hub</span>
+            <span class="brand-tagline">Plate to Pattern</span>
           </div>
         </a>
         <div class="nav-links" role="navigation">
