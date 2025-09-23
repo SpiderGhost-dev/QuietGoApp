@@ -459,7 +459,7 @@
                 </p>
             </div>
             
-            <div class="grid grid-2" style="max-width: 1000px; margin: 0 auto;">
+            <div class="grid grid-2">
                 <div>
                     <h3 style="display: flex; align-items: center; margin-bottom: 24px;">
                         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color: var(--green-color); margin-right: 12px;">

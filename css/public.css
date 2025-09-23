@@ -766,27 +766,30 @@ html {
 
 /* Privacy Section Centering Fix */
 #privacy .grid {
-  max-width: 1000px !important;
+  max-width: 900px !important;
   margin: 0 auto !important;
-  justify-items: center;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--spacing-2xl);
-  justify-content: center;
+  display: flex !important;
+  justify-content: center !important;
+  gap: var(--spacing-2xl) !important;
+  align-items: flex-start;
 }
 
 #privacy .grid > div {
-  width: 100%;
-  max-width: 450px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  flex: 1;
+  max-width: 400px;
+  min-width: 350px;
 }
 
 @media (max-width: 768px) {
   #privacy .grid {
-    grid-template-columns: 1fr !important;
-    gap: var(--spacing-lg);
+    flex-direction: column !important;
+    gap: var(--spacing-lg) !important;
+    align-items: center;
+  }
+  
+  #privacy .grid > div {
+    max-width: 100%;
+    min-width: auto;
   }
 }
 
