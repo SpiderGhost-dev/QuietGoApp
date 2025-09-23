@@ -186,6 +186,165 @@
         </div>
     </section>
 
+    <!-- Your Journey, Your Way Section -->
+    <section id="journeys" class="section">
+        <div class="container">
+            <div class="text-center" style="margin-bottom: 64px;">
+                <h2>Your Journey, Your Way</h2>
+                <p class="subheading" style="font-size: 1.125rem; max-width: 700px; margin: 16px auto 0;">
+                    Whether you're working with healthcare providers, training for peak performance, or simply living your best life — QuietGo adapts to your unique goals and delivers personalized insights.
+                </p>
+            </div>
+            
+            <div class="features-grid">
+                <!-- Digestive Wellness -->
+                <div class="card journey-card">
+                    <div class="card-icon">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color: var(--green-color);">
+                            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5Z"/>
+                            <path d="M12 5L8 21l4-7 4 7-4-16"/>
+                        </svg>
+                    </div>
+                    <h3>🏥 Digestive Wellness</h3>
+                    <p style="margin-bottom: 24px; color: var(--text-muted);">
+                        Partner with healthcare providers for optimal gut health
+                    </p>
+                    <ul class="feature-list" style="text-align: left; margin-bottom: 24px;">
+                        <li>
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <polyline points="20,6 9,17 4,12"/>
+                            </svg>
+                            Medical-grade reporting and exports
+                        </li>
+                        <li>
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <polyline points="20,6 9,17 4,12"/>
+                            </svg>
+                            Symptom pattern identification
+                        </li>
+                        <li>
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <polyline points="20,6 9,17 4,12"/>
+                            </svg>
+                            Provider collaboration tools
+                        </li>
+                        <li>
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <polyline points="20,6 9,17 4,12"/>
+                            </svg>
+                            HIPAA-aware data handling
+                        </li>
+                    </ul>
+                    <div class="journey-quote">
+                        "Get insights your doctor can actually use"
+                    </div>
+                </div>
+
+                <!-- Performance Optimization -->
+                <div class="card journey-card">
+                    <div class="card-icon accent">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color: var(--accent-color);">
+                            <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+                            <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+                            <path d="M4 22h16"/>
+                            <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/>
+                            <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/>
+                            <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
+                        </svg>
+                    </div>
+                    <h3>💪 Performance Optimization</h3>
+                    <p style="margin-bottom: 24px; color: var(--text-muted);">
+                        Fuel your training and maximize athletic potential
+                    </p>
+                    <ul class="feature-list" style="text-align: left; margin-bottom: 24px;">
+                        <li>
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <polyline points="20,6 9,17 4,12"/>
+                            </svg>
+                            Pre/post-workout nutrition analysis
+                        </li>
+                        <li>
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <polyline points="20,6 9,17 4,12"/>
+                            </svg>
+                            Performance correlation tracking
+                        </li>
+                        <li>
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <polyline points="20,6 9,17 4,12"/>
+                            </svg>
+                            Coach-ready data exports
+                        </li>
+                        <li>
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <polyline points="20,6 9,17 4,12"/>
+                            </svg>
+                            Training cycle organization
+                        </li>
+                    </ul>
+                    <div class="journey-quote">
+                        "Turn your plate into peak performance"
+                    </div>
+                </div>
+
+                <!-- Everyday Vitality -->
+                <div class="card journey-card">
+                    <div class="card-icon">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color: var(--green-color);">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
+                            <line x1="9" y1="9" x2="9.01" y2="9"/>
+                            <line x1="15" y1="9" x2="15.01" y2="9"/>
+                        </svg>
+                    </div>
+                    <h3>✨ Everyday Vitality</h3>
+                    <p style="margin-bottom: 24px; color: var(--text-muted);">
+                        Look great, feel amazing, live your best life daily
+                    </p>
+                    <ul class="feature-list" style="text-align: left; margin-bottom: 24px;">
+                        <li>
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <polyline points="20,6 9,17 4,12"/>
+                            </svg>
+                            Energy optimization insights
+                        </li>
+                        <li>
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <polyline points="20,6 9,17 4,12"/>
+                            </svg>
+                            Feel-good meal discovery
+                        </li>
+                        <li>
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <polyline points="20,6 9,17 4,12"/>
+                            </svg>
+                            Lifestyle pattern recognition
+                        </li>
+                        <li>
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <polyline points="20,6 9,17 4,12"/>
+                            </svg>
+                            Wellness journey tracking
+                        </li>
+                    </ul>
+                    <div class="journey-quote">
+                        "Look great, feel amazing, every day"
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center" style="margin-top: 48px;">
+                <p style="font-size: 1rem; color: var(--text-muted); margin-bottom: 24px;">
+                    <strong>One platform, three personalized experiences.</strong><br>
+                    QuietGo adapts its interface, insights, and recommendations to match your wellness goals.
+                </p>
+                <div class="hero-features">
+                    🎯 Goal-based insights • 📊 Personalized reports • 🔄 Seamless experience
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Download Section -->
     <section id="download" class="section">
         <div class="container text-center">
