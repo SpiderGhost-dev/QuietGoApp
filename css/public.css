@@ -764,29 +764,38 @@ html {
   color: var(--text-color);
 }
 
-/* Privacy Section Centering Fix */
+/* Privacy Section Improved Positioning */
 #privacy .grid {
-  max-width: 1100px !important;
+  max-width: 1200px !important;
   margin: 0 auto !important;
   display: flex !important;
-  justify-content: space-between !important;
+  justify-content: center !important;
   gap: var(--spacing-3xl) !important;
   align-items: flex-start;
-  padding: 0 var(--spacing-xl);
+  padding: 0 var(--spacing-lg);
 }
 
 #privacy .grid > div {
-  flex: 0 0 45%;
-  max-width: 450px;
-  min-width: 350px;
+  flex: 1;
+  max-width: 500px;
+  min-width: 320px;
+  text-align: left;
+}
+
+#privacy .grid > div:first-child {
+  margin-right: var(--spacing-xl);
+}
+
+#privacy .grid > div:last-child {
+  margin-left: var(--spacing-xl);
 }
 
 @media (max-width: 768px) {
   #privacy .grid {
     flex-direction: column !important;
-    gap: var(--spacing-lg) !important;
+    gap: var(--spacing-xl) !important;
     align-items: center;
-    padding: 0;
+    padding: 0 var(--spacing-md);
     justify-content: center !important;
   }
   
@@ -794,6 +803,16 @@ html {
     flex: none;
     max-width: 100%;
     min-width: auto;
+    margin: 0 !important;
+    text-align: left;
+  }
+  
+  #privacy .grid > div:first-child {
+    margin-right: 0 !important;
+  }
+  
+  #privacy .grid > div:last-child {
+    margin-left: 0 !important;
   }
 }
 
@@ -919,9 +938,14 @@ html {
   }
 }
 
-/* CTA Section Improved Centering */
+/* CTA Section Better Positioning */
+section[style*="padding-top: 32px"] {
+  padding-top: var(--spacing-3xl) !important;
+  padding-bottom: var(--spacing-3xl) !important;
+}
+
 section[style*="padding-top: 32px"] .container {
-  max-width: 700px;
+  max-width: 800px;
   margin: 0 auto;
   padding: 0 var(--spacing-lg);
 }
@@ -930,12 +954,17 @@ section[style*="padding-top: 32px"] .flex-center {
   justify-content: center;
   align-items: center;
   gap: var(--spacing-2xl);
-  padding: var(--spacing-lg) 0;
+  padding: var(--spacing-xl) 0;
 }
 
-/* Additional App Store Button Spacing */
+/* App Store Button Improvements */
 .app-store-btn {
-  margin: 0 var(--spacing-sm);
+  margin: 0 var(--spacing-md);
+  transition: all 0.3s ease;
+}
+
+.app-store-btn:hover {
+  transform: translateY(-2px) scale(1.02);
 }
 
 @media (max-width: 768px) {
