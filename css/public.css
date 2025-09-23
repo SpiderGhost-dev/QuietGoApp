@@ -763,3 +763,53 @@ html {
   opacity: 0.8;
   color: var(--text-color);
 }
+
+/* Privacy Section Centering Fix */
+#privacy .grid {
+  max-width: 1000px;
+  margin: 0 auto;
+  justify-items: center;
+}
+
+#privacy .grid > div {
+  width: 100%;
+  max-width: 450px;
+}
+
+/* Footer Link Fixes - No Pill Buttons */
+.footer a, .footer button {
+  color: var(--text-color) !important;
+  text-decoration: none !important;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: normal !important;
+}
+
+.footer a:hover, .footer button:hover {
+  opacity: 1;
+  text-decoration: underline;
+  background: none !important;
+  border: none !important;
+  transform: none !important;
+}
+
+/* Ensure no pill styling anywhere in footer */
+.footer * {
+  background: transparent !important;
+  border: none !important;
+}
+
+.footer .btn, .footer .badge {
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  font-weight: normal !important;
+  color: var(--text-color) !important;
+}
