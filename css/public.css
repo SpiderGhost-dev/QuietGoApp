@@ -764,20 +764,22 @@ html {
   color: var(--text-color);
 }
 
-/* Privacy Section Proper Horizontal Distribution */
+/* Privacy Section Centered with Closer Column Spacing */
 #privacy .grid {
-  max-width: 1100px !important;
+  max-width: 900px !important;
   margin: 0 auto !important;
   display: flex !important;
   justify-content: space-between !important;
-  gap: var(--spacing-2xl) !important;
+  gap: var(--spacing-xl) !important;
   align-items: flex-start;
-  padding: 0 var(--spacing-xl);
+  padding: 0 var(--spacing-lg);
+  margin-left: auto !important;
+  margin-right: auto !important;
 }
 
 #privacy .grid > div {
-  flex: 0 0 48%;
-  max-width: 480px;
+  flex: 0 0 45%;
+  max-width: 420px;
   min-width: 300px;
   text-align: left;
 }
