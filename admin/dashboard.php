@@ -1,4 +1,8 @@
-<?php include __DIR__ . '/includes/header-admin.php'; ?>
+<?php 
+require_once __DIR__ . '/includes/admin-auth.php';
+$adminUser = require_admin_login();
+include __DIR__ . '/includes/header-admin.php'; 
+?>
 <div class="admin-layout">
     <!-- Sidebar Navigation -->
     <aside class="admin-sidebar">
@@ -199,19 +203,35 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td>admin</td>
-                                <td>admin@quietgo.app</td>
-                                <td>System Administrator</td>
+                                <td>david</td>
+                                <td>david@quietgo.app</td>
+                                <td>David M. Baker</td>
                                 <td><span class="status-badge status-active">Active</span></td>
                                 <td>Now</td>
                                 <td>Jan 1, 2024</td>
                             </tr>
                             <tr>
-                                <td>spiderghost</td>
-                                <td>spiderghost@quietgo.app</td>
-                                <td>Spider Ghost</td>
+                                <td>savannah</td>
+                                <td>savannah@quietgo.app</td>
+                                <td>Savannah J. Baker</td>
                                 <td><span class="status-badge status-active">Active</span></td>
-                                <td>Now</td>
+                                <td>--</td>
+                                <td>Jan 1, 2024</td>
+                            </tr>
+                            <tr>
+                                <td>stone</td>
+                                <td>stone@quietgo.app</td>
+                                <td>O. Stone Baker</td>
+                                <td><span class="status-badge status-active">Active</span></td>
+                                <td>--</td>
+                                <td>Jan 1, 2024</td>
+                            </tr>
+                            <tr>
+                                <td>admin</td>
+                                <td>admin@quietgo.app</td>
+                                <td>System Admin</td>
+                                <td><span class="status-badge status-active">Active</span></td>
+                                <td>--</td>
                                 <td>Jan 1, 2024</td>
                             </tr>
                         </tbody>
@@ -253,12 +273,6 @@
         if (isLoggedIn !== 'true') {
             window.location.href = '/admin/login.php';
             return;
-        }
-        
-        // Update admin info
-        const adminInfo = document.getElementById('admin-info');
-        if (adminInfo) {
-            adminInfo.textContent = 'Admin User';
         }
     });
 

@@ -2,6 +2,8 @@
 session_start();
 header('Content-Type: application/json');
 
+require_once $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/admin-users.php';
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     echo json_encode(['error' => 'Method not allowed']);
@@ -14,15 +16,21 @@ $data = json_decode($input, true);
 $username = $data['username'] ?? '';
 $password = $data['password'] ?? '';
 
-if (($username === 'spiderghost' && $password === 'TempAdmin2024') || 
-    ($username === 'admin' && $password === 'admin123')) {
-    
+$user = authenticate_admin($username, $password);
+
+if ($user) {
     $_SESSION['admin_logged_in'] = true;
     $_SESSION['admin_username'] = $username;
+    $_SESSION['admin_name'] = $user['name'];
+    $_SESSION['admin_role'] = $user['role'];
     
     echo json_encode([
         'success' => true,
-        'user' => ['username' => $username]
+        'user' => [
+            'username' => $username,
+            'name' => $user['name'],
+            'role' => $user['role']
+        ]
     ]);
 } else {
     http_response_code(401);

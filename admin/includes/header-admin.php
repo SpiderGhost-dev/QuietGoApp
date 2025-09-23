@@ -1,6 +1,14 @@
 <?php
 $adminHeaderMode = $adminHeaderMode ?? 'dashboard';
 $showAdminActions = $adminHeaderMode !== 'login';
+
+// Get admin user info if logged in
+$adminUser = null;
+if ($showAdminActions) {
+    session_start();
+    require_once $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/admin-users.php';
+    $adminUser = admin_current_user();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -38,7 +46,7 @@ $showAdminActions = $adminHeaderMode !== 'login';
                         <a href="/" class="header-nav-link">Main</a>
                         <a href="/hub/" class="header-nav-link">Dashboard</a>
                         <div class="admin-user-info">
-                            <span id="admin-info">Admin User</span>
+                            <span id="admin-info"><?php echo htmlspecialchars($adminUser['name'] ?? 'Admin User'); ?></span>
                             <button class="logout-btn" type="button" onclick="logout()">Logout</button>
                         </div>
                     <?php else: ?>
@@ -83,7 +91,18 @@ $showAdminActions = $adminHeaderMode !== 'login';
 
         // Logout function
         function logout() {
+            // Clear client-side storage
             localStorage.removeItem('admin_logged_in');
-            window.location.href = '/admin/login.php';
+            localStorage.removeItem('admin_user');
+            
+            // Make server-side logout request
+            fetch('/admin/api/logout.php', { method: 'POST' })
+                .then(() => {
+                    window.location.href = '/admin/login.php';
+                })
+                .catch(() => {
+                    // Redirect even if logout request fails
+                    window.location.href = '/admin/login.php';
+                });
         }
     </script>

@@ -43,19 +43,32 @@ $adminHeaderMode = 'login';
     </div>
     
     <script>
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             
-            // Admin-specific authentication
-            if ((username === 'spiderghost' && password === 'TempAdmin2024') || 
-                (username === 'admin' && password === 'admin123')) {
-                localStorage.setItem('admin_logged_in', 'true');
-                localStorage.setItem('admin_user', username);
-                window.location.href = '/admin/dashboard.php';
-            } else {
-                alert('Invalid admin credentials');
+            try {
+                const response = await fetch('/admin/api/login.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Store user info in localStorage for client-side checks
+                    localStorage.setItem('admin_logged_in', 'true');
+                    localStorage.setItem('admin_user', JSON.stringify(data.user));
+                    window.location.href = '/admin/dashboard.php';
+                } else {
+                    alert('Invalid admin credentials');
+                }
+            } catch (error) {
+                alert('Login error. Please try again.');
             }
         });
         
