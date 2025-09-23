@@ -790,7 +790,7 @@ html {
 
 #privacy .grid > div:last-child {
   margin-left: 0;
-  transform: translateX(50%);
+  transform: translateX(30%);
 }
 
 @media (max-width: 768px) {
