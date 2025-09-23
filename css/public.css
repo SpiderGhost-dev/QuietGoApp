@@ -764,30 +764,30 @@ html {
   color: var(--text-color);
 }
 
-/* Privacy Section Improved Positioning */
+/* Privacy Section Proper Horizontal Distribution */
 #privacy .grid {
-  max-width: 1200px !important;
+  max-width: 1100px !important;
   margin: 0 auto !important;
   display: flex !important;
-  justify-content: center !important;
-  gap: var(--spacing-3xl) !important;
+  justify-content: space-between !important;
+  gap: var(--spacing-2xl) !important;
   align-items: flex-start;
-  padding: 0 var(--spacing-lg);
+  padding: 0 var(--spacing-xl);
 }
 
 #privacy .grid > div {
-  flex: 1;
-  max-width: 500px;
-  min-width: 320px;
+  flex: 0 0 48%;
+  max-width: 480px;
+  min-width: 300px;
   text-align: left;
 }
 
 #privacy .grid > div:first-child {
-  margin-right: var(--spacing-xl);
+  margin-right: 0;
 }
 
 #privacy .grid > div:last-child {
-  margin-left: var(--spacing-xl);
+  margin-left: 0;
 }
 
 @media (max-width: 768px) {
