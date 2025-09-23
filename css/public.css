@@ -766,17 +766,18 @@ html {
 
 /* Privacy Section Centering Fix */
 #privacy .grid {
-  max-width: 900px !important;
+  max-width: 1100px !important;
   margin: 0 auto !important;
   display: flex !important;
-  justify-content: center !important;
-  gap: var(--spacing-2xl) !important;
+  justify-content: space-between !important;
+  gap: var(--spacing-3xl) !important;
   align-items: flex-start;
+  padding: 0 var(--spacing-xl);
 }
 
 #privacy .grid > div {
-  flex: 1;
-  max-width: 400px;
+  flex: 0 0 45%;
+  max-width: 450px;
   min-width: 350px;
 }
 
@@ -785,9 +786,12 @@ html {
     flex-direction: column !important;
     gap: var(--spacing-lg) !important;
     align-items: center;
+    padding: 0;
+    justify-content: center !important;
   }
   
   #privacy .grid > div {
+    flex: none;
     max-width: 100%;
     min-width: auto;
   }
@@ -912,5 +916,35 @@ html {
 @media (max-width: 768px) {
   .section-identifier {
     display: none;
+  }
+}
+
+/* CTA Section Improved Centering */
+section[style*="padding-top: 32px"] .container {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
+}
+
+section[style*="padding-top: 32px"] .flex-center {
+  justify-content: center;
+  align-items: center;
+  gap: var(--spacing-2xl);
+  padding: var(--spacing-lg) 0;
+}
+
+/* Additional App Store Button Spacing */
+.app-store-btn {
+  margin: 0 var(--spacing-sm);
+}
+
+@media (max-width: 768px) {
+  section[style*="padding-top: 32px"] .flex-center {
+    flex-direction: column;
+    gap: var(--spacing-lg);
+  }
+  
+  .app-store-btn {
+    margin: 0;
   }
 }
