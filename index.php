@@ -442,7 +442,7 @@
                     </div>
                     <div style="text-align: center;">
                         <strong style="color: var(--text-color);">CalcuPlate Add-on</strong>
-                        <div style="font-size: 0.875rem; opacity: 0.8;">$1.99/month</div>
+                        <div style="font-size: 0.875rem; opacity: 0.8;">$2.99/month</div>
                     </div>
                 </div>
             </div>
