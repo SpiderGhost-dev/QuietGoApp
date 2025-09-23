@@ -30,6 +30,9 @@ $showAdminActions = $adminHeaderMode !== 'login';
                         <span class="brand-tagline">Plate to Pattern</span>
                     </div>
                 </a>
+                <div class="section-identifier">
+                    <span class="section-label">Admin</span>
+                </div>
                 <nav class="header-nav" aria-label="Admin navigation">
                     <?php if ($showAdminActions): ?>
                         <a href="/" class="header-nav-link">Main</a>

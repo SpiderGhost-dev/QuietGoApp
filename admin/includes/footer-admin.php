@@ -2,10 +2,10 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-brand">
-                    <img src="/assets/images/logo-graphic.png" alt="QuietGo Logo" width="24" height="24">
-                    <div class="brand-text">
+                    <img src="/assets/images/logo-graphic.png" alt="QuietGo Logo" width="48" height="48">
+                    <div class="brand-stack">
                         <span class="quietgo-brand"><span class="quiet">Quiet</span><span class="go">Go</span></span>
-                        <span class="admin-text">Admin Portal</span>
+                        <span class="brand-tagline">Plate to Pattern</span>
                     </div>
                 </div>
                 

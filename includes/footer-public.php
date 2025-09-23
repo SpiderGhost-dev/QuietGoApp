@@ -3,12 +3,15 @@
     <div class="footer-grid">
       <div class="footer-brand">
         <a class="footer-logo" href="/">
-          <img src="/assets/images/logo-graphic.png" alt="QuietGo logo" width="36" height="36" loading="lazy">
-          <span class="quietgo-brand">
-            <span class="quiet">Quiet</span><span class="go">Go</span>
-          </span>
+          <img src="/assets/images/logo-graphic.png" alt="QuietGo logo" width="48" height="48" loading="lazy">
+          <div class="brand-stack">
+            <span class="quietgo-brand">
+              <span class="quiet">Quiet</span><span class="go">Go</span>
+            </span>
+            <span class="brand-tagline">Plate to Pattern</span>
+          </div>
         </a>
-        <p class="footer-copy">Discreet health tracking with AI-powered insights. Plate to pattern.</p>
+        <p class="footer-copy">Discreet health tracking with AI-powered insights.</p>
       </div>
 
       <div class="footer-column">

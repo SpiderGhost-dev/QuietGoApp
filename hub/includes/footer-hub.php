@@ -2,10 +2,10 @@
   <div class="container">
     <div class="footer-top">
       <div class="footer-brand">
-        <img src="/assets/images/logo-graphic.png" alt="QuietGo logo" width="32" height="32" loading="lazy">
-        <div class="footer-text">
+        <img src="/assets/images/logo-graphic.png" alt="QuietGo logo" width="48" height="48" loading="lazy">
+        <div class="brand-stack">
           <span class="quietgo-brand"><span class="quiet">Quiet</span><span class="go">Go</span></span>
-          <span class="brand-subtitle">Hub</span>
+          <span class="brand-tagline">Plate to Pattern</span>
         </div>
       </div>
       <nav class="footer-links" aria-label="Hub footer navigation">

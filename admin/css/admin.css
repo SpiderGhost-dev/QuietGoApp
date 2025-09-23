@@ -1273,3 +1273,25 @@ html {
     font-size: 0.75rem;
   }
 }
+
+/* Section Identifier Styling */
+.section-identifier {
+  display: flex;
+  align-items: center;
+  margin: 0 var(--spacing-lg);
+}
+
+.section-label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--muted-text);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: 0.7;
+}
+
+@media (max-width: 768px) {
+  .section-identifier {
+    display: none;
+  }
+}

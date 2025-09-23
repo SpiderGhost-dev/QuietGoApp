@@ -62,7 +62,11 @@ $switchHref = hub_logged_in() || is_impersonating() ? '/hub/login.php?logout=1' 
             <span class="brand-tagline">Plate to Pattern</span>
           </div>
         </a>
+        <div class="section-identifier">
+          <span class="section-label">Hub</span>
+        </div>
         <div class="nav-links" role="navigation">
+          <a href="/" class="nav-link">Home</a>
           <a href="/hub/" class="nav-link">Overview</a>
           <a href="/hub/#insights" class="nav-link">Insights</a>
           <a href="/hub/#exports" class="nav-link">Exports</a>
@@ -86,6 +90,7 @@ $switchHref = hub_logged_in() || is_impersonating() ? '/hub/login.php?logout=1' 
         </button>
       </div>
       <div class="mobile-menu" id="mobileMenu">
+        <a href="/" class="nav-link">Home</a>
         <a href="/hub/" class="nav-link">Overview</a>
         <a href="/hub/#insights" class="nav-link">Insights</a>
         <a href="/hub/#exports" class="nav-link">Exports</a>
