@@ -11,14 +11,13 @@
             <span class="brand-tagline">Plate to Pattern</span>
           </div>
         </a>
-        <p class="footer-copy">Discreet health tracking with AI-powered insights.</p>
       </div>
 
       <div class="footer-column">
         <h3>Product</h3>
         <ul>
-          <li><button type="button" onclick="scrollToSection('features')">Features</button></li>
-          <li><button type="button" onclick="scrollToSection('download')">Download</button></li>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#download">Download</a></li>
           <li><a href="/privacy.php">Privacy</a></li>
         </ul>
       </div>
@@ -27,7 +26,7 @@
         <h3>Legal</h3>
         <ul>
           <li><a href="/privacy.php">Terms &amp; Privacy</a></li>
-          <li><button type="button" onclick="scrollToSection('privacy')">Data Protection</button></li>
+          <li><a href="#privacy">Data Protection</a></li>
           <li><a href="/privacy.php#hipaa">HIPAA Notice</a></li>
         </ul>
       </div>
