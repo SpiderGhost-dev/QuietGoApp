@@ -1,4 +1,5 @@
 <?php $pageTitle = 'QuietGo — Your gut talks. QuietGo translates.'; ?>
+<!-- Force deploy: privacy section fix --!>
 <!DOCTYPE html>
 <html lang="en">
 <head>
