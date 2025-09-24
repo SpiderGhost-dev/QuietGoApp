@@ -5,7 +5,7 @@ $showAdminActions = $adminHeaderMode !== 'login';
 // Get admin user info if logged in
 $adminUser = null;
 if ($showAdminActions) {
-    session_start();
+
     require_once $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/admin-users.php';
     $adminUser = admin_current_user();
 }
@@ -17,13 +17,13 @@ if ($showAdminActions) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QuietGo Admin Dashboard</title>
     <meta name="description" content="QuietGo administration dashboard for managing users, content, and system settings.">
-    
+
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
-    
+
     <!-- Admin Styles -->
     <link href="/admin/css/admin.css" rel="stylesheet">
-    
+
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="/assets/images/favicon_io/favicon.ico">
 </head>
@@ -79,7 +79,7 @@ if ($showAdminActions) {
         function toggleMobileMenu(button) {
             const mobileMenu = document.getElementById('mobileMenu');
             const isOpen = mobileMenu.classList.contains('open');
-            
+
             if (isOpen) {
                 mobileMenu.classList.remove('open');
                 button.setAttribute('aria-expanded', 'false');
@@ -94,7 +94,7 @@ if ($showAdminActions) {
             // Clear client-side storage
             localStorage.removeItem('admin_logged_in');
             localStorage.removeItem('admin_user');
-            
+
             // Make server-side logout request
             fetch('/admin/api/logout.php', { method: 'POST' })
                 .then(() => {
