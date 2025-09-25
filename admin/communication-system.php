@@ -319,9 +319,13 @@ include __DIR__ . '/includes/header-admin.php';
     <aside class="admin-sidebar">
         <div class="sidebar-section">
             <div class="sidebar-title">Communication</div>
-            <a href="#messaging" class="nav-item active" onclick="showSection('messaging')">
+            <a href="/admin/communication-system.php" class="nav-item active" onclick="showSection('messaging')">
                 <span class="nav-item-icon">📧</span>
-                Direct Messaging
+                Communication System
+            </a>
+            <a href="/admin/ai-chatbot.php" class="nav-item">
+                <span class="nav-item-icon">🤖</span>
+                AI Support Chatbot
             </a>
             <a href="#templates" class="nav-item" onclick="showSection('templates')">
                 <span class="nav-item-icon">📝</span>

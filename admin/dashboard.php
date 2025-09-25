@@ -28,6 +28,10 @@ include __DIR__ . '/includes/header-admin.php';
                 <span class="nav-item-icon">📧</span>
                 Communication System
             </a>
+            <a href="/admin/ai-chatbot.php" class="nav-item">
+                <span class="nav-item-icon">🤖</span>
+                AI Support Chatbot
+            </a>
             <a href="#users" class="nav-item" onclick="showSection('users')">
                 <span class="nav-item-icon">👥</span>
                 User Management

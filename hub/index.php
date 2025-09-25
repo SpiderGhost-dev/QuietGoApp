@@ -518,3 +518,6 @@ function openMultiMonthComparison() {
 </script>
 
 <?php include __DIR__ . '/includes/footer-hub.php'; ?>
+
+<!-- AI Support Chatbot -->
+<?php include __DIR__ . '/../includes/chatbot-widget.php'; ?>

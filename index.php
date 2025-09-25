@@ -648,5 +648,9 @@
     </div>
 </section>
 <?php include __DIR__ . '/includes/footer-public.php'; ?>
+
+<!-- AI Support Chatbot -->
+<?php include __DIR__ . '/includes/chatbot-widget.php'; ?>
+
 </body>
 </html>
