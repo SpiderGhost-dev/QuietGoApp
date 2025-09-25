@@ -1,0 +1,829 @@
+<?php 
+require_once __DIR__ . '/includes/admin-auth.php';
+$adminUser = require_admin_login();
+
+// Set title for this page
+$pageTitle = "Enhanced User Impersonation";
+
+// Handle impersonation actions
+$activeImpersonation = null;
+$impersonationResult = null;
+
+// Check if currently impersonating
+if (isset($_SESSION['impersonated_user'])) {
+    $activeImpersonation = $_SESSION['impersonated_user'];
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $action = $_POST['action'] ?? '';
+    
+    switch($action) {
+        case 'start_impersonation':
+            $impersonationResult = startUserImpersonation($_POST);
+            break;
+        case 'switch_journey':
+            $impersonationResult = switchUserJourney($_POST);
+            break;
+        case 'switch_subscription':
+            $impersonationResult = switchUserSubscription($_POST);
+            break;
+        case 'stop_impersonation':
+            $impersonationResult = stopUserImpersonation();
+            break;
+        case 'start_journey_test':
+            $impersonationResult = startJourneyTest($_POST);
+            break;
+        case 'start_feature_test':
+            $impersonationResult = startFeatureTest($_POST);
+            break;
+    }
+    
+    // Reload active impersonation if it changed
+    if (isset($_SESSION['impersonated_user'])) {
+        $activeImpersonation = $_SESSION['impersonated_user'];
+    }
+}
+
+// PLACEHOLDER FUNCTIONS - Will connect to real user system post-launch
+function startUserImpersonation($postData) {
+    $email = $postData['user_email'] ?? '';
+    $journey = $postData['journey'] ?? 'best_life';
+    $subscription = $postData['subscription'] ?? 'free';
+    
+    // PLACEHOLDER: Load real user data and create impersonation session
+    $_SESSION['impersonated_user'] = [
+        'email' => $email,
+        'name' => getUserNameFromEmail($email),
+        'journey' => $journey,
+        'subscription' => $subscription,
+        'started_at' => time(),
+        'admin_user' => $adminUser['username'] ?? 'admin',
+        'original_admin_session' => $_SESSION['admin_logged_in'] ?? true,
+        'impersonation_id' => uniqid('imp_')
+    ];
+    
+    // Also set hub_user session for seamless hub access
+    $_SESSION['hub_user'] = [
+        'email' => $email,
+        'name' => getUserNameFromEmail($email),
+        'journey' => $journey,
+        'subscription_plan' => $subscription,
+        'is_admin_impersonation' => true,
+        'login_time' => time()
+    ];
+    
+    return [
+        'success' => true,
+        'message' => "Started impersonating {$email} as {$journey} journey with {$subscription} subscription"
+    ];
+}
+
+function switchUserJourney($postData) {
+    if (!isset($_SESSION['impersonated_user'])) {
+        return ['success' => false, 'message' => 'No active impersonation'];
+    }
+    
+    $newJourney = $postData['new_journey'] ?? 'best_life';
+    $_SESSION['impersonated_user']['journey'] = $newJourney;
+    $_SESSION['hub_user']['journey'] = $newJourney;
+    
+    return [
+        'success' => true,
+        'message' => "Switched to {$newJourney} journey experience"
+    ];
+}
+
+function switchUserSubscription($postData) {
+    if (!isset($_SESSION['impersonated_user'])) {
+        return ['success' => false, 'message' => 'No active impersonation'];
+    }
+    
+    $newSubscription = $postData['new_subscription'] ?? 'free';
+    $_SESSION['impersonated_user']['subscription'] = $newSubscription;
+    $_SESSION['hub_user']['subscription_plan'] = $newSubscription;
+    
+    return [
+        'success' => true,
+        'message' => "Switched to {$newSubscription} subscription experience"
+    ];
+}
+
+function stopUserImpersonation() {
+    if (!isset($_SESSION['impersonated_user'])) {
+        return ['success' => false, 'message' => 'No active impersonation'];
+    }
+    
+    $email = $_SESSION['impersonated_user']['email'];
+    unset($_SESSION['impersonated_user']);
+    unset($_SESSION['hub_user']);
+    
+    return [
+        'success' => true,
+        'message' => "Stopped impersonating {$email} - back to admin view"
+    ];
+}
+
+function testUserFeature($postData) {
+    $feature = $postData['feature'] ?? '';
+    $email = $_SESSION['impersonated_user']['email'] ?? 'unknown';
+    
+    return [
+        'success' => true,
+        'message' => "Testing {$feature} feature as {$email}"
+    ];
+}
+
+function getUserNameFromEmail($email) {
+    // PLACEHOLDER: Get real user name from database
+    $names = [
+        'john.doe@example.com' => 'John Doe',
+        'jane.smith@example.com' => 'Jane Smith',
+        'mike.johnson@example.com' => 'Mike Johnson'
+    ];
+    return $names[$email] ?? 'Test User';
+}
+
+include __DIR__ . '/includes/header-admin.php'; 
+?>
+
+<style>
+/* =================================================================
+   TIER 2: ENHANCED USER IMPERSONATION STYLES
+   ================================================================= */
+
+/* Impersonation Control Panel */
+.impersonation-panel {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+}
+
+.impersonation-active {
+    background: linear-gradient(135deg, rgba(255, 107, 107, 0.1) 0%, rgba(255, 152, 0, 0.1) 100%);
+    border: 2px solid #ff6b6b;
+}
+
+.impersonation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.impersonation-title {
+    color: var(--heading-color);
+    font-size: 1.5rem;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.impersonation-status {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.status-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+.status-active { background: #ff6b6b; }
+.status-inactive { background: #666; }
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+/* Quick Start Section */
+.quick-start {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+}
+
+.start-option {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-lg);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.start-option:hover {
+    background: rgba(140, 157, 138, 0.05);
+    border-color: var(--green-color);
+    transform: translateY(-2px);
+}
+
+.option-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.option-icon {
+    font-size: 2rem;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-color);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+}
+
+.option-title {
+    color: var(--heading-color);
+    font-size: 1.25rem;
+    margin: 0;
+}
+
+.option-description {
+    color: var(--text-secondary);
+    margin: 0 0 var(--spacing-md) 0;
+    line-height: 1.5;
+}
+
+.option-features {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.option-features li {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    margin: var(--spacing-xs) 0;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.option-features li::before {
+    content: '✓';
+    color: var(--green-color);
+    font-weight: bold;
+}
+
+/* Active Impersonation Control */
+.active-controls {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+.control-section {
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-lg);
+}
+
+.control-header {
+    color: var(--heading-color);
+    font-size: 1.125rem;
+    margin: 0 0 var(--spacing-md) 0;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.control-current {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-md);
+    padding: var(--spacing-sm);
+    background: rgba(140, 157, 138, 0.1);
+    border-radius: var(--border-radius);
+}
+
+.current-value {
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+/* Switch Controls */
+.switch-controls {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.switch-btn {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.switch-btn:hover {
+    background: var(--border-color);
+    transform: translateY(-1px);
+}
+
+.switch-btn.active {
+    background: var(--green-color);
+    border-color: var(--green-color);
+    color: var(--bg-color);
+}
+
+/* Test Features */
+.test-features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-md);
+}
+
+.test-btn {
+    background: var(--accent-dark);
+    color: white;
+    border: none;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.875rem;
+}
+
+.test-btn:hover {
+    background: var(--accent-color);
+    transform: translateY(-1px);
+}
+
+/* Impersonation Info */
+.impersonation-info {
+    background: rgba(255, 107, 107, 0.1);
+    border: 1px solid #ff6b6b;
+    border-radius: var(--border-radius);
+    padding: var(--spacing-md);
+    margin: var(--spacing-lg) 0;
+}
+
+.impersonation-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-md);
+    margin: var(--spacing-sm) 0;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.875rem;
+}
+
+.detail-label {
+    color: var(--text-secondary);
+}
+
+.detail-value {
+    color: var(--text-color);
+    font-weight: 600;
+}
+
+/* Emergency Stop */
+.emergency-stop {
+    background: #ff6b6b;
+    color: white;
+    border: none;
+    padding: var(--spacing-md) var(--spacing-xl);
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 1rem;
+}
+
+.emergency-stop:hover {
+    background: #ff5252;
+    transform: scale(1.05);
+}
+
+/* Action Results */
+.action-result {
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius);
+    margin-bottom: var(--spacing-lg);
+    font-size: 0.875rem;
+}
+
+.action-result.success {
+    background: rgba(108, 152, 95, 0.1);
+    border: 1px solid var(--green-color);
+    color: var(--green-color);
+}
+
+.action-result.error {
+    background: rgba(255, 107, 107, 0.1);
+    border: 1px solid #ff6b6b;
+    color: #ff6b6b;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .quick-start {
+        grid-template-columns: 1fr;
+    }
+    
+    .active-controls {
+        grid-template-columns: 1fr;
+    }
+    
+    .test-features {
+        grid-template-columns: 1fr;
+    }
+    
+    .impersonation-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-md);
+    }
+}
+</style>
+
+<div class="admin-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-title">User Support</div>
+            <a href="/admin/user-inspector.php" class="nav-item">
+                <span class="nav-item-icon">🔍</span>
+                User Inspector
+            </a>
+            <a href="#impersonation" class="nav-item active" onclick="showSection('impersonation')">
+                <span class="nav-item-icon">🎭</span>
+                User Impersonation
+            </a>
+        </div>
+        
+        <div class="sidebar-section">
+            <div class="sidebar-title">Testing</div>
+            <a href="#journey-testing" class="nav-item" onclick="showSection('journey-testing')">
+                <span class="nav-item-icon">🎯</span>
+                Journey Testing
+            </a>
+            <a href="#feature-testing" class="nav-item" onclick="showSection('feature-testing')">
+                <span class="nav-item-icon">🧪</span>
+                Feature Testing
+            </a>
+        </div>
+        
+        <div class="sidebar-section">
+            <div class="sidebar-title">Navigation</div>
+            <a href="/admin/dashboard.php" class="nav-item">
+                <span class="nav-item-icon">🏠</span>
+                Main Dashboard
+            </a>
+            <a href="/admin/business-analytics.php" class="nav-item">
+                <span class="nav-item-icon">🧠</span>
+                Business Analytics
+            </a>
+        </div>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="admin-content">
+        <div id="impersonation" class="content-section active">
+            <div class="content-header">
+                <h1 class="content-title" style="text-align: center;">🎭 Enhanced User Impersonation</h1>
+                <p class="content-subtitle" style="text-align: center;">Test user experiences with journey-specific and subscription-level accuracy</p>
+                <div class="placeholder-notice">
+                    🚀 <strong>POST-LAUNCH:</strong> Connect to real user database and session management
+                </div>
+            </div>
+            
+            <!-- Action Results -->
+            <?php if ($impersonationResult): ?>
+            <div class="action-result <?php echo $impersonationResult['success'] ? 'success' : 'error'; ?>">
+                <?php echo htmlspecialchars($impersonationResult['message']); ?>
+            </div>
+            <?php endif; ?>
+            
+            <!-- Active Impersonation Status -->
+            <div class="impersonation-panel <?php echo $activeImpersonation ? 'impersonation-active' : ''; ?>">
+                <div class="impersonation-header">
+                    <h3 class="impersonation-title">
+                        🎭 Impersonation Status
+                        <div class="status-indicator <?php echo $activeImpersonation ? 'status-active' : 'status-inactive'; ?>"></div>
+                    </h3>
+                    <div class="impersonation-status">
+                        <?php if ($activeImpersonation): ?>
+                            <span style="color: #ff6b6b; font-weight: 600;">⚠️ IMPERSONATING USER</span>
+                            <form method="POST" style="display: inline;">
+                                <input type="hidden" name="action" value="stop_impersonation">
+                                <button type="submit" class="emergency-stop">🛑 STOP IMPERSONATION</button>
+                            </form>
+                        <?php else: ?>
+                            <span style="color: #666;">No active impersonation</span>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                
+                <?php if ($activeImpersonation): ?>
+                <!-- Active Impersonation Controls -->
+                <div class="impersonation-info">
+                    <h4 style="color: #ff6b6b; margin: 0 0 var(--spacing-md) 0;">🚨 Currently Impersonating</h4>
+                    <div class="impersonation-details">
+                        <div class="detail-item">
+                            <span class="detail-label">User:</span>
+                            <span class="detail-value"><?php echo htmlspecialchars($activeImpersonation['name']); ?></span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Email:</span>
+                            <span class="detail-value"><?php echo htmlspecialchars($activeImpersonation['email']); ?></span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Journey:</span>
+                            <span class="detail-value"><?php echo ucfirst(str_replace('_', ' ', $activeImpersonation['journey'])); ?></span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Subscription:</span>
+                            <span class="detail-value"><?php echo ucfirst(str_replace('_', '+', $activeImpersonation['subscription'])); ?></span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Started:</span>
+                            <span class="detail-value"><?php echo date('H:i:s', $activeImpersonation['started_at']); ?></span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Admin:</span>
+                            <span class="detail-value"><?php echo htmlspecialchars($activeImpersonation['admin_user']); ?></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Live Controls -->
+                <div class="active-controls">
+                    <!-- Journey Switching -->
+                    <div class="control-section">
+                        <h4 class="control-header">🎯 Journey Experience</h4>
+                        <div class="control-current">
+                            <span>Current:</span>
+                            <span class="current-value">
+                                <?php 
+                                $journeyNames = [
+                                    'clinical' => 'Clinical Focus',
+                                    'performance' => 'Peak Performance',
+                                    'best_life' => 'Best Life Mode'
+                                ];
+                                echo $journeyNames[$activeImpersonation['journey']] ?? $activeImpersonation['journey'];
+                                ?>
+                            </span>
+                        </div>
+                        <div class="switch-controls">
+                            <?php foreach (['clinical', 'performance', 'best_life'] as $journey): ?>
+                            <form method="POST" style="display: inline;">
+                                <input type="hidden" name="action" value="switch_journey">
+                                <input type="hidden" name="new_journey" value="<?php echo $journey; ?>">
+                                <button type="submit" class="switch-btn <?php echo $activeImpersonation['journey'] === $journey ? 'active' : ''; ?>">
+                                    <?php echo $journeyNames[$journey]; ?>
+                                    <span><?php echo $activeImpersonation['journey'] === $journey ? '✓' : '→'; ?></span>
+                                </button>
+                            </form>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                    
+                    <!-- Subscription Switching -->
+                    <div class="control-section">
+                        <h4 class="control-header">💳 Subscription Level</h4>
+                        <div class="control-current">
+                            <span>Current:</span>
+                            <span class="current-value"><?php echo ucfirst(str_replace('_', '+', $activeImpersonation['subscription'])); ?></span>
+                        </div>
+                        <div class="switch-controls">
+                            <?php foreach (['free', 'pro', 'pro_plus'] as $subscription): ?>
+                            <form method="POST" style="display: inline;">
+                                <input type="hidden" name="action" value="switch_subscription">
+                                <input type="hidden" name="new_subscription" value="<?php echo $subscription; ?>">
+                                <button type="submit" class="switch-btn <?php echo $activeImpersonation['subscription'] === $subscription ? 'active' : ''; ?>">
+                                    <?php echo ucfirst(str_replace('_', '+', $subscription)); ?>
+                                    <span><?php echo $activeImpersonation['subscription'] === $subscription ? '✓' : '→'; ?></span>
+                                </button>
+                            </form>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Feature Testing -->
+                    <div class="control-section">
+                        <h4 class="control-header">🧪 Test Features</h4>
+                        <p style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: var(--spacing-md);">
+                            Test specific features as this user
+                        </p>
+                        <div class="test-features">
+                            <a href="/hub/" target="_blank" class="test-btn">🏠 Hub Home</a>
+                            <a href="/hub/upload.php" target="_blank" class="test-btn">📤 Upload</a>
+                            <a href="/hub/patterns.php" target="_blank" class="test-btn">📊 Patterns</a>
+                            <a href="/hub/account.php" target="_blank" class="test-btn">⚙️ Account</a>
+                            <form method="POST" style="display: inline;">
+                                <input type="hidden" name="action" value="test_feature">
+                                <input type="hidden" name="feature" value="onboarding">
+                                <button type="submit" class="test-btn">🎯 Test Onboarding</button>
+                            </form>
+                            <form method="POST" style="display: inline;">
+                                <input type="hidden" name="action" value="test_feature">
+                                <input type="hidden" name="feature" value="upgrade_flow">
+                                <button type="submit" class="test-btn">⬆️ Test Upgrade</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <?php else: ?>
+                <!-- Quick Start Options -->
+                <div class="quick-start">
+                    <!-- Quick User Impersonation -->
+                    <div class="start-option" onclick="showUserSearchModal()">
+                        <div class="option-header">
+                            <div class="option-icon">👤</div>
+                            <h4 class="option-title">Impersonate Specific User</h4>
+                        </div>
+                        <p class="option-description">Search for and impersonate a specific user to test their exact experience</p>
+                        <ul class="option-features">
+                            <li>Search by email or name</li>
+                            <li>Use their real journey and subscription</li>
+                            <li>Access their actual data and settings</li>
+                            <li>Perfect for customer support</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Journey-Specific Testing -->
+                    <div class="start-option" onclick="showJourneyTestingModal()">
+                        <div class="option-header">
+                            <div class="option-icon">🎯</div>
+                            <h4 class="option-title">Test Journey Experience</h4>
+                        </div>
+                        <p class="option-description">Test different user journey paths with various subscription levels</p>
+                        <ul class="option-features">
+                            <li>Clinical Focus journey testing</li>
+                            <li>Peak Performance experience</li>
+                            <li>Best Life Mode validation</li>
+                            <li>Subscription feature comparison</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Feature Testing -->
+                    <div class="start-option" onclick="showFeatureTestingModal()">
+                        <div class="option-header">
+                            <div class="option-icon">🧪</div>
+                            <h4 class="option-title">Feature Testing</h4>
+                        </div>
+                        <p class="option-description">Test specific app features and flows with different user configurations</p>
+                        <ul class="option-features">
+                            <li>Upload and analysis flows</li>
+                            <li>Onboarding experience</li>
+                            <li>Upgrade and payment flows</li>
+                            <li>Pattern report generation</li>
+                        </ul>
+                    </div>
+                </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Impersonation Modals -->
+<div id="user-search-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>👤 Start User Impersonation</h2>
+            <p>Enter user details to begin impersonation</p>
+        </div>
+        <form method="POST">
+            <input type="hidden" name="action" value="start_impersonation">
+            
+            <div class="form-group">
+                <label>User Email</label>
+                <input type="email" name="user_email" placeholder="user@example.com" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Journey Experience</label>
+                <select name="journey">
+                    <option value="clinical">🏥 Clinical Focus</option>
+                    <option value="performance">💪 Peak Performance</option>
+                    <option value="best_life" selected>✨ Best Life Mode</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Subscription Level</label>
+                <select name="subscription">
+                    <option value="free">Free</option>
+                    <option value="pro">Pro</option>
+                    <option value="pro_plus" selected>Pro+</option>
+                </select>
+            </div>
+            
+            <div class="modal-actions">
+                <button type="button" onclick="closeModal('user-search-modal')" class="btn-outline">Cancel</button>
+                <button type="submit" class="btn-primary">🎭 Start Impersonation</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// TIER 2: Enhanced User Impersonation Functions
+
+// Modal management
+function showUserSearchModal() {
+    document.getElementById('user-search-modal').style.display = 'flex';
+}
+
+function showJourneyTestingModal() {
+    alert('🎯 PLACEHOLDER: Journey Testing Modal\n\nWill provide:\n• Pre-configured journey test scenarios\n• A/B testing capabilities\n• Journey performance comparison\n• Quick journey switching');
+}
+
+function showFeatureTestingModal() {
+    alert('🧪 PLACEHOLDER: Feature Testing Modal\n\nWill provide:\n• Specific feature test scenarios\n• Upload flow testing\n• Payment flow validation\n• Onboarding experience testing');
+}
+
+function closeModal(modalId) {
+    document.getElementById(modalId).style.display = 'none';
+}
+
+function showSection(sectionName) {
+    // Navigation function for future sections
+    console.log(`Navigate to ${sectionName} section`);
+}
+
+// Auto-refresh impersonation status
+function checkImpersonationStatus() {
+    // PLACEHOLDER: Check if impersonation is still active
+    console.log('🔍 Checking impersonation status...');
+}
+
+// Impersonation safety warnings
+function confirmStopImpersonation() {
+    return confirm('⚠️ Stop user impersonation?\n\nThis will:\n• End the current user session\n• Return you to admin view\n• Clear all impersonation data\n\nContinue?');
+}
+
+// Feature testing shortcuts
+function testUserFeature(feature) {
+    console.log(`🧪 Testing ${feature} feature`);
+}
+
+// Session management
+function extendImpersonationSession() {
+    console.log('⏰ PLACEHOLDER: Extend impersonation session');
+    // Will prevent auto-timeout during long testing sessions
+}
+
+// Journey switching warnings
+function confirmJourneySwitch(newJourney) {
+    return confirm(`🎯 Switch to ${newJourney} journey?\n\nThis will change:\n• UI personalization\n• AI tone and messaging\n• Feature recommendations\n• Upload interface\n\nContinue?`);
+}
+
+// Initialize impersonation system
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🎭 Enhanced User Impersonation System loaded');
+    console.log('✨ Features: User-specific impersonation, journey switching, subscription testing');
+    console.log('🚀 Post-launch: Real user data integration, session management, testing automation');
+    
+    // Check for active impersonation
+    <?php if ($activeImpersonation): ?>
+    console.log('⚠️ ACTIVE IMPERSONATION DETECTED');
+    console.log('User: <?php echo addslashes($activeImpersonation['email']); ?>');
+    console.log('Journey: <?php echo addslashes($activeImpersonation['journey']); ?>');
+    console.log('Subscription: <?php echo addslashes($activeImpersonation['subscription']); ?>');
+    
+    // Auto-refresh status every 30 seconds
+    setInterval(checkImpersonationStatus, 30000);
+    <?php endif; ?>
+});
+
+// Modal click-outside-to-close
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('modal')) {
+        e.target.style.display = 'none';
+    }
+});
+</script>
+
+<?php include __DIR__ . '/includes/footer-admin.php'; ?>

@@ -9,6 +9,12 @@ $pageTitle = "User Inspector & Management";
 $searchResults = null;
 $selectedUser = null;
 $actionResult = null;
+$activeImpersonation = null;
+
+// Check if currently impersonating
+if (isset($_SESSION['impersonated_user'])) {
+    $activeImpersonation = $_SESSION['impersonated_user'];
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
@@ -31,6 +37,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             break;
         case 'send_message':
             $actionResult = sendUserMessage($_POST);
+            break;
+        case 'start_impersonation':
+            $actionResult = startUserImpersonation($_POST);
+            break;
+        case 'stop_impersonation':
+            $actionResult = stopUserImpersonation();
             break;
     }
 }
@@ -121,13 +133,68 @@ function updateUserSubscription($postData) {
 }
 
 function handleUserImpersonation($email) {
-    // Set impersonation session
-    $_SESSION['impersonated_email'] = $email;
-    $_SESSION['impersonation_source'] = 'user_inspector';
+    // This will be handled by the enhanced modal in the frontend
+    return [
+        'success' => true,
+        'message' => 'Opening impersonation modal for ' . $email
+    ];
+}
+
+function startUserImpersonation($postData) {
+    $email = $postData['user_email'] ?? '';
+    $journey = $postData['journey'] ?? 'best_life';
+    $subscription = $postData['subscription'] ?? 'pro';
     
-    // Redirect to hub as this user
-    header('Location: /hub/');
-    exit;
+    // PLACEHOLDER: Load real user data and create impersonation session
+    $_SESSION['impersonated_user'] = [
+        'email' => $email,
+        'name' => getUserNameFromEmail($email),
+        'journey' => $journey,
+        'subscription' => $subscription,
+        'started_at' => time(),
+        'admin_user' => $GLOBALS['adminUser']['username'] ?? 'admin',
+        'impersonation_id' => uniqid('imp_')
+    ];
+    
+    // Also set hub_user session for seamless hub access
+    $_SESSION['hub_user'] = [
+        'email' => $email,
+        'name' => getUserNameFromEmail($email),
+        'journey' => $journey,
+        'subscription_plan' => $subscription,
+        'is_admin_impersonation' => true,
+        'login_time' => time()
+    ];
+    
+    return [
+        'success' => true,
+        'message' => "Started impersonating {$email} as {$journey} journey with {$subscription} subscription"
+    ];
+}
+
+function stopUserImpersonation() {
+    if (!isset($_SESSION['impersonated_user'])) {
+        return ['success' => false, 'message' => 'No active impersonation'];
+    }
+    
+    $email = $_SESSION['impersonated_user']['email'];
+    unset($_SESSION['impersonated_user']);
+    unset($_SESSION['hub_user']);
+    
+    return [
+        'success' => true,
+        'message' => "Stopped impersonating {$email} - back to admin view"
+    ];
+}
+
+function getUserNameFromEmail($email) {
+    // PLACEHOLDER: Get real user name from database
+    $names = [
+        'john.doe@example.com' => 'John Doe',
+        'jane.smith@example.com' => 'Jane Smith',
+        'mike.johnson@example.com' => 'Mike Johnson'
+    ];
+    return $names[$email] ?? 'Test User';
 }
 
 function sendUserMessage($postData) {
@@ -491,6 +558,88 @@ include __DIR__ . '/includes/header-admin.php';
         justify-content: flex-end;
     }
 }
+
+/* Modal Styles */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal.open {
+    display: flex;
+}
+
+.modal-content {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-xl);
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    margin-bottom: var(--spacing-lg);
+    text-align: center;
+}
+
+.modal-header h2 {
+    color: var(--heading-color);
+    font-size: 1.5rem;
+    margin: 0 0 var(--spacing-sm) 0;
+}
+
+.modal-header p {
+    color: var(--text-secondary);
+    margin: 0;
+    font-size: 0.875rem;
+}
+
+.modal-actions {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-xl);
+}
+
+.modal-actions button {
+    flex: 1;
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+}
+
+.btn-outline:hover {
+    background: var(--border-color);
+}
+
+.btn-primary {
+    background: var(--green-color);
+    color: var(--bg-color);
+    border: none;
+}
+
+.btn-primary:hover {
+    background: #7a8a78;
+    transform: translateY(-1px);
+}
 </style>
 
 <div class="admin-layout">
@@ -500,27 +649,7 @@ include __DIR__ . '/includes/header-admin.php';
             <div class="sidebar-title">User Support</div>
             <a href="#search" class="nav-item active" onclick="showSection('search')">
                 <span class="nav-item-icon">🔍</span>
-                User Search
-            </a>
-            <a href="#management" class="nav-item" onclick="showSection('management')">
-                <span class="nav-item-icon">⚙️</span>
-                Account Management
-            </a>
-            <a href="#communication" class="nav-item" onclick="showSection('communication')">
-                <span class="nav-item-icon">📧</span>
-                User Communication
-            </a>
-        </div>
-        
-        <div class="sidebar-section">
-            <div class="sidebar-title">Tools</div>
-            <a href="#impersonation" class="nav-item" onclick="showSection('impersonation')">
-                <span class="nav-item-icon">🎭</span>
-                User Impersonation
-            </a>
-            <a href="#analytics" class="nav-item" onclick="showSection('analytics')">
-                <span class="nav-item-icon">📊</span>
-                User Analytics
+                User Search & Impersonation
             </a>
         </div>
         
@@ -553,6 +682,27 @@ include __DIR__ . '/includes/header-admin.php';
             <?php if ($actionResult): ?>
             <div class="action-result <?php echo $actionResult['success'] ? 'success' : 'error'; ?>">
                 <?php echo htmlspecialchars($actionResult['message']); ?>
+            </div>
+            <?php endif; ?>
+            
+            <!-- Active Impersonation Status -->
+            <?php if ($activeImpersonation): ?>
+            <div class="action-result" style="background: rgba(255, 107, 107, 0.1); border: 2px solid #ff6b6b; color: #ff6b6b;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <strong>⚠️ CURRENTLY IMPERSONATING:</strong> <?php echo htmlspecialchars($activeImpersonation['name']); ?> 
+                        (<?php echo htmlspecialchars($activeImpersonation['email']); ?>) • 
+                        <?php echo ucfirst(str_replace('_', ' ', $activeImpersonation['journey'])); ?> • 
+                        <?php echo ucfirst(str_replace('_', '+', $activeImpersonation['subscription'])); ?>
+                    </div>
+                    <div style="display: flex; gap: var(--spacing-sm);">
+                        <a href="/hub/" target="_blank" class="btn-outline-small">🔗 Test as User</a>
+                        <form method="POST" style="display: inline;">
+                            <input type="hidden" name="action" value="stop_impersonation">
+                            <button type="submit" class="btn-primary-small" style="background: #ff6b6b;" onclick="return confirm('Stop impersonating this user?')">🛑 Stop</button>
+                        </form>
+                    </div>
+                </div>
             </div>
             <?php endif; ?>
             
@@ -609,11 +759,7 @@ include __DIR__ . '/includes/header-admin.php';
                                 <input type="hidden" name="user_email" value="<?php echo htmlspecialchars($user['email']); ?>">
                                 <button type="submit" class="action-btn">👤 View Profile</button>
                             </form>
-                            <form method="POST" style="display: inline;">
-                                <input type="hidden" name="action" value="impersonate_user">
-                                <input type="hidden" name="user_email" value="<?php echo htmlspecialchars($user['email']); ?>">
-                                <button type="submit" class="action-btn">🎭 Impersonate</button>
-                            </form>
+                            <button type="button" class="action-btn" onclick="openImpersonationModal('<?php echo htmlspecialchars($user['email']); ?>', '<?php echo htmlspecialchars($user['journey']); ?>', '<?php echo htmlspecialchars($user['subscription']); ?>')">🎭 Impersonate</button>
                         </div>
                     </div>
                     <?php endforeach; ?>
@@ -629,11 +775,7 @@ include __DIR__ . '/includes/header-admin.php';
                     <div class="profile-header">
                         <h3 class="profile-title">👤 Account Overview</h3>
                         <div class="profile-actions">
-                            <form method="POST" style="display: inline;">
-                                <input type="hidden" name="action" value="impersonate_user">
-                                <input type="hidden" name="user_email" value="<?php echo htmlspecialchars($selectedUser['email']); ?>">
-                                <button type="submit" class="action-btn">🎭 Impersonate User</button>
-                            </form>
+                            <button type="button" class="action-btn" onclick="openImpersonationModal('<?php echo htmlspecialchars($selectedUser['email']); ?>', '<?php echo htmlspecialchars($selectedUser['journey'] ?? 'best_life'); ?>', '<?php echo htmlspecialchars($selectedUser['subscription']); ?>')">🎭 Impersonate User</button>
                         </div>
                     </div>
                     
@@ -860,8 +1002,84 @@ include __DIR__ . '/includes/header-admin.php';
     </main>
 </div>
 
+<!-- Impersonation Modal -->
+<div id="impersonation-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>🎭 Start User Impersonation</h2>
+            <p>Configure impersonation settings and start testing as this user</p>
+        </div>
+        <form method="POST" id="impersonation-form">
+            <input type="hidden" name="action" value="start_impersonation">
+            
+            <div class="form-group">
+                <label>User Email</label>
+                <input type="email" name="user_email" id="impersonation-email" readonly 
+                       style="background: #333; cursor: not-allowed;">
+            </div>
+            
+            <div class="form-group">
+                <label>Journey Experience</label>
+                <select name="journey" id="impersonation-journey">
+                    <option value="clinical">🏥 Clinical Focus</option>
+                    <option value="performance">💪 Peak Performance</option>
+                    <option value="best_life" selected>✨ Best Life Mode</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Subscription Level</label>
+                <select name="subscription" id="impersonation-subscription">
+                    <option value="free">Free</option>
+                    <option value="pro" selected>Pro</option>
+                    <option value="pro_plus">Pro+</option>
+                </select>
+            </div>
+            
+            <div style="background: rgba(255, 206, 84, 0.1); border: 1px solid #ffce54; border-radius: var(--border-radius); padding: var(--spacing-md); margin: var(--spacing-md) 0;">
+                <p style="margin: 0; font-size: 0.875rem; color: var(--text-color);">
+                    <strong>⚠️ Important:</strong> Impersonation will create a session that lets you experience 
+                    the app exactly as this user would see it. You can test their journey, subscription features, 
+                    and access level. Click "Test as User" links to open the Hub in their context.
+                </p>
+            </div>
+            
+            <div class="modal-actions">
+                <button type="button" onclick="closeImpersonationModal()" class="btn-outline">Cancel</button>
+                <button type="submit" class="btn-primary">🎭 Start Impersonation</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
 // TIER 2: User Inspector & Management Functions
+
+// Impersonation Modal Management
+function openImpersonationModal(email, journey, subscription) {
+    document.getElementById('impersonation-email').value = email;
+    document.getElementById('impersonation-journey').value = journey || 'best_life';
+    document.getElementById('impersonation-subscription').value = subscription || 'pro';
+    document.getElementById('impersonation-modal').style.display = 'flex';
+}
+
+function closeImpersonationModal() {
+    document.getElementById('impersonation-modal').style.display = 'none';
+}
+
+// Modal Management
+function closeModal(modalId) {
+    document.getElementById(modalId).style.display = 'none';
+}
+
+// Modal click-outside-to-close
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('modal')) {
+        e.target.style.display = 'none';
+    }
+});
+
+// Navigation and other functions
 function refundSubscription(email) {
     if (confirm(`Process refund for ${email}?\n\nThis will:\n• Cancel their subscription\n• Process refund via payment processor\n• Send confirmation email\n• Update their account status`)) {
         alert(`🔄 PLACEHOLDER: Processing refund for ${email}\n\nWill connect to:\n• Stripe refund API\n• Subscription management\n• Email notification system\n• Account status updates`);
