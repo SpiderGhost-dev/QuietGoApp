@@ -23,8 +23,7 @@ if ($isAdminLoggedIn && !isset($_SESSION['hub_user'])) {
         'login_time' => time(),
         'is_admin_impersonation' => true,
         'subscription_plan' => 'pro_plus',
-        'personality' => 'simple',
-        'purpose' => 'healthcare'
+        'journey' => 'best_life'  // clinical, performance, best_life
     ];
 }
 
@@ -32,8 +31,15 @@ if ($isAdminLoggedIn && !isset($_SESSION['hub_user'])) {
 $user = $_SESSION['hub_user'];
 $userName = $user['name'] ?? 'User';
 $subscriptionPlan = $user['subscription_plan'] ?? 'free';
-$userPersonality = $user['personality'] ?? 'simple';
-$userPurpose = $user['purpose'] ?? 'lifestyle';
+$userJourney = $user['journey'] ?? 'best_life';
+
+// Journey personalization (same system as upload.php)
+$journeyConfig = [
+    'clinical' => ['focus' => 'healthcare providers', 'tone' => 'clinical'],
+    'performance' => ['focus' => 'training optimization', 'tone' => 'performance'],
+    'best_life' => ['focus' => 'everyday wellness', 'tone' => 'lifestyle']
+];
+$currentJourney = $journeyConfig[$userJourney];
 
 // Simulate sync and data status for demo (replace with real data later)
 $lastSync = time() - (2 * 60); // 2 minutes ago

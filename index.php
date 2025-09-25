@@ -198,7 +198,7 @@
             </div>
 
             <div class="features-grid">
-                <!-- Digestive Wellness -->
+                <!-- Clinical Focus -->
                 <div class="card journey-card">
                     <div class="card-icon">
                         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color: var(--green-color);">
@@ -206,7 +206,7 @@
                             <path d="M12 5L8 21l4-7 4 7-4-16"/>
                         </svg>
                     </div>
-                    <h3>🏥 Digestive Wellness</h3>
+                    <h3>🏥 Clinical Focus</h3>
                     <p style="margin-bottom: 24px; color: var(--text-muted);">
                         Partner with healthcare providers for optimal gut health
                     </p>
@@ -241,7 +241,7 @@
                     </div>
                 </div>
 
-                <!-- Performance Optimization -->
+                <!-- Peak Performance -->
                 <div class="card journey-card">
                     <div class="card-icon accent">
                         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color: var(--accent-color);">
@@ -253,7 +253,7 @@
                             <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
                         </svg>
                     </div>
-                    <h3>💪 Performance Optimization</h3>
+                    <h3>💪 Peak Performance</h3>
                     <p style="margin-bottom: 24px; color: var(--text-muted);">
                         Fuel your training and maximize athletic potential
                     </p>
@@ -288,7 +288,7 @@
                     </div>
                 </div>
 
-                <!-- Everyday Vitality -->
+                <!-- Best Life Mode -->
                 <div class="card journey-card">
                     <div class="card-icon">
                         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color: var(--green-color);">
@@ -298,7 +298,7 @@
                             <line x1="15" y1="9" x2="15.01" y2="9"/>
                         </svg>
                     </div>
-                    <h3>✨ Everyday Vitality</h3>
+                    <h3>✨ Best Life Mode</h3>
                     <p style="margin-bottom: 24px; color: var(--text-muted);">
                         Look great, feel amazing, live your best life daily
                     </p>
@@ -639,9 +639,8 @@
                                 <circle cx="12" cy="12" r="3"/>
                             </svg>
                         </div>
-                        <blockquote style="color: var(--text-color); font-style: italic; margin: 0 0 1.5rem 0; line-height: 1.6; font-size: 1.1rem;">"QuietGo helped me understand how my meals affect my energy levels. I feel more balanced and confident in my daily choices.""</blockquote>
+                        <blockquote style="color: var(--text-color); font-style: italic; margin: 0 0 1.5rem 0; line-height: 1.6; font-size: 1.1rem;">"QuietGo helped me understand how my meals affect my energy levels. I feel more balanced and confident in my daily choices."</blockquote>
                         <div class="testimonial-author" style="color: var(--green-color); font-weight: 600; font-size: 1rem;">— Ashley K.</div>
-                        <div style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">Wellness Enthusiast</div>
                     </div>
                 </div>
             </div>

@@ -24,11 +24,36 @@ if ($isAdminLoggedIn && !isset($_SESSION['hub_user'])) {
     ];
 }
 
-// Get user subscription status for feature access
+// Get user subscription status and journey preferences
 $user = $_SESSION['hub_user'];
 $subscriptionPlan = $user['subscription_plan'] ?? 'free';
 $hasCalcuPlate = in_array($subscriptionPlan, ['pro_plus', 'calcuplate']);
 $isProUser = in_array($subscriptionPlan, ['pro', 'pro_plus']);
+
+// Journey personalization (synced from mobile app during onboarding)
+$userJourney = $user['journey'] ?? 'best_life'; // clinical, performance, best_life (default)
+$journeyConfig = [
+    'clinical' => [
+        'title' => '🏥 Clinical Focus',
+        'focus' => 'symptom patterns and provider collaboration',
+        'ai_tone' => 'clinical insights with medical terminology when needed',
+        'default_report' => 'healthcare'
+    ],
+    'performance' => [
+        'title' => '💪 Peak Performance',
+        'focus' => 'nutrition impact on training and recovery',
+        'ai_tone' => 'performance-focused analysis and coaching insights',
+        'default_report' => 'coach'
+    ],
+    'best_life' => [
+        'title' => '✨ Best Life Mode',
+        'focus' => 'energy levels and living your best life daily',
+        'ai_tone' => 'lifestyle optimization and feel-good insights',
+        'default_report' => 'personal'
+    ]
+];
+
+$currentJourneyConfig = $journeyConfig[$userJourney];
 
 // Free users shouldn't have Hub access - redirect them
 if (!$isProUser) {
@@ -435,18 +460,31 @@ include __DIR__ . '/includes/header-hub.php';
     </section>
     <?php endif; ?>
 
-    <!-- Header Section -->
+    <!-- Header Section - Journey Personalized -->
     <section class="upload-header">
         <div class="container">
-            <h1 class="upload-title">📤 Upload Individual Items</h1>
-            <p class="upload-subtitle">Add specific photos, logs, or reports from your mobile app</p>
+            <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 1rem;">
+                <h1 class="upload-title">📤 Upload & Sync Data</h1>
+                <span style="background: var(--primary-blue); color: white; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem; font-weight: 600;">
+                    <?php echo htmlspecialchars($currentJourneyConfig['title']); ?>
+                </span>
+            </div>
+            <p class="upload-subtitle">Personalized analysis focused on <?php echo htmlspecialchars($currentJourneyConfig['focus']); ?></p>
             <p class="upload-description">
                 <?php if ($hasCalcuPlate): ?>
-                    Upload stool photos for AI Bristol Scale analysis and meal photos for instant CalcuPlate parsing with auto-logging.
+                    Our AI will analyze your uploads with <?php echo htmlspecialchars($currentJourneyConfig['ai_tone']); ?>, 
+                    providing instant CalcuPlate meal parsing and Bristol Scale stool analysis.
                 <?php else: ?>
-                    Upload stool photos for AI Bristol Scale analysis and meal photos for manual nutrition logging. Upgrade to Pro+ for CalcuPlate automatic meal parsing.
+                    Our AI provides <?php echo htmlspecialchars($currentJourneyConfig['ai_tone']); ?>, 
+                    with Bristol Scale stool analysis and manual meal logging. Upgrade to Pro+ for CalcuPlate automation.
                 <?php endif; ?>
             </p>
+            
+            <!-- Journey Quick Switch -->
+            <div style="margin-top: 1rem; text-align: center;">
+                <small style="color: var(--text-muted);">Current focus: <strong><?php echo htmlspecialchars($userJourney === 'clinical' ? 'Clinical Focus' : ($userJourney === 'performance' ? 'Peak Performance' : 'Best Life Mode')); ?></strong> • 
+                <a href="/hub/account.php#journey" style="color: var(--primary-blue);">Change journey preference</a></small>
+            </div>
         </div>
     </section>
 

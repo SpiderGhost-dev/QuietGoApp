@@ -37,57 +37,183 @@ include __DIR__ . '/includes/header-admin.php';
     
     <!-- Main Content -->
     <main class="admin-content">
-        <!-- Analytics Dashboard -->
+        <!-- Analytics Dashboard - TIER 1: BUSINESS HEALTH MONITORING -->
         <div id="analytics" class="content-section active">
             <div class="content-header">
-                <h1 class="content-title">Analytics Dashboard</h1>
-                <p class="content-subtitle">Monitor your <span class="quietgo-brand"><span class="quiet">Quiet</span><span class="go">Go</span></span> platform performance and user engagement</p>
+                <h1 class="content-title">Business Health Dashboard</h1>
+                <p class="content-subtitle">Monitor <span class="quietgo-brand"><span class="quiet">Quiet</span><span class="go">Go</span></span> financial performance and user engagement</p>
+                <div class="placeholder-notice">
+                    🚀 <strong>MOBILE APP INTEGRATION:</strong> Real data will replace placeholders post-launch
+                </div>
             </div>
             
+            <!-- Financial Overview -->
             <div class="stats-grid">
-                <div class="stat-card featured">
+                <div class="stat-card featured financial">
                     <div class="stat-header">
-                        <div class="stat-icon">👥</div>
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-period">This Month</div>
                     </div>
-                    <div class="stat-value">247</div>
-                    <div class="stat-label">Total Users</div>
-                    <div class="stat-change positive">+12% this month</div>
+                    <div class="stat-value">$12,847</div>
+                    <div class="stat-label">Monthly Recurring Revenue</div>
+                    <div class="stat-change positive">+18% vs last month</div>
+                    <div class="stat-breakdown">
+                        <small>Pro: $8,210 • CalcuPlate: $4,637</small>
+                    </div>
                 </div>
                 
-                <div class="stat-card">
+                <div class="stat-card financial">
                     <div class="stat-header">
                         <div class="stat-icon">📈</div>
                     </div>
-                    <div class="stat-value">23</div>
-                    <div class="stat-label">New Users (30 days)</div>
-                    <div class="stat-change positive">+8% vs last month</div>
+                    <div class="stat-value">$154,164</div>
+                    <div class="stat-label">Annual Recurring Revenue</div>
+                    <div class="stat-change positive">+23% YoY</div>
                 </div>
                 
                 <div class="stat-card">
                     <div class="stat-header">
-                        <div class="stat-icon">📋</div>
+                        <div class="stat-icon">📱</div>
                     </div>
-                    <div class="stat-value">1,543</div>
-                    <div class="stat-label">Total Health Logs</div>
-                    <div class="stat-change positive">+25% this month</div>
+                    <div class="stat-value">2.3%</div>
+                    <div class="stat-label">Monthly Churn Rate</div>
+                    <div class="stat-change negative">+0.4% vs target</div>
                 </div>
                 
                 <div class="stat-card">
                     <div class="stat-header">
-                        <div class="stat-icon">📁</div>
+                        <div class="stat-icon">💎</div>
                     </div>
-                    <div class="stat-value">89</div>
-                    <div class="stat-label">File Uploads</div>
-                    <div class="stat-change positive">+5% this week</div>
+                    <div class="stat-value">31.2%</div>
+                    <div class="stat-label">Free → Pro Conversion</div>
+                    <div class="stat-change positive">+5.1% this month</div>
                 </div>
             </div>
             
+            <!-- User Growth Metrics -->
             <div class="data-section">
                 <div class="section-header">
-                    <h3 class="section-title">Recent User Activity</h3>
+                    <h3 class="section-title">User Growth & Engagement</h3>
+                    <div class="section-actions">
+                        <button class="btn-outline">Export Data</button>
+                        <button class="btn-outline">Custom Range</button>
+                    </div>
                 </div>
-                <div class="loading-state">
-                    Real-time analytics data will be displayed here when connected to your backend systems.
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <h4>Total Active Users</h4>
+                            <span class="metric-trend positive">↗️ +12%</span>
+                        </div>
+                        <div class="metric-value">1,247</div>
+                        <div class="metric-details">
+                            <div class="detail-row">
+                                <span>Pro Subscribers</span>
+                                <span>634 (50.8%)</span>
+                            </div>
+                            <div class="detail-row">
+                                <span>CalcuPlate Add-on</span>
+                                <span>312 (49.2% of Pro)</span>
+                            </div>
+                            <div class="detail-row">
+                                <span>Free Users</span>
+                                <span>613 (49.2%)</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <h4>User Journey Distribution</h4>
+                            <span class="metric-trend neutral">📊</span>
+                        </div>
+                        <div class="journey-breakdown">
+                            <div class="journey-stat">
+                                <div class="journey-bar">
+                                    <div class="journey-fill clinical" style="width: 28%"></div>
+                                </div>
+                                <div class="journey-label">
+                                    <span>🏥 Clinical Focus</span>
+                                    <span>28% (349 users)</span>
+                                </div>
+                            </div>
+                            <div class="journey-stat">
+                                <div class="journey-bar">
+                                    <div class="journey-fill performance" style="width: 35%"></div>
+                                </div>
+                                <div class="journey-label">
+                                    <span>💪 Peak Performance</span>
+                                    <span>35% (437 users)</span>
+                                </div>
+                            </div>
+                            <div class="journey-stat">
+                                <div class="journey-bar">
+                                    <div class="journey-fill best-life" style="width: 37%"></div>
+                                </div>
+                                <div class="journey-label">
+                                    <span>✨ Best Life Mode</span>
+                                    <span>37% (461 users)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <h4>App Store Performance</h4>
+                            <span class="metric-trend positive">⭐ 4.8</span>
+                        </div>
+                        <div class="metric-details">
+                            <div class="detail-row">
+                                <span>iOS Downloads</span>
+                                <span>8,234 this month</span>
+                            </div>
+                            <div class="detail-row">
+                                <span>Android Downloads</span>
+                                <span>6,891 this month</span>
+                            </div>
+                            <div class="detail-row">
+                                <span>Average Rating</span>
+                                <span>4.8/5 (iOS) • 4.7/5 (Android)</span>
+                            </div>
+                            <div class="detail-row critical">
+                                <span>⚠️ Recent 1-star reviews</span>
+                                <span>3 requiring response</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Financial Health -->
+            <div class="data-section">
+                <div class="section-header">
+                    <h3 class="section-title">Financial Health Alerts</h3>
+                    <div class="alert-indicator">🟡 2 Issues</div>
+                </div>
+                <div class="alert-list">
+                    <div class="alert-item warning">
+                        <div class="alert-icon">⚠️</div>
+                        <div class="alert-content">
+                            <div class="alert-title">Payment Failures Increasing</div>
+                            <div class="alert-desc">47 failed payments this week (+23% vs last week). Review billing retry logic.</div>
+                        </div>
+                        <div class="alert-actions">
+                            <button class="btn-outline-small">View Details</button>
+                            <button class="btn-primary-small">Fix Issues</button>
+                        </div>
+                    </div>
+                    
+                    <div class="alert-item info">
+                        <div class="alert-icon">💡</div>
+                        <div class="alert-content">
+                            <div class="alert-title">CalcuPlate Conversion Opportunity</div>
+                            <div class="alert-desc">156 Pro users haven't tried CalcuPlate. Consider targeted promotion.</div>
+                        </div>
+                        <div class="alert-actions">
+                            <button class="btn-outline-small">Create Campaign</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
