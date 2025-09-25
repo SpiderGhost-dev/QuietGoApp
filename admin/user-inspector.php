@@ -651,6 +651,10 @@ include __DIR__ . '/includes/header-admin.php';
                 <span class="nav-item-icon">🔍</span>
                 User Search & Impersonation
             </a>
+            <a href="/admin/communication-system.php" class="nav-item">
+                <span class="nav-item-icon">📧</span>
+                Communication System
+            </a>
         </div>
         
         <div class="sidebar-section">
@@ -760,6 +764,7 @@ include __DIR__ . '/includes/header-admin.php';
                                 <button type="submit" class="action-btn">👤 View Profile</button>
                             </form>
                             <button type="button" class="action-btn" onclick="openImpersonationModal('<?php echo htmlspecialchars($user['email']); ?>', '<?php echo htmlspecialchars($user['journey']); ?>', '<?php echo htmlspecialchars($user['subscription']); ?>')">🎭 Impersonate</button>
+                            <a href="/admin/communication-system.php?user=<?php echo urlencode($user['email']); ?>" class="action-btn" style="text-decoration: none; display: inline-block; font-size: 0.875rem; padding: 6px 12px;">📧 Message</a>
                         </div>
                     </div>
                     <?php endforeach; ?>
@@ -776,6 +781,7 @@ include __DIR__ . '/includes/header-admin.php';
                         <h3 class="profile-title">👤 Account Overview</h3>
                         <div class="profile-actions">
                             <button type="button" class="action-btn" onclick="openImpersonationModal('<?php echo htmlspecialchars($selectedUser['email']); ?>', '<?php echo htmlspecialchars($selectedUser['journey'] ?? 'best_life'); ?>', '<?php echo htmlspecialchars($selectedUser['subscription']); ?>')">🎭 Impersonate User</button>
+                            <a href="/admin/communication-system.php?user=<?php echo urlencode($selectedUser['email']); ?>" class="action-btn" style="text-decoration: none; display: inline-block;">📧 Send Message</a>
                         </div>
                     </div>
                     
