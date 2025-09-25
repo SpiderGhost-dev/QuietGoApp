@@ -1,3 +1,4 @@
+
 <?php
 // Hub authentication check
 if (session_status() == PHP_SESSION_NONE) {
@@ -12,8 +13,6 @@ if (!isset($_SESSION['hub_user']) && !isset($_COOKIE['hub_auth']) && !$isAdminLo
     header('Location: /hub/login.php');
     exit;
 }
-
-// If admin but no hub session, create one for demo purposes
 if ($isAdminLoggedIn && !isset($_SESSION['hub_user'])) {
     $_SESSION['hub_user'] = [
         'email' => 'admin@quietgo.app',
@@ -69,15 +68,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['health_item'])) {
 
 function handleIndividualUpload($file, $postData) {
     $uploadDir = __DIR__ . '/uploads/individual/' . date('Y-m-d') . '/';
-    
+
     if (!is_dir($uploadDir)) {
         mkdir($uploadDir, 0755, true);
     }
-    
+
     if ($file['error'] === UPLOAD_ERR_OK) {
         $filename = uniqid() . '_' . basename($file['name']);
         $filepath = $uploadDir . $filename;
-        
+
         if (move_uploaded_file($file['tmp_name'], $filepath)) {
             return [
                 'status' => 'success',
@@ -89,7 +88,7 @@ function handleIndividualUpload($file, $postData) {
             ];
         }
     }
-    
+
     return ['status' => 'error', 'message' => 'Upload failed'];
 }
 
@@ -435,11 +434,11 @@ include __DIR__ . '/includes/header-hub.php';
         grid-template-columns: 1fr;
         gap: 1.5rem;
     }
-    
+
     .category-actions {
         flex-direction: column;
     }
-    
+
     .modal-actions {
         flex-direction: column;
     }
@@ -472,17 +471,17 @@ include __DIR__ . '/includes/header-hub.php';
             <p class="upload-subtitle">Personalized analysis focused on <?php echo htmlspecialchars($currentJourneyConfig['focus']); ?></p>
             <p class="upload-description">
                 <?php if ($hasCalcuPlate): ?>
-                    Our AI will analyze your uploads with <?php echo htmlspecialchars($currentJourneyConfig['ai_tone']); ?>, 
+                    Our AI will analyze your uploads with <?php echo htmlspecialchars($currentJourneyConfig['ai_tone']); ?>,
                     providing instant CalcuPlate meal parsing and Bristol Scale stool analysis.
                 <?php else: ?>
-                    Our AI provides <?php echo htmlspecialchars($currentJourneyConfig['ai_tone']); ?>, 
+                    Our AI provides <?php echo htmlspecialchars($currentJourneyConfig['ai_tone']); ?>,
                     with Bristol Scale stool analysis and manual meal logging. Upgrade to Pro+ for CalcuPlate automation.
                 <?php endif; ?>
             </p>
-            
+
             <!-- Journey Quick Switch -->
             <div style="margin-top: 1rem; text-align: center;">
-                <small style="color: var(--text-muted);">Current focus: <strong><?php echo htmlspecialchars($userJourney === 'clinical' ? 'Clinical Focus' : ($userJourney === 'performance' ? 'Peak Performance' : 'Best Life Mode')); ?></strong> • 
+                <small style="color: var(--text-muted);">Current focus: <strong><?php echo htmlspecialchars($userJourney === 'clinical' ? 'Clinical Focus' : ($userJourney === 'performance' ? 'Peak Performance' : 'Best Life Mode')); ?></strong> •
                 <a href="/hub/account.php#journey" style="color: var(--primary-blue);">Change journey preference</a></small>
             </div>
         </div>
@@ -647,7 +646,7 @@ include __DIR__ . '/includes/header-hub.php';
 
             <form id="upload-form" method="POST" enctype="multipart/form-data">
                 <input type="hidden" id="upload-category" name="category" value="">
-                
+
                 <div class="upload-area" onclick="document.getElementById('file-input').click()">
                     <div class="upload-icon" id="upload-icon">📁</div>
                     <h4>Choose File</h4>
@@ -716,27 +715,27 @@ const categoryConfigs = {
 function openUploadModal(category) {
     currentCategory = category;
     const config = categoryConfigs[category];
-    
+
     document.getElementById('modal-title').textContent = config.title;
     document.getElementById('modal-subtitle').textContent = config.subtitle;
     document.getElementById('upload-icon').textContent = config.icon;
     document.getElementById('upload-category').value = category;
     document.getElementById('file-input').accept = config.accept;
-    
+
     // Build context form
     buildContextForm(config.contexts);
-    
+
     document.getElementById('upload-modal').style.display = 'flex';
 }
 
 function buildContextForm(contexts) {
     const form = document.getElementById('context-form');
     form.innerHTML = '';
-    
+
     contexts.forEach(context => {
         const group = document.createElement('div');
         group.className = 'form-group';
-        
+
         switch(context) {
             case 'time':
                 group.innerHTML = `
@@ -843,7 +842,7 @@ function buildContextForm(contexts) {
                 `;
                 break;
         }
-        
+
         form.appendChild(group);
     });
 }
@@ -868,7 +867,7 @@ function upgradeToProPlusPage() {
 document.getElementById('file-input').addEventListener('change', function(e) {
     if (e.target.files.length > 0) {
         selectedFile = e.target.files[0];
-        
+
         // Update upload area to show selected file
         const uploadArea = document.querySelector('.upload-area');
         const instructions = uploadArea.querySelector('.upload-instructions');
@@ -881,17 +880,17 @@ document.getElementById('file-input').addEventListener('change', function(e) {
 // Form submission
 document.getElementById('upload-form').addEventListener('submit', function(e) {
     e.preventDefault();
-    
+
     if (!selectedFile) {
         alert('Please select a file first');
         return;
     }
-    
+
     // In real app, this would upload to server with context
-    const analysisText = currentCategory === 'photos' ? 
+    const analysisText = currentCategory === 'photos' ?
         (hasCalcuPlate ? 'AI analysis and CalcuPlate parsing' : 'AI stool analysis and manual meal logging') : 'processing';
     alert(`🚀 Uploading ${selectedFile.name} for ${analysisText}...\n\nThis will process and show results!`);
-    
+
     // For demo, just close modal
     closeUploadModal();
 });
@@ -910,7 +909,7 @@ document.querySelector('.upload-area').addEventListener('dragleave', function(e)
 document.querySelector('.upload-area').addEventListener('drop', function(e) {
     e.preventDefault();
     this.classList.remove('drag-over');
-    
+
     const files = e.dataTransfer.files;
     if (files.length > 0) {
         document.getElementById('file-input').files = files;
@@ -920,7 +919,7 @@ document.querySelector('.upload-area').addEventListener('drop', function(e) {
 
 console.log('📤 Pro User Individual Upload Interface loaded');
 console.log('- Pro users: AI stool analysis + manual meal logging');
-console.log('- Pro+ users: AI stool analysis + CalcuPlate meal parsing'); 
+console.log('- Pro+ users: AI stool analysis + CalcuPlate meal parsing');
 console.log('- Smart context forms based on upload type');
 console.log('- Mobile app integration architecture ready');
 </script>

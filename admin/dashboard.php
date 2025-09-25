@@ -1,23 +1,19 @@
-<?php 
-require_once __DIR__ . '/includes/admin-auth.php';
-$adminUser = require_admin_login();
-include __DIR__ . '/includes/header-admin.php'; 
-?>
-<div class="admin-layout">
-    <!-- Sidebar Navigation -->
-    <aside class="admin-sidebar">
-        <div class="sidebar-section">
-            <div class="sidebar-title">Overview</div>
+git add <div class="git commit -m "Build Tier 1 Business Intelligence Dashboard"></div><?php require_once __DIR__ . '/includes/admin-auth.php';- Create comprehensive business-analytics.php with financial health monitoring $adminUser = require_admin_login();- Add user analytics with conversion funnel and engagement metrics include __DIR__ . '/includes/header-admin.php';- Include journey distribution analysis for Clinical/Performance/Best Life paths ?>- Build app store performance tracking with review monitoring <div class="admin-layout">- Implement critical alerts system for business and technical issues <!-- Sidebar Navigation -->- Add revenue breakdown with optimization opportunities <aside class="admin-sidebar">- Enhance admin CSS with 480+ lines of business intelligence styling <div class="sidebar-section">- Update admin navigation with Analytics links in header and sidebar <div class="sidebar-title">Business Intelligence</div>- All metrics show realistic placeholder data with clear integration points <a href="/admin/business-analytics.php" class="nav-item">- Ready for mobile app data integration post-launch"
+    git push
+    git status
+     <span class="nav-item-icon">🧠</span>
+                Business Analytics
+            </a>
             <a href="#analytics" class="nav-item active" onclick="showSection('analytics')">
                 <span class="nav-item-icon">📊</span>
-                Analytics Dashboard
+                Dashboard Overview
             </a>
             <a href="#users" class="nav-item" onclick="showSection('users')">
                 <span class="nav-item-icon">👥</span>
                 User Management
             </a>
         </div>
-        
+
         <div class="sidebar-section">
             <div class="sidebar-title">Content</div>
             <a href="#content" class="nav-item" onclick="showSection('content')">
@@ -25,7 +21,7 @@ include __DIR__ . '/includes/header-admin.php';
                 Content Management
             </a>
         </div>
-        
+
         <div class="sidebar-section">
             <div class="sidebar-title">System</div>
             <a href="#settings" class="nav-item" onclick="showSection('settings')">
@@ -34,7 +30,7 @@ include __DIR__ . '/includes/header-admin.php';
             </a>
         </div>
     </aside>
-    
+
     <!-- Main Content -->
     <main class="admin-content">
         <!-- Analytics Dashboard - TIER 1: BUSINESS HEALTH MONITORING -->
@@ -46,7 +42,7 @@ include __DIR__ . '/includes/header-admin.php';
                     🚀 <strong>MOBILE APP INTEGRATION:</strong> Real data will replace placeholders post-launch
                 </div>
             </div>
-            
+
             <!-- Financial Overview -->
             <div class="stats-grid">
                 <div class="stat-card featured financial">
@@ -61,7 +57,7 @@ include __DIR__ . '/includes/header-admin.php';
                         <small>Pro: $8,210 • CalcuPlate: $4,637</small>
                     </div>
                 </div>
-                
+
                 <div class="stat-card financial">
                     <div class="stat-header">
                         <div class="stat-icon">📈</div>
@@ -70,7 +66,7 @@ include __DIR__ . '/includes/header-admin.php';
                     <div class="stat-label">Annual Recurring Revenue</div>
                     <div class="stat-change positive">+23% YoY</div>
                 </div>
-                
+
                 <div class="stat-card">
                     <div class="stat-header">
                         <div class="stat-icon">📱</div>
@@ -79,7 +75,7 @@ include __DIR__ . '/includes/header-admin.php';
                     <div class="stat-label">Monthly Churn Rate</div>
                     <div class="stat-change negative">+0.4% vs target</div>
                 </div>
-                
+
                 <div class="stat-card">
                     <div class="stat-header">
                         <div class="stat-icon">💎</div>
@@ -89,7 +85,7 @@ include __DIR__ . '/includes/header-admin.php';
                     <div class="stat-change positive">+5.1% this month</div>
                 </div>
             </div>
-            
+
             <!-- User Growth Metrics -->
             <div class="data-section">
                 <div class="section-header">
@@ -121,7 +117,7 @@ include __DIR__ . '/includes/header-admin.php';
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="metric-card">
                         <div class="metric-header">
                             <h4>User Journey Distribution</h4>
@@ -157,7 +153,7 @@ include __DIR__ . '/includes/header-admin.php';
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="metric-card">
                         <div class="metric-header">
                             <h4>App Store Performance</h4>
@@ -184,7 +180,7 @@ include __DIR__ . '/includes/header-admin.php';
                     </div>
                 </div>
             </div>
-            
+
             <!-- Financial Health -->
             <div class="data-section">
                 <div class="section-header">
@@ -203,7 +199,7 @@ include __DIR__ . '/includes/header-admin.php';
                             <button class="btn-primary-small">Fix Issues</button>
                         </div>
                     </div>
-                    
+
                     <div class="alert-item info">
                         <div class="alert-icon">💡</div>
                         <div class="alert-content">
@@ -217,14 +213,14 @@ include __DIR__ . '/includes/header-admin.php';
                 </div>
             </div>
         </div>
-        
+
         <!-- User Management -->
         <div id="users" class="content-section">
             <div class="content-header">
                 <h1 class="content-title">User Management</h1>
                 <p class="content-subtitle">Manage <span class="quietgo-brand"><span class="quiet">Quiet</span><span class="go">Go</span></span> user accounts and subscriptions</p>
             </div>
-            
+
             <div class="data-section">
                 <div class="section-header">
                     <h3 class="section-title">All Users</h3>
@@ -271,14 +267,14 @@ include __DIR__ . '/includes/header-admin.php';
                 </div>
             </div>
         </div>
-        
+
         <!-- Content Management -->
         <div id="content" class="content-section">
             <div class="content-header">
                 <h1 class="content-title">Content Management</h1>
                 <p class="content-subtitle">Manage <span class="quietgo-brand"><span class="quiet">Quiet</span><span class="go">Go</span></span> website content and configuration</p>
             </div>
-            
+
             <div class="data-section">
                 <div class="section-header">
                     <h3 class="section-title">Site Configuration</h3>
@@ -303,14 +299,14 @@ include __DIR__ . '/includes/header-admin.php';
                 </div>
             </div>
         </div>
-        
+
         <!-- System Settings -->
         <div id="settings" class="content-section">
             <div class="content-header">
                 <h1 class="content-title">System Settings</h1>
                 <p class="content-subtitle">Configure <span class="quietgo-brand"><span class="quiet">Quiet</span><span class="go">Go</span></span> system settings and administration</p>
             </div>
-            
+
             <div class="data-section">
                 <div class="section-header">
                     <h3 class="section-title">Admin Accounts</h3>
@@ -364,7 +360,7 @@ include __DIR__ . '/includes/header-admin.php';
                     </table>
                 </div>
             </div>
-            
+
             <div class="data-section">
                 <div class="section-header">
                     <h3 class="section-title">System Configuration</h3>
@@ -408,15 +404,15 @@ include __DIR__ . '/includes/header-admin.php';
         document.querySelectorAll('.nav-item').forEach(item => {
             item.classList.remove('active');
         });
-        
+
         // Add active class to clicked nav item
         event.target.classList.add('active');
-        
+
         // Hide all content sections
         document.querySelectorAll('.content-section').forEach(section => {
             section.classList.remove('active');
         });
-        
+
         // Show selected content section
         document.getElementById(sectionName).classList.add('active');
     }
