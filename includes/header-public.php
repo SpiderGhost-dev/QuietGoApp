@@ -13,19 +13,18 @@
         </a>
 
         <div class="nav-links" role="navigation">
-          <button class="nav-link" type="button" onclick="scrollToSection('features')">Features</button>
-          <button class="nav-link" type="button" onclick="scrollToSection('download')">Download</button>
-          <a href="/about.php" class="nav-link">About</a>
-          <a href="/contact.php" class="nav-link">Contact</a>
-          <a href="/privacy.php" class="nav-link">Privacy</a>
-          <button class="btn btn-outline" type="button" onclick="handleLogin()">
-            <span class="quietgo-brand" style="font-size: 0.875rem;">
-              <span class="quiet">Quiet</span><span class="go">Go</span>
-            </span>
-            <span class="btn-suffix">Hub</span>
-          </button>
-          <button class="btn btn-primary" type="button" onclick="handleGetStarted()">Get Started</button>
-        </div>
+  <a href="#features" class="nav-link">Features</a>
+  <a href="/about.php" class="nav-link">About</a>
+  <a href="/contact.php" class="nav-link">Contact</a>
+  <a href="/privacy.php" class="nav-link">Privacy</a>
+  <button class="btn btn-outline" type="button" onclick="handleLogin()">
+    <span class="quietgo-brand" style="font-size: 0.875rem;">
+      <span class="quiet">Quiet</span><span class="go">Go</span>
+    </span>
+    <span class="btn-suffix">Hub</span>
+  </button>
+  <button class="btn btn-primary" type="button" onclick="handleGetStarted()">Get Started</button>
+</div>
 
         <button class="mobile-menu-btn" type="button" aria-expanded="false" aria-controls="mobileMenu" onclick="toggleMobileMenu(this)">
           <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
@@ -36,19 +35,18 @@
       </div>
 
       <div class="mobile-menu" id="mobileMenu">
-        <button class="nav-link" type="button" onclick="scrollToSection('features')">Features</button>
-        <button class="nav-link" type="button" onclick="scrollToSection('download')">Download</button>
-        <a href="/about.php" class="nav-link">About</a>
-        <a href="/contact.php" class="nav-link">Contact</a>
-        <a href="/privacy.php" class="nav-link">Privacy</a>
-        <button class="btn btn-outline" type="button" onclick="handleLogin()" style="margin-top: 16px;">
-          <span class="quietgo-brand">
-            <span class="quiet">Quiet</span><span class="go">Go</span>
-          </span>
-          <span class="btn-suffix">Hub</span>
-        </button>
-        <button class="btn btn-primary" type="button" onclick="handleGetStarted()" style="margin-top: 8px;">Get Started</button>
-      </div>
+  <a href="#features" class="nav-link">Features</a>
+  <a href="/about.php" class="nav-link">About</a>
+  <a href="/contact.php" class="nav-link">Contact</a>
+  <a href="/privacy.php" class="nav-link">Privacy</a>
+  <button class="btn btn-outline" type="button" onclick="handleLogin()" style="margin-top: 16px;">
+    <span class="quietgo-brand">
+      <span class="quiet">Quiet</span><span class="go">Go</span>
+    </span>
+    <span class="btn-suffix">Hub</span>
+  </button>
+  <button class="btn btn-primary" type="button" onclick="handleGetStarted()" style="margin-top: 8px;">Get Started</button>
+</div>
     </div>
   </nav>
 </header>
