@@ -1,15 +1,17 @@
 /* QuietGo Static Site Styles */
 /* Easy-to-edit color variables */
 :root {
-  /* User's specified colors */
-  --text-color: #ecece6;          /* Normal body text */
-  --heading-color: #e6d7c3;       /* Main headings */
-  --subheading-color: #f3ebe1;    /* Subheadings */
-  --green-color: #8c9d8a;         /* Wherever green was used */
-  --accent-color: #bdcdde;        /* Accent color - light blue */
-  --accent-dark: #8fa3b8;         /* Darker blue shade */
-  --quiet-color: #ddd6c5;         /* 'Quiet' in brand name */
-  --go-color: #ce988c;            /* 'Go' in brand name */
+  /* User's specified brand colors */
+  --text-color: #ecece6;          /* Off-white body text - user specified */
+  --heading-color: #F5F5DC;       /* Cream for main headings */
+  --subheading-color: #F5F5DC;    /* Cream for subheadings */
+  --green-color: #6C985F;         /* Sage 500 - primary brand color */
+  --accent-color: #6A7BA2;        /* Slate Blue - primary accent */
+  --accent-dark: #4682B4;         /* Steel Blue - darker accent */
+  --teal-color: #3C9D9B;          /* Teal Blue - additional accent */
+  --midnight-color: #191970;      /* Midnight Blue - additional accent */
+  --quiet-color: #F5F5DC;         /* Cream for 'Quiet' in brand name */
+  --go-color: #D4A799;            /* Logo Rose for 'Go' in brand name */
   
   /* Background and structure */
   --bg-color: #000000;            /* Black background */

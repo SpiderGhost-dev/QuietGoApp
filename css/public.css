@@ -1,22 +1,42 @@
 /* QuietGo Static Site Styles */
 /* Easy-to-edit color variables */
 :root {
-  /* User's specified colors */
-  --text-color: #ecece6;          /* Normal body text */
-  --heading-color: #e6d7c3;       /* Main headings */
-  --subheading-color: #f3ebe1;    /* Subheadings */
-  --green-color: #8c9d8a;         /* Wherever green was used */
-  --accent-color: #bdcdde;        /* Accent color - light blue */
-  --accent-dark: #8fa3b8;         /* Darker blue shade */
-  --quiet-color: #ddd6c5;         /* 'Quiet' in brand name */
-  --go-color: #ce988c;            /* 'Go' in brand name */
-  
+  /* User's specified brand colors */
+  --text-color: #ecece6;
+  /* Off-white body text - user specified */
+  --heading-color: #F5F5DC;
+  /* Cream for main headings */
+  --subheading-color: #F5F5DC;
+  /* Cream for subheadings */
+  --green-color: #6C985F;
+  /* Sage 500 - primary brand color */
+  --accent-color: #6A7BA2;
+  /* Slate Blue - primary accent */
+  --accent-dark: #4682B4;
+  /* Steel Blue - darker accent */
+  --teal-color: #3C9D9B;
+  /* Teal Blue - additional accent */
+  --midnight-color: #191970;
+  /* Midnight Blue - additional accent */
+  --quiet-color: #F5F5DC;
+  /* Cream for 'Quiet' in brand name */
+  --go-color: #D4A799;
+  /* Logo Rose for 'Go' in brand name */
+
   /* Background and structure */
-  --bg-color: #000000;            /* Black background */
-  --card-bg: #1a1a1a;            /* Dark card backgrounds */
-  --border-color: #333;           /* Borders */
-  --muted-text: #999;             /* Muted/secondary text */
-  
+  --bg-color: #000000;
+  /* Black background */
+  --card-bg: #1a1a1a;
+  /* Dark card backgrounds */
+  --card-border: #333;
+  /* Card borders - same as border-color */
+  --border-color: #333;
+  /* Borders */
+  --muted-text: #999;
+  /* Muted/secondary text */
+  --text-muted: #999;
+  /* Alternative name for muted text */
+
   /* Spacing and layout */
   --border-radius: 8px;
   --spacing-xs: 4px;
@@ -26,7 +46,7 @@
   --spacing-xl: 32px;
   --spacing-2xl: 48px;
   --spacing-3xl: 64px;
-  
+
   /* Typography */
   --font-sans: "Inter", sans-serif;
   --font-serif: "Playfair Display", serif;
@@ -48,16 +68,29 @@ body {
 }
 
 /* Typography */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   color: var(--heading-color);
   font-family: var(--font-serif);
   font-weight: 700;
   line-height: 1.2;
 }
 
-h1 { font-size: 3.5rem; }
-h2 { font-size: 2.5rem; }
-h3 { font-size: 1.5rem; }
+h1 {
+  font-size: 3.5rem;
+}
+
+h2 {
+  font-size: 2.5rem;
+}
+
+h3 {
+  font-size: 1.5rem;
+}
 
 p {
   color: var(--text-color);
@@ -94,8 +127,13 @@ p {
   padding: 0 var(--spacing-lg);
 }
 
-.text-center { text-align: center; }
-.text-left { text-align: left; }
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
 
 /* Grid system */
 .grid {
@@ -103,11 +141,20 @@ p {
   gap: var(--spacing-lg);
 }
 
-.grid-2 { grid-template-columns: repeat(2, 1fr); }
-.grid-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.grid-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
 
 @media (max-width: 768px) {
-  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+
+  .grid-2,
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Flexbox utilities */
@@ -131,9 +178,17 @@ p {
   flex-direction: column;
 }
 
-.gap-sm { gap: var(--spacing-sm); }
-.gap-md { gap: var(--spacing-md); }
-.gap-lg { gap: var(--spacing-lg); }
+.gap-sm {
+  gap: var(--spacing-sm);
+}
+
+.gap-md {
+  gap: var(--spacing-md);
+}
+
+.gap-lg {
+  gap: var(--spacing-lg);
+}
 
 /* Navigation */
 .navbar {
@@ -212,7 +267,7 @@ p {
   .nav-links {
     display: none;
   }
-  
+
   .mobile-menu-btn {
     display: block;
   }
@@ -275,11 +330,13 @@ p {
   align-items: center;
   justify-content: center;
   margin-bottom: var(--spacing-md);
-  background-color: rgba(140, 157, 138, 0.1); /* Green with opacity */
+  background-color: rgba(140, 157, 138, 0.1);
+  /* Green with opacity */
 }
 
 .card-icon.accent {
-  background-color: rgba(189, 205, 222, 0.1); /* Accent with opacity */
+  background-color: rgba(189, 205, 222, 0.1);
+  /* Accent with opacity */
 }
 
 .card h3 {
@@ -485,12 +542,12 @@ p {
   top: -12px;
   left: 50%;
   transform: translateX(-50%);
-  background-color: var(--green-color);
+  background: var(--green-color);
   color: var(--bg-color);
-  padding: var(--spacing-xs) var(--spacing-md);
-  border-radius: calc(var(--border-radius) / 2);
+  padding: 6px 16px;
+  border-radius: 20px;
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .price {
@@ -552,7 +609,8 @@ p {
   margin-bottom: var(--spacing-sm);
 }
 
-.footer a, .footer button {
+.footer a,
+.footer button {
   color: var(--text-color);
   text-decoration: none;
   opacity: 0.8;
@@ -563,7 +621,8 @@ p {
   font-size: 0.875rem;
 }
 
-.footer a:hover, .footer button:hover {
+.footer a:hover,
+.footer button:hover {
   opacity: 1;
 }
 
@@ -638,36 +697,38 @@ p {
   .hero-title {
     font-size: 3rem;
   }
-  
+
   .hero-subtitle {
     font-size: 1.25rem;
   }
 }
 
 @media (max-width: 768px) {
-  .container, .container-wide {
+
+  .container,
+  .container-wide {
     padding: 0 var(--spacing-md);
   }
-  
+
   .hero-title {
     font-size: 2.5rem;
   }
-  
+
   .hero-subtitle {
     font-size: 1.125rem;
   }
-  
+
   .app-store-btn {
     flex-direction: column;
     text-align: center;
     min-width: auto;
   }
-  
+
   .app-store-btn svg {
     margin-right: 0;
     margin-bottom: var(--spacing-sm);
   }
-  
+
   .footer-bottom {
     flex-direction: column;
     text-align: center;
@@ -764,6 +825,364 @@ html {
   color: var(--text-color);
 }
 
+/* =================================================================
+   SEMANTIC CLASSES - NO MORE INLINE STYLES
+   ================================================================= */
+
+/* Hero Section Classes */
+.hero-intro {
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+
+/* Section Content Classes */
+.section-intro {
+  text-align: center;
+  margin-bottom: 64px;
+}
+
+.section-intro .subheading {
+  font-size: 1.125rem;
+  max-width: 600px;
+  margin: 16px auto 0;
+}
+
+.journeys-intro {
+  text-align: center;
+  margin-bottom: 64px;
+}
+
+.journeys-intro .subheading {
+  font-size: 1.125rem;
+  max-width: 700px;
+  margin: 16px auto 0;
+}
+
+.journey-card-text {
+  margin-bottom: 24px;
+  color: var(--text-muted);
+}
+
+.journey-feature-list {
+  text-align: left;
+  margin-bottom: 24px;
+}
+
+/* Pricing Section Classes */
+.pricing-main-title {
+  margin-bottom: 3rem !important;
+}
+
+.pricing-intro {
+  font-size: 1.125rem;
+  margin-bottom: 48px;
+}
+
+.trial-banner {
+  background: var(--go-color);
+  padding: 20px;
+  border-radius: var(--border-radius);
+  margin: 0 auto 48px auto;
+  max-width: 600px;
+  color: rgb(2, 2, 2);
+  text-align: center;
+}
+
+.trial-banner h3 {
+  margin: 0 0 8px 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.trial-banner p {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.pricing-container {
+  max-width: 900px;
+  margin: 0 auto 48px auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.pricing-card-pro {
+  position: relative;
+  border: 2px solid var(--green-color);
+  background: var(--card-bg);
+  display: flex;
+  flex-direction: column;
+}
+
+.pricing-card-pro-plus {
+  border: 2px solid var(--accent-color);
+  background: var(--card-bg);
+  display: flex;
+  flex-direction: column;
+}
+
+.pricing-icon {
+  margin: 24px 0 16px 0;
+}
+
+.pricing-icon-plus {
+  margin: 36px 0 16px 0;
+}
+
+.pricing-title {
+  margin: 0 0 8px 0;
+  font-size: 1.75rem;
+}
+
+.pricing-title-green {
+  color: var(--green-color);
+}
+
+.pricing-title-accent {
+  color: var(--accent-color);
+}
+
+.pricing-display {
+  margin-bottom: 24px;
+}
+
+.pricing-amount {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-color);
+  margin-bottom: 4px;
+}
+
+.pricing-period {
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.pricing-yearly {
+  font-size: 1rem;
+  color: var(--accent-color);
+  font-weight: 600;
+}
+
+.pricing-yearly-green {
+  font-size: 1rem;
+  color: var(--green-color);
+  font-weight: 600;
+}
+
+.pricing-addon-note {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.pricing-features {
+  text-align: left;
+  margin-bottom: 32px;
+  padding: 0 16px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.pricing-button {
+  width: 100%;
+  border: none;
+}
+
+.pricing-button-green {
+  background: var(--green-color);
+}
+
+.pricing-button-accent {
+  background: var(--accent-color);
+}
+
+/* Download Buttons Section */
+.download-section {
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+
+/* Cancellation Card */
+.cancellation-card {
+  background: rgba(212, 167, 153, 0.1);
+  border: 1px solid var(--accent-color);
+  padding: 20px;
+  border-radius: var(--border-radius);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.cancellation-title {
+  margin: 0 0 12px 0;
+  color: var(--text-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cancellation-icon {
+  color: var(--green-color);
+  margin-right: 8px;
+}
+
+.cancellation-text {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.cancellation-emphasis {
+  color: var(--text-color);
+}
+
+/* Privacy Section Classes */
+.privacy-intro {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.privacy-intro .subheading {
+  font-size: 1.125rem;
+}
+
+.privacy-column-title {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.privacy-icon {
+  color: var(--green-color);
+  margin-right: 12px;
+}
+
+/* CTA Section Classes */
+.cta-section {
+  padding-top: 32px;
+  padding-bottom: 32px;
+}
+
+/* Social Section Classes */
+.social-section {
+  padding: 4rem 0;
+  margin-bottom: 3rem;
+}
+
+.social-heading {
+  color: var(--text-color);
+  font-size: 1.5rem;
+  margin: 0 0 1.5rem 0;
+  text-align: center;
+}
+
+.social-links {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-bottom: 4rem;
+}
+
+.social-link {
+  color: var(--text-muted);
+  font-size: 1.5rem;
+  transition: all 0.3s ease;
+  padding: 0.75rem;
+  border-radius: 12px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  text-decoration: none;
+}
+
+.testimonial-heading {
+  color: var(--text-color);
+  font-size: 1.75rem;
+  margin: 0 0 1rem 0;
+  text-align: center;
+}
+
+.testimonial-intro {
+  color: var(--text-muted);
+  font-size: 1rem;
+  text-align: center;
+  margin: 0 0 3rem 0;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.testimonial-grid {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.testimonial-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  padding: 2rem;
+  border-radius: var(--border-radius);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.testimonial-icon {
+  margin-bottom: 1.5rem;
+}
+
+.testimonial-icon-green {
+  color: var(--green-color);
+}
+
+.testimonial-icon-accent {
+  color: var(--accent-color);
+}
+
+.testimonial-quote {
+  color: var(--text-color);
+  font-style: italic;
+  margin: 0 0 1.5rem 0;
+  line-height: 1.6;
+  font-size: 1.1rem;
+}
+
+.testimonial-author-green {
+  color: var(--green-color);
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.testimonial-author-accent {
+  color: var(--accent-color);
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.testimonial-role {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+/* Journey Section Classes */
+.journey-section-intro {
+  text-align: center;
+  margin-top: 48px;
+}
+
+.journey-final-text {
+  font-size: 1rem;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+}
+
+.journey-final-emphasis {
+  margin-bottom: 24px;
+}
+
 /* Privacy Section Centered with Closer Column Spacing */
 #privacy .grid {
   max-width: 900px !important;
@@ -777,18 +1196,18 @@ html {
   margin-right: auto !important;
 }
 
-#privacy .grid > div {
+#privacy .grid>div {
   flex: 0 0 45%;
   max-width: 420px;
   min-width: 300px;
   text-align: left;
 }
 
-#privacy .grid > div:first-child {
+#privacy .grid>div:first-child {
   margin-right: 0;
 }
 
-#privacy .grid > div:last-child {
+#privacy .grid>div:last-child {
   margin-left: 0;
   transform: translateX(30%);
 }
@@ -801,26 +1220,27 @@ html {
     padding: 0 var(--spacing-md);
     justify-content: center !important;
   }
-  
-  #privacy .grid > div {
+
+  #privacy .grid>div {
     flex: none;
     max-width: 100%;
     min-width: auto;
     margin: 0 !important;
     text-align: left;
   }
-  
-  #privacy .grid > div:first-child {
+
+  #privacy .grid>div:first-child {
     margin-right: 0 !important;
   }
-  
-  #privacy .grid > div:last-child {
+
+  #privacy .grid>div:last-child {
     margin-left: 0 !important;
   }
 }
 
 /* Footer Link Fixes - No Pill Buttons */
-.footer a, .footer button {
+.footer a,
+.footer button {
   color: var(--text-color) !important;
   text-decoration: none !important;
   opacity: 0.8;
@@ -834,7 +1254,8 @@ html {
   font-weight: normal !important;
 }
 
-.footer a:hover, .footer button:hover {
+.footer a:hover,
+.footer button:hover {
   opacity: 1;
   text-decoration: underline;
   background: none !important;
@@ -848,7 +1269,8 @@ html {
   border: none !important;
 }
 
-.footer .btn, .footer .badge {
+.footer .btn,
+.footer .badge {
   background: none !important;
   border: none !important;
   padding: 0 !important;
@@ -909,11 +1331,11 @@ html {
     width: 40px !important;
     height: 40px !important;
   }
-  
+
   .brand-stack .quietgo-brand {
     font-size: 1.5rem;
   }
-  
+
   .brand-tagline {
     font-size: 0.75rem;
   }
@@ -975,7 +1397,7 @@ section[style*="padding-top: 32px"] .flex-center {
     flex-direction: column;
     gap: var(--spacing-lg);
   }
-  
+
   .app-store-btn {
     margin: 0;
   }

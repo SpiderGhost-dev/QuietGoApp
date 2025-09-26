@@ -4,7 +4,11 @@
  * Include this file to protect admin pages
  */
 
-session_start();
+// Only start session if one hasn't been started already
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 require_once $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/admin-users.php';
 
 function require_admin_login() {

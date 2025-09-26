@@ -72,9 +72,27 @@ $adminHeaderMode = 'login';
             }
         });
         
-        // Check if already logged in
+        // Check if already logged in - but verify with server first
         if (localStorage.getItem('admin_logged_in') === 'true') {
-            window.location.href = '/admin/dashboard.php';
+            // Verify server-side session is still valid
+            fetch('/admin/api/me.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.href = '/admin/dashboard.php';
+                    } else {
+                        // Session invalid, clear localStorage and stay on login page
+                        localStorage.removeItem('admin_logged_in');
+                        localStorage.removeItem('admin_user');
+                        console.log('Server session invalid, cleared localStorage');
+                    }
+                })
+                .catch(error => {
+                    // Error checking session, clear localStorage and stay on login page
+                    localStorage.removeItem('admin_logged_in');
+                    localStorage.removeItem('admin_user');
+                    console.log('Error validating session:', error);
+                });
         }
     </script>
 </body>

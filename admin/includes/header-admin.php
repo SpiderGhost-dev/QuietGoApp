@@ -5,7 +5,11 @@ $showAdminActions = $adminHeaderMode !== 'login';
 // Get admin user info if logged in
 $adminUser = null;
 if ($showAdminActions) {
-
+    // Start session if not already started
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+    
     require_once $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/admin-users.php';
     $adminUser = admin_current_user();
 }

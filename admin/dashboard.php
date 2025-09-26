@@ -417,9 +417,32 @@ include __DIR__ . '/includes/header-admin.php';
     document.addEventListener('DOMContentLoaded', function() {
         const isLoggedIn = localStorage.getItem('admin_logged_in');
         if (isLoggedIn !== 'true') {
+            console.log('No localStorage admin session, redirecting to login');
             window.location.href = '/admin/login.php';
             return;
         }
+        
+        // Double-check with server to make sure session is still valid
+        fetch('/admin/api/me.php')
+            .then(response => response.json())
+            .then(data => {
+                if (!data.success) {
+                    // Server session invalid, clear localStorage and redirect
+                    console.log('Server session invalid, clearing localStorage and redirecting');
+                    localStorage.removeItem('admin_logged_in');
+                    localStorage.removeItem('admin_user');
+                    window.location.href = '/admin/login.php';
+                } else {
+                    console.log('Session validated successfully');
+                }
+            })
+            .catch(error => {
+                // Error checking session, redirect to login
+                console.log('Error validating session, redirecting to login:', error);
+                localStorage.removeItem('admin_logged_in');
+                localStorage.removeItem('admin_user');
+                window.location.href = '/admin/login.php';
+            });
     });
 
     // Navigation function

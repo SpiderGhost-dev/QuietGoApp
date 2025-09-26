@@ -39,7 +39,7 @@
             </p>
 
             <!-- App Download Buttons -->
-            <div class="flex flex-center gap-lg" style="margin-bottom: 32px; flex-wrap: wrap;">
+            <div class="flex flex-center gap-lg hero-intro">
                 <!-- iOS App Store button -->
                 <a href="#" class="app-store-btn hover-scale" onclick="handleAppStore()">
                     <svg class="icon-lg" viewBox="0 0 24 24" fill="currentColor">
@@ -72,9 +72,9 @@
     <!-- Features Section -->
     <section id="features" class="section">
         <div class="container">
-            <div class="text-center" style="margin-bottom: 64px;">
+            <div class="section-intro">
                 <h2>Snap it. Understand it. Build a routine.</h2>
-                <p class="subheading" style="font-size: 1.125rem; max-width: 600px; margin: 16px auto 0;">
+                <p class="subheading">
                     AI-powered stool and meal tracking that reveals patterns in your health. Discreet, private, and designed for real insights.
                 </p>
             </div>
@@ -190,9 +190,9 @@
     <!-- Your Journey, Your Way Section -->
     <section id="journeys" class="section">
         <div class="container">
-            <div class="text-center" style="margin-bottom: 64px;">
+            <div class="journeys-intro">
                 <h2>Your Journey, Your Way</h2>
-                <p class="subheading" style="font-size: 1.125rem; max-width: 700px; margin: 16px auto 0;">
+                <p class="subheading">
                     Whether you're working with healthcare providers, training for peak performance, or simply living your best life — QuietGo adapts to your unique goals and delivers personalized insights.
                 </p>
             </div>
@@ -207,10 +207,10 @@
                         </svg>
                     </div>
                     <h3>🏥 Clinical Focus</h3>
-                    <p style="margin-bottom: 24px; color: var(--text-muted);">
+                    <p class="journey-card-text">
                         Partner with healthcare providers for optimal gut health
                     </p>
-                    <ul class="feature-list" style="text-align: left; margin-bottom: 24px;">
+                    <ul class="feature-list journey-feature-list">
                         <li>
                             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                 <polyline points="20,6 9,17 4,12"/>
@@ -254,10 +254,10 @@
                         </svg>
                     </div>
                     <h3>💪 Peak Performance</h3>
-                    <p style="margin-bottom: 24px; color: var(--text-muted);">
+                    <p class="journey-card-text">
                         Fuel your training and maximize athletic potential
                     </p>
-                    <ul class="feature-list" style="text-align: left; margin-bottom: 24px;">
+                    <ul class="feature-list journey-feature-list">
                         <li>
                             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                 <polyline points="20,6 9,17 4,12"/>
@@ -299,10 +299,10 @@
                         </svg>
                     </div>
                     <h3>✨ Best Life Mode</h3>
-                    <p style="margin-bottom: 24px; color: var(--text-muted);">
+                    <p class="journey-card-text">
                         Look great, feel amazing, live your best life daily
                     </p>
-                    <ul class="feature-list" style="text-align: left; margin-bottom: 24px;">
+                    <ul class="feature-list journey-feature-list">
                         <li>
                             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                 <polyline points="20,6 9,17 4,12"/>
@@ -334,9 +334,9 @@
                 </div>
             </div>
 
-            <div class="text-center" style="margin-top: 48px;">
-                <p style="font-size: 1rem; color: var(--text-muted); margin-bottom: 24px;">
-                    <strong>One platform, three personalized experiences.</strong><br>
+            <div class="journey-section-intro">
+                <p class="journey-final-text">
+                    <strong class="journey-final-emphasis">One platform, three personalized experiences.</strong><br>
                     QuietGo adapts its interface, insights, and recommendations to match your wellness goals.
                 </p>
                 <div class="hero-features">
@@ -346,106 +346,153 @@
         </div>
     </section>
 
-    <!-- Download Section -->
-    <section id="download" class="section">
+    <!-- Pricing Plans Section -->
+    <section id="pricing" class="section">
         <div class="container text-center">
-            <h2>Download QuietGo</h2>
-            <p class="subheading" style="font-size: 1.125rem; margin-bottom: 48px;">Available on iOS and Android - Start tracking your wellness journey today</p>
+            <h2 class="pricing-main-title">Start with a 7-day PRO trial TODAY, and choose the plan that best fits your wellness journey.</h2>
 
-            <div class="pricing-grid" style="max-width: 800px;">
-                <!-- iOS App -->
-                <div class="card pricing-card">
-                    <div class="card-icon" style="margin-bottom: 24px;">
+            <!-- Pricing Comparison -->
+            <div class="pricing-grid pricing-container">
+
+                <!-- QuietGo PRO -->
+                <div class="card pricing-card pricing-card-pro">
+                    <div class="pricing-badge">Most Popular</div>
+
+                    <div class="card-icon pricing-icon">
                         <svg class="icon" viewBox="0 0 24 24" fill="currentColor" style="color: var(--green-color); width: 48px; height: 48px;">
-                            <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                         </svg>
                     </div>
-                    <h3>iOS App Store</h3>
-                    <p class="muted" style="margin-bottom: 24px;">
-                        Free download with in-app purchases for Pro features and CalcuPlate meal analysis.
-                    </p>
-                    <ul class="feature-list" style="text-align: left; margin-bottom: 32px;">
+
+                    <h3 class="pricing-title pricing-title-green">
+                        <span class="quietgo-brand"><span class="quiet">QuietGo</span></span> <strong>PRO</strong>
+                    </h3>
+
+                    <div class="pricing-display">
+                        <div class="pricing-amount">$4.99<span class="pricing-period">/month</span></div>
+                        <div class="pricing-yearly">or $39.99/year (save $20)</div>
+                    </div>
+
+                    <ul class="feature-list pricing-features">
                         <li>
-                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color: var(--green-color);">
                                 <polyline points="20,6 9,17 4,12"/>
                             </svg>
-                            iOS 15+ compatible
+                            <strong>AI Stool Analysis</strong> — Bristol scale, health insights
                         </li>
                         <li>
-                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color: var(--green-color);">
                                 <polyline points="20,6 9,17 4,12"/>
                             </svg>
-                            HealthKit integration
+                            <strong>Manual Meal Logging</strong> — Comprehensive nutrition tracking
                         </li>
                         <li>
-                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color: var(--green-color);">
                                 <polyline points="20,6 9,17 4,12"/>
                             </svg>
-                            iCloud sync
+                            <strong>Pattern Reports</strong> — Weekly/monthly health insights
+                        </li>
+                        <li>
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color: var(--green-color);">
+                                <polyline points="20,6 9,17 4,12"/>
+                            </svg>
+                            <strong>QuietGo Hub</strong> — Desktop analytics dashboard
+                        </li>
+                        <li>
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color: var(--green-color);">
+                                <polyline points="20,6 9,17 4,12"/>
+                            </svg>
+                            <strong>Data Export</strong> — Share with healthcare providers
                         </li>
                     </ul>
-                    <button class="btn btn-primary" onclick="handleGetStarted()" style="width: 100%;">
-                        Download on App Store
+
+                    <button class="btn btn-primary pricing-button pricing-button-green" onclick="handleAppStore()">
+                        Get QuietGo PRO
                     </button>
                 </div>
 
-                <!-- Android App -->
-                <div class="card pricing-card">
-                    <div class="card-icon" style="margin-bottom: 24px;">
+                <!-- QuietGo PRO+ -->
+                <div class="card pricing-card pricing-card-pro-plus">
+                    <div class="card-icon pricing-icon-plus">
                         <svg class="icon" viewBox="0 0 24 24" fill="currentColor" style="color: var(--accent-color); width: 48px; height: 48px;">
-                            <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z"/>
+                            <path d="M3 2v7c0 6 4 10 9 10s9-4 9-10V2"/>
+                            <path d="M7 15h10"/>
+                            <path d="M12 9v9"/>
                         </svg>
                     </div>
-                    <h3>Google Play Store</h3>
-                    <p class="muted" style="margin-bottom: 24px;">
-                        Free download with in-app purchases for Pro features and CalcuPlate meal analysis.
-                    </p>
-                    <ul class="feature-list" style="text-align: left; margin-bottom: 32px;">
+
+                    <h3 class="pricing-title pricing-title-accent">
+                        <span class="quietgo-brand"><span class="quiet">QuietGo</span></span> <strong>PRO+</strong>
+                    </h3>
+
+                    <div class="pricing-display">
+                        <div class="pricing-amount">$7.98<span class="pricing-period">/month</span></div>
+                        <div class="pricing-yearly-green">or $59.98/year (save $36)</div>
+                        <div class="pricing-addon-note">PRO + CalcuPlate ($2.99/mo add-on)</div>
+                    </div>
+
+                    <ul class="feature-list pricing-features">
                         <li>
-                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color: var(--accent-color);">
                                 <polyline points="20,6 9,17 4,12"/>
                             </svg>
-                            Android 8+ compatible
+                            <strong>Everything in PRO</strong> — All PRO features included
                         </li>
                         <li>
-                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color: var(--accent-color);">
                                 <polyline points="20,6 9,17 4,12"/>
                             </svg>
-                            Google Fit integration
+                            <strong>CalcuPlate AI</strong> — Automatic meal photo analysis
                         </li>
                         <li>
-                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color: var(--accent-color);">
                                 <polyline points="20,6 9,17 4,12"/>
                             </svg>
-                            Cloud backup
+                            <strong>Auto Food Recognition</strong> — No manual logging needed
+                        </li>
+                        <li>
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color: var(--accent-color);">
+                                <polyline points="20,6 9,17 4,12"/>
+                            </svg>
+                            <strong>Instant Calories/Macros</strong> — Just take a picture
+                        </li>
+                        <li>
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color: var(--accent-color);">
+                                <polyline points="20,6 9,17 4,12"/>
+                            </svg>
+                            <strong>Advanced Patterns</strong> — AI meal + stool correlations
                         </li>
                     </ul>
-                    <button class="btn btn-accent" onclick="handleGetStarted()" style="width: 100%;">
-                        Get it on Google Play
+
+                    <button class="btn btn-accent pricing-button pricing-button-accent" onclick="handleAppStore()">
+                        Get QuietGo PRO+
                     </button>
                 </div>
             </div>
 
-            <!-- Subscription Info -->
-            <div style="margin-top: 48px; padding: 24px; background-color: var(--card-bg); border-radius: var(--border-radius); max-width: 600px; margin-left: auto; margin-right: auto;">
-                <h3 style="margin-bottom: 16px;">In-App Subscriptions</h3>
-                <p class="muted" style="margin-bottom: 16px;">
-                    Start with our free features, then upgrade within the app when you're ready for AI analysis, advanced correlations, and professional reports.
-                </p>
-                <div style="display: flex; gap: 24px; justify-content: center; flex-wrap: wrap;">
-                    <div style="text-align: center;">
-                        <strong style="color: var(--text-color);">Pro Monthly</strong>
-                        <div style="font-size: 0.875rem; opacity: 0.8;">$4.99/month</div>
+            <!-- Download Buttons -->
+            <div class="flex flex-center gap-lg download-section">
+                <!-- iOS App Store button -->
+                <a href="#" class="app-store-btn hover-scale" onclick="handleAppStore()">
+                    <svg class="icon-lg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+                    </svg>
+                    <div>
+                        <div class="app-store-text-small">Download on the</div>
+                        <div class="app-store-text-large">App Store</div>
                     </div>
-                    <div style="text-align: center;">
-                        <strong style="color: var(--text-color);">Pro Annual</strong>
-                        <div style="font-size: 0.875rem; opacity: 0.8;">$39.99/year</div>
+                </a>
+
+                <!-- Google Play Store button -->
+                <a href="#" class="app-store-btn hover-scale" onclick="handlePlayStore()">
+                    <svg class="icon-lg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z"/>
+                    </svg>
+                    <div>
+                        <div class="app-store-text-small">Get it on</div>
+                        <div class="app-store-text-large">Google Play</div>
                     </div>
-                    <div style="text-align: center;">
-                        <strong style="color: var(--text-color);">CalcuPlate Add-on</strong>
-                        <div style="font-size: 0.875rem; opacity: 0.8;">$2.99/month</div>
-                    </div>
-                </div>
+                </a>
             </div>
         </div>
     </section>
@@ -453,17 +500,17 @@
     <!-- Privacy & Security -->
     <section id="privacy" class="section">
         <div class="container">
-            <div class="text-center" style="margin-bottom: 48px;">
+            <div class="privacy-intro">
                 <h2>Your privacy, our priority</h2>
-                <p class="subheading" style="font-size: 1.125rem;">
+                <p class="subheading">
                     Built from the ground up with healthcare-grade privacy and security standards.
                 </p>
             </div>
 
             <div class="grid grid-2">
                 <div>
-                    <h3 style="display: flex; align-items: center; margin-bottom: 24px;">
-                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color: var(--green-color); margin-right: 12px;">
+                    <h3 class="privacy-column-title">
+                        <svg class="icon privacy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                         </svg>
                         Data Protection
@@ -497,8 +544,8 @@
                 </div>
 
                 <div>
-                    <h3 style="display: flex; align-items: center; margin-bottom: 24px;">
-                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color: var(--green-color); margin-right: 12px;">
+                    <h3 class="privacy-column-title">
+                        <svg class="icon privacy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
                             <circle cx="12" cy="12" r="3"/>
                         </svg>
@@ -536,9 +583,9 @@
     </section>
 
     <!-- Additional App CTAs -->
-    <section class="section" style="padding-top: 32px; padding-bottom: 32px;">
+    <section class="section cta-section">
         <div class="container">
-            <div class="flex flex-center gap-lg" style="flex-wrap: wrap;">
+            <div class="flex flex-center gap-lg download-section">
                 <a href="#" class="app-store-btn hover-scale" onclick="handleAppStore()">
                     <svg class="icon-lg" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
@@ -564,29 +611,29 @@
 </main>
 
 <!-- 📱 SOCIAL & COMMUNITY -->
-<section class="social-section" style="padding: 4rem 0; margin-bottom: 3rem;">
+<section class="social-section">
     <div class="container">
         <div class="social-content">
             <!-- Social Media Links -->
             <div class="social-media">
-                <h3 style="color: var(--text-color); font-size: 1.5rem; margin: 0 0 1.5rem 0; text-align: center;">Join Our Community</h3>
-                <div class="social-links" style="display: flex; justify-content: center; gap: 1.5rem; margin-bottom: 4rem;">
-                    <a href="https://twitter.com/quietgoapp" style="color: var(--text-muted); font-size: 1.5rem; transition: all 0.3s ease; padding: 0.75rem; border-radius: 12px; background: var(--card-bg); border: 1px solid var(--card-border); text-decoration: none;" aria-label="Follow QuietGo on Twitter" onmouseover="this.style.color='#1DA1F2'; this.style.transform='translateY(-2px)'" onmouseout="this.style.color='var(--text-muted)'; this.style.transform='translateY(0)'">
+                <h3 class="social-heading">Join Our Community</h3>
+                <div class="social-links">
+                    <a href="https://twitter.com/quietgoapp" class="social-link" aria-label="Follow QuietGo on Twitter" onmouseover="this.style.color='#1DA1F2'; this.style.transform='translateY(-2px)'" onmouseout="this.style.color='var(--text-muted)'; this.style.transform='translateY(0)'">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
                         </svg>
                     </a>
-                    <a href="https://facebook.com/quietgoapp" style="color: var(--text-muted); font-size: 1.5rem; transition: all 0.3s ease; padding: 0.75rem; border-radius: 12px; background: var(--card-bg); border: 1px solid var(--card-border); text-decoration: none;" aria-label="Like QuietGo on Facebook" onmouseover="this.style.color='#4267B2'; this.style.transform='translateY(-2px)'" onmouseout="this.style.color='var(--text-muted)'; this.style.transform='translateY(0)'">
+                    <a href="https://facebook.com/quietgoapp" class="social-link" aria-label="Like QuietGo on Facebook" onmouseover="this.style.color='#4267B2'; this.style.transform='translateY(-2px)'" onmouseout="this.style.color='var(--text-muted)'; this.style.transform='translateY(0)'">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                         </svg>
                     </a>
-                    <a href="https://instagram.com/quietgoapp" style="color: var(--text-muted); font-size: 1.5rem; transition: all 0.3s ease; padding: 0.75rem; border-radius: 12px; background: var(--card-bg); border: 1px solid var(--card-border); text-decoration: none;" aria-label="Follow QuietGo on Instagram" onmouseover="this.style.color='#E4405F'; this.style.transform='translateY(-2px)'" onmouseout="this.style.color='var(--text-muted)'; this.style.transform='translateY(0)'">
+                    <a href="https://instagram.com/quietgoapp" class="social-link" aria-label="Follow QuietGo on Instagram" onmouseover="this.style.color='#E4405F'; this.style.transform='translateY(-2px)'" onmouseout="this.style.color='var(--text-muted)'; this.style.transform='translateY(0)'">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
                         </svg>
                     </a>
-                    <a href="https://linkedin.com/company/quietgoapp" style="color: var(--text-muted); font-size: 1.5rem; transition: all 0.3s ease; padding: 0.75rem; border-radius: 12px; background: var(--card-bg); border: 1px solid var(--card-border); text-decoration: none;" aria-label="Connect with QuietGo on LinkedIn" onmouseover="this.style.color='#0077B5'; this.style.transform='translateY(-2px)'" onmouseout="this.style.color='var(--text-muted)'; this.style.transform='translateY(0)'">
+                    <a href="https://linkedin.com/company/quietgoapp" class="social-link" aria-label="Connect with QuietGo on LinkedIn" onmouseover="this.style.color='#0077B5'; this.style.transform='translateY(-2px)'" onmouseout="this.style.color='var(--text-muted)'; this.style.transform='translateY(0)'">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
                         </svg>
@@ -596,13 +643,13 @@
 
             <!-- Social Proof Testimonials -->
             <div class="social-proof">
-                <h3 style="color: var(--text-color); font-size: 1.75rem; margin: 0 0 1rem 0; text-align: center;">Trusted by health-conscious individuals</h3>
-                <p style="color: var(--text-muted); font-size: 1rem; text-align: center; margin: 0 0 3rem 0; max-width: 600px; margin-left: auto; margin-right: auto;">See what our users are saying about their <span class="quietgo-brand"><span class="quiet">Quiet</span><span class="go">Go</span></span> experience</p>
+                <h3 class="testimonial-heading">Trusted by health-conscious individuals</h3>
+                <p class="testimonial-intro">See what our users are saying about their <span class="quietgo-brand"><span class="quiet">Quiet</span><span class="go">Go</span></span> experience</p>
 
-                <div class="features-grid" style="max-width: 1000px; margin: 0 auto;">
+                <div class="features-grid testimonial-grid">
                     <!-- Testimonial 1 -->
-                    <div class="card" style="background: var(--card-bg); border: 1px solid var(--card-border); padding: 2rem; border-radius: var(--border-radius); transition: transform 0.3s ease, box-shadow 0.3s ease;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
-                        <div class="card-icon" style="color: var(--green-color); margin-bottom: 1.5rem;">
+                    <div class="testimonial-card" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                        <div class="testimonial-icon testimonial-icon-green">
                             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="width: 48px; height: 48px;">
                                 <path d="M9 12l2 2 4-4"/>
                                 <path d="M21 12c.552 0 1-.448 1-1s-.448-1-1-1-1 .448-1 1 .448 1 1 1z"/>
@@ -613,34 +660,34 @@
                                 <path d="M2 12h20"/>
                             </svg>
                         </div>
-                        <blockquote style="color: var(--text-color); font-style: italic; margin: 0 0 1.5rem 0; line-height: 1.6; font-size: 1.1rem;">"Finally found patterns in my digestive health that doctors couldn't see. The AI analysis is incredibly accurate."</blockquote>
-                        <div class="testimonial-author" style="color: var(--green-color); font-weight: 600; font-size: 1rem;">— Sarah M.</div>
-                        <div style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">Healthcare Professional</div>
+                        <blockquote class="testimonial-quote">"Finally found patterns in my digestive health that doctors couldn't see. The AI analysis is incredibly accurate."</blockquote>
+                        <div class="testimonial-author-green">— Sarah M.</div>
+                        <div class="testimonial-role">Healthcare Professional</div>
                     </div>
 
                     <!-- Testimonial 2 -->
-                    <div class="card" style="background: var(--card-bg); border: 1px solid var(--card-border); padding: 2rem; border-radius: var(--border-radius); transition: transform 0.3s ease, box-shadow 0.3s ease;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
-                        <div class="card-icon accent" style="color: var(--accent-color); margin-bottom: 1.5rem;">
+                    <div class="testimonial-card" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                        <div class="testimonial-icon testimonial-icon-accent">
                             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="width: 48px; height: 48px;">
                                 <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
                                 <circle cx="12" cy="13" r="4"/>
                             </svg>
                         </div>
-                        <blockquote style="color: var(--text-color); font-style: italic; margin: 0 0 1.5rem 0; line-height: 1.6; font-size: 1.1rem;">"CalcuPlate saves me hours every week. Just snap a photo and everything is logged automatically."</blockquote>
-                        <div class="testimonial-author" style="color: var(--accent-color); font-weight: 600; font-size: 1rem;">— Michael R.</div>
-                        <div style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">Fitness Enthusiast</div>
+                        <blockquote class="testimonial-quote">"CalcuPlate saves me hours every week. Just snap a photo and everything is logged automatically."</blockquote>
+                        <div class="testimonial-author-accent">— Michael R.</div>
+                        <div class="testimonial-role">Fitness Enthusiast</div>
                     </div>
 
                     <!-- Testimonial 3 -->
-                    <div class="card" style="background: var(--card-bg); border: 1px solid var(--card-border); padding: 2rem; border-radius: var(--border-radius); transition: transform 0.3s ease, box-shadow 0.3s ease;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
-                        <div class="card-icon" style="color: var(--green-color); margin-bottom: 1.5rem;">
+                    <div class="testimonial-card" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                        <div class="testimonial-icon testimonial-icon-green">
                             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="width: 48px; height: 48px;">
                                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
                                 <circle cx="12" cy="12" r="3"/>
                             </svg>
                         </div>
-                        <blockquote style="color: var(--text-color); font-style: italic; margin: 0 0 1.5rem 0; line-height: 1.6; font-size: 1.1rem;">"QuietGo helped me understand how my meals affect my energy levels. I feel more balanced and confident in my daily choices."</blockquote>
-                        <div class="testimonial-author" style="color: var(--green-color); font-weight: 600; font-size: 1rem;">— Ashley K.</div>
+                        <blockquote class="testimonial-quote">"QuietGo helped me understand how my meals affect my energy levels. I feel more balanced and confident in my daily choices."</blockquote>
+                        <div class="testimonial-author-green">— Ashley K.</div>
                     </div>
                 </div>
             </div>

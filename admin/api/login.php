@@ -6,7 +6,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/admin-users.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
-    echo json_encode(['error' => 'Method not allowed']);
+    echo json_encode(['success' => false, 'error' => 'Method not allowed']);
     exit();
 }
 
@@ -23,7 +23,7 @@ if ($user) {
     $_SESSION['admin_username'] = $username;
     $_SESSION['admin_name'] = $user['name'];
     $_SESSION['admin_role'] = $user['role'];
-    
+
     echo json_encode([
         'success' => true,
         'user' => [
@@ -34,6 +34,6 @@ if ($user) {
     ]);
 } else {
     http_response_code(401);
-    echo json_encode(['error' => 'Invalid credentials']);
+    echo json_encode(['success' => false, 'error' => 'Invalid credentials']);
 }
 ?>
