@@ -1715,10 +1715,6 @@ html {
   text-align: center;
 }
 
-#sync-box {
-  display: block;
-}
-
 .sync-form-hidden {
   display: none !important;
 }

@@ -193,8 +193,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['sync_mobile'])) {
                 </div>
             <?php endif; ?>
 
-
-
             <form method="POST">
                 <input type="hidden" name="sync_mobile" value="1">
                 <input type="email" name="mobile_email" placeholder="Mobile app email" required value="<?php echo htmlspecialchars($_POST['mobile_email'] ?? ''); ?>">
