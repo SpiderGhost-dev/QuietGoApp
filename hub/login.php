@@ -137,7 +137,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['sync_mobile'])) {
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
 
     <!-- Hub Styles -->
-    <link href="/hub/css/hub.css" rel="stylesheet">
+    <link href="/hub/css/hub.css?v=2" rel="stylesheet">
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="/assets/images/favicon_io/favicon.ico">
