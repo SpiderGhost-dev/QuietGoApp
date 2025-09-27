@@ -1,0 +1,64 @@
+# QuietGo Security - DO NOT COMMIT SENSITIVE FILES
+
+# Environment Variables & API Keys
+.env
+.env.local
+.env.production
+.env.staging
+
+# API Keys & Secrets
+**/api-keys.php
+**/secrets.php
+**/credentials.php
+
+# Upload Directories
+hub/uploads/
+uploads/
+temp/
+
+# System Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE Files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+logs/
+error.log
+access.log
+
+# Temporary Files
+*.tmp
+*.temp
+cache/
+tmp/
+
+# Node.js (if using)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# PHP
+vendor/
+composer.lock
+
+# Database
+*.sqlite
+*.db
+
+# Backup Files
+*.backup
+*.bak
+*.old

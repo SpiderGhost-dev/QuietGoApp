@@ -4,10 +4,10 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-$isAdminLoggedIn = isset($_SESSION['admin_logged_in']) || 
+$isAdminLoggedIn = isset($_SESSION['admin_logged_in']) ||
                    (isset($_COOKIE['admin_logged_in']) && $_COOKIE['admin_logged_in'] === 'true') ||
                    (isset($_SESSION['hub_user']['is_admin_impersonation']));
-                   
+
 if (!isset($_SESSION['hub_user']) && !isset($_COOKIE['hub_auth']) && !$isAdminLoggedIn) {
     header('Location: /hub/login.php');
     exit;
@@ -46,19 +46,22 @@ $journeyConfig = [
         'title' => '🏥 Clinical Focus',
         'focus' => 'symptom patterns and provider collaboration',
         'ai_tone' => 'clinical insights with medical terminology',
-        'meal_focus' => 'symptom triggers and digestive impact'
+        'meal_focus' => 'symptom triggers and digestive impact',
+        'recommendations' => 'healthcare provider communication and medical appointment preparation'
     ],
     'performance' => [
-        'title' => '💪 Peak Performance', 
+        'title' => '💪 Peak Performance',
         'focus' => 'nutrition impact on training and recovery',
         'ai_tone' => 'performance-focused analysis and coaching',
-        'meal_focus' => 'energy, recovery, and performance optimization'
+        'meal_focus' => 'energy, recovery, and performance optimization',
+        'recommendations' => 'performance enhancement, training optimization, and macro timing'
     ],
     'best_life' => [
         'title' => '✨ Best Life Mode',
-        'focus' => 'energy levels and living your best life daily', 
+        'focus' => 'energy levels and living your best life daily',
         'ai_tone' => 'lifestyle optimization and feel-good insights',
-        'meal_focus' => 'energy levels and overall wellness'
+        'meal_focus' => 'energy levels and overall wellness',
+        'recommendations' => 'lifestyle improvements, wellness habits, and energy optimization'
     ]
 ];
 $currentJourneyConfig = $journeyConfig[$userJourney];
@@ -71,15 +74,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['health_item'])) {
 
 function handlePhotoUpload($file, $postData, $user) {
     global $hasCalcuPlate, $userJourney;
-    
-    // Create user-specific upload directory
-    $userEmail = $user['email'];
-    $userDir = preg_replace('/[^a-zA-Z0-9]/', '_', $userEmail);
-    $uploadDir = __DIR__ . '/uploads/' . $userDir . '/' . date('Y-m-d') . '/';
 
-    if (!is_dir($uploadDir)) {
-        mkdir($uploadDir, 0755, true);
-    }
+    // Include storage helper
+    require_once __DIR__ . '/includes/storage-helper.php';
+    $storage = getQuietGoStorage();
+
+    // Ensure user structure exists
+    $storage->createUserStructure($user['email']);
 
     if ($file['error'] !== UPLOAD_ERR_OK) {
         return ['status' => 'error', 'message' => 'Upload failed: ' . $file['error']];
@@ -100,249 +101,393 @@ function handlePhotoUpload($file, $postData, $user) {
         return ['status' => 'error', 'message' => 'File too large. Maximum size is 10MB.'];
     }
 
-    // Generate unique filename with timestamp
-    $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-    $timestamp = date('His');
-    $filename = date('Ymd') . '_' . $timestamp . '_' . uniqid() . '.' . $extension;
-    $filepath = $uploadDir . $filename;
-
-    if (move_uploaded_file($file['tmp_name'], $filepath)) {
-        // Generate thumbnail
-        $thumbnailPath = generateThumbnail($filepath, $uploadDir);
-        
-        // ALWAYS timestamp, location stamp if available
-        $locationData = null;
-        if (!empty($postData['latitude']) && !empty($postData['longitude'])) {
-            $locationData = [
-                'latitude' => floatval($postData['latitude']),
-                'longitude' => floatval($postData['longitude']),
-                'accuracy' => $postData['accuracy'] ?? null,
-                'timestamp' => time()
-            ];
-        }
-        
-        // Generate AI analysis (different for Pro vs Pro+)
-        $aiAnalysis = generateAIAnalysis($postData, $userJourney, $hasCalcuPlate);
-        
-        // Save comprehensive metadata
-        $metadata = [
-            'filename' => $filename,
-            'original_name' => $file['name'],
-            'filepath' => $filepath,
-            'thumbnail' => $thumbnailPath,
-            'category' => $postData['category'] ?? 'photos',
-            'photo_type' => $postData['photo_type'] ?? 'general',
-            'upload_timestamp' => time(),
-            'upload_datetime' => date('Y-m-d H:i:s'),
-            'user_email' => $user['email'],
-            'user_journey' => $userJourney,
-            'subscription_plan' => $user['subscription_plan'],
-            'has_calcuplate' => $hasCalcuPlate,
-            'location_data' => $locationData,
-            'context' => [
-                'time_of_day' => $postData['context_time'] ?? '',
-                'symptoms' => $postData['context_symptoms'] ?? '',
-                'notes' => $postData['context_notes'] ?? ''
-            ],
-            'ai_analysis' => $aiAnalysis,
-            'manual_meal_data' => $postData['manual_meal_data'] ?? null, // For Pro users
-            'file_info' => [
-                'size' => $file['size'],
-                'dimensions' => getimagesize($filepath),
-                'mime_type' => $mimeType
-            ]
-        ];
-        
-        // Save metadata to JSON file (in real app: database)
-        $metadataFile = str_replace('.' . $extension, '_metadata.json', $filepath);
-        file_put_contents($metadataFile, json_encode($metadata, JSON_PRETTY_PRINT));
-        
-        return [
-            'status' => 'success',
-            'filename' => $filename,
-            'thumbnail' => $thumbnailPath,
-            'ai_analysis' => $aiAnalysis,
-            'metadata' => $metadata,
-            'requires_manual_logging' => (!$hasCalcuPlate && $postData['photo_type'] === 'meal')
+    // Location data
+    $locationData = null;
+    if (!empty($postData['latitude']) && !empty($postData['longitude'])) {
+        $locationData = [
+            'latitude' => floatval($postData['latitude']),
+            'longitude' => floatval($postData['longitude']),
+            'accuracy' => $postData['accuracy'] ?? null,
+            'timestamp' => time()
         ];
     }
 
-    return ['status' => 'error', 'message' => 'Failed to save file'];
+    // Prepare comprehensive metadata
+    $metadata = [
+        'original_name' => $file['name'],
+        'category' => $postData['category'] ?? 'photos',
+        'photo_type' => $postData['photo_type'] ?? 'general',
+        'upload_timestamp' => time(),
+        'upload_datetime' => date('Y-m-d H:i:s'),
+        'user_email' => $user['email'],
+        'user_journey' => $userJourney,
+        'subscription_plan' => $user['subscription_plan'],
+        'has_calcuplate' => $hasCalcuPlate,
+        'location_data' => $locationData,
+        'context' => [
+            'time_of_day' => $postData['context_time'] ?? '',
+            'symptoms' => $postData['context_symptoms'] ?? '',
+            'notes' => $postData['context_notes'] ?? ''
+        ],
+        'file_info' => [
+            'size' => $file['size'],
+            'mime_type' => $mimeType
+        ]
+    ];
+
+    // Store photo using organized structure
+    $photoType = $postData['photo_type'] ?? 'general';
+    $storeResult = $storage->storePhoto($user['email'], $photoType, $file, $metadata);
+
+    if (!$storeResult['success']) {
+        return ['status' => 'error', 'message' => $storeResult['error']];
+    }
+
+    // Generate AI analysis
+    $aiAnalysis = generateAIAnalysis($postData, $userJourney, $hasCalcuPlate, $storeResult['filepath']);
+
+    // Store AI analysis in organized location
+    if (!isset($aiAnalysis['error'])) {
+        $storage->storeAnalysis($user['email'], 'ai_results', [
+            'photo_type' => $photoType,
+            'analysis' => $aiAnalysis,
+            'photo_metadata' => $metadata
+        ]);
+    }
+
+    return [
+        'status' => 'success',
+        'filename' => basename($storeResult['filepath']),
+        'thumbnail' => $storeResult['thumbnail'],
+        'ai_analysis' => $aiAnalysis,
+        'metadata' => $metadata,
+        'requires_manual_logging' => (!$hasCalcuPlate && $postData['photo_type'] === 'meal'),
+        'storage_path' => $storeResult['filepath']
+    ];
 }
 
-function generateThumbnail($imagePath, $uploadDir) {
-    $thumbnailDir = $uploadDir . 'thumbnails/';
-    if (!is_dir($thumbnailDir)) {
-        mkdir($thumbnailDir, 0755, true);
-    }
-    
-    $filename = basename($imagePath);
-    $thumbnailPath = $thumbnailDir . 'thumb_' . $filename;
-    
-    // Get image info
-    list($width, $height, $type) = getimagesize($imagePath);
-    
-    // Create image resource
-    switch ($type) {
-        case IMAGETYPE_JPEG:
-            $source = imagecreatefromjpeg($imagePath);
-            break;
-        case IMAGETYPE_PNG:
-            $source = imagecreatefrompng($imagePath);
-            break;
-        case IMAGETYPE_GIF:
-            $source = imagecreatefromgif($imagePath);
-            break;
-        default:
-            return null;
-    }
-    
-    // Calculate thumbnail dimensions (max 200px)
-    $maxSize = 200;
-    if ($width > $height) {
-        $newWidth = $maxSize;
-        $newHeight = ($height / $width) * $maxSize;
-    } else {
-        $newHeight = $maxSize;
-        $newWidth = ($width / $height) * $maxSize;
-    }
-    
-    // Create thumbnail
-    $thumbnail = imagecreatetruecolor($newWidth, $newHeight);
-    imagecopyresampled($thumbnail, $source, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
-    
-    // Save thumbnail
-    switch ($type) {
-        case IMAGETYPE_JPEG:
-            imagejpeg($thumbnail, $thumbnailPath, 85);
-            break;
-        case IMAGETYPE_PNG:
-            imagepng($thumbnail, $thumbnailPath);
-            break;
-        case IMAGETYPE_GIF:
-            imagegif($thumbnail, $thumbnailPath);
-            break;
-    }
-    
-    // Clean up
-    imagedestroy($source);
-    imagedestroy($thumbnail);
-    
-    return str_replace(__DIR__, '', $thumbnailPath);
-}
+function generateAIAnalysis($postData, $userJourney, $hasCalcuPlate, $imagePath = null) {
+    // Include OpenAI configuration
+    require_once __DIR__ . '/includes/openai-config.php';
 
-function generateAIAnalysis($postData, $userJourney, $hasCalcuPlate) {
     $photoType = $postData['photo_type'] ?? 'general';
     $symptoms = $postData['context_symptoms'] ?? '';
     $time = $postData['context_time'] ?? '';
-    
+    $notes = $postData['context_notes'] ?? '';
+    $startTime = microtime(true);
+
+    // Check API rate limits
+    $userEmail = $_SESSION['hub_user']['email'] ?? 'anonymous';
+    if (!checkAPIRateLimit($userEmail)) {
+        return [
+            'error' => 'Rate limit exceeded. Please try again in an hour.',
+            'timestamp' => time(),
+            'user_journey' => $userJourney
+        ];
+    }
+
     $analysis = [
         'timestamp' => time(),
-        'confidence' => rand(78, 94),
-        'processing_time' => rand(15, 45) / 10, // 1.5 to 4.5 seconds
-        'user_journey' => $userJourney
+        'user_journey' => $userJourney,
+        'photo_type' => $photoType
     ];
-    
-    switch ($photoType) {
-        case 'stool':
-            // ALL users (Pro and Pro+) get AI stool analysis
-            $bristolTypes = [
-                1 => 'Type 1: Separate hard lumps - indicates constipation',
-                2 => 'Type 2: Lumpy and sausage-like - mild constipation', 
-                3 => 'Type 3: Sausage with surface cracks - normal range',
-                4 => 'Type 4: Smooth, soft sausage - ideal consistency',
-                5 => 'Type 5: Soft blobs with clear edges - lacking fiber',
-                6 => 'Type 6: Mushy with ragged edges - mild diarrhea',
-                7 => 'Type 7: Liquid consistency - severe diarrhea'
-            ];
-            
-            $bristolType = rand(3, 6);
-            $analysis['bristol_scale'] = $bristolType;
-            $analysis['bristol_description'] = $bristolTypes[$bristolType];
-            $analysis['color_assessment'] = ['normal brown', 'dark brown', 'light brown'][rand(0, 2)];
-            $analysis['consistency'] = $bristolType <= 2 ? 'hard' : ($bristolType >= 6 ? 'loose' : 'normal');
-            $analysis['volume_estimate'] = ['small', 'normal', 'large'][rand(0, 2)];
-            
-            // Journey-specific insights
-            if ($userJourney === 'clinical') {
-                $analysis['clinical_significance'] = 'Bristol Scale ' . $bristolType . ' - document for provider review';
-                $analysis['tracking_recommendations'] = ['Note timing patterns', 'Record associated symptoms', 'Monitor consistency trends'];
-            } elseif ($userJourney === 'performance') {
-                $analysis['performance_impact'] = $bristolType >= 5 ? 'May impact training performance' : 'Good baseline for training';
-                $analysis['athletic_considerations'] = ['Hydration status', 'Pre-workout timing', 'Recovery indicators'];
-            } else {
-                $analysis['wellness_insights'] = ['Normal variation expected', 'Stay consistent with habits', 'Monitor energy correlation'];
-            }
-            break;
-            
-        case 'meal':
-            if ($hasCalcuPlate) {
-                // PRO+ ONLY: CalcuPlate AI meal analysis with auto-logging
-                $foodDatabase = [
-                    'proteins' => ['grilled chicken', 'salmon', 'eggs', 'tofu', 'greek yogurt', 'lean beef'],
-                    'carbs' => ['brown rice', 'quinoa', 'sweet potato', 'oatmeal', 'whole grain bread'],
-                    'vegetables' => ['broccoli', 'spinach', 'carrots', 'bell peppers', 'zucchini'],
-                    'fats' => ['avocado', 'olive oil', 'nuts', 'seeds', 'coconut oil']
-                ];
-                
-                $detectedFoods = [];
-                foreach ($foodDatabase as $category => $foods) {
-                    if (rand(0, 1)) {
-                        $detectedFoods[] = $foods[array_rand($foods)];
-                    }
-                }
-                
-                $totalCalories = rand(300, 750);
-                $analysis['calcuplate'] = [
-                    'auto_logged' => true,
-                    'foods_detected' => $detectedFoods,
-                    'total_calories' => $totalCalories,
-                    'macros' => [
-                        'protein' => rand(20, 40) . 'g',
-                        'carbs' => rand(25, 55) . 'g',
-                        'fat' => rand(12, 28) . 'g',
-                        'fiber' => rand(6, 12) . 'g'
-                    ],
-                    'meal_quality_score' => rand(7, 10) . '/10',
-                    'portion_sizes' => 'Automatically estimated',
-                    'nutritional_completeness' => rand(75, 95) . '%'
-                ];
-                
-                // Journey-specific auto-logged insights
-                if ($userJourney === 'clinical') {
-                    $analysis['clinical_nutrition'] = 'Logged for symptom correlation analysis';
-                } elseif ($userJourney === 'performance') {
-                    $analysis['performance_nutrition'] = 'Logged for training optimization';
+
+    // Get journey-specific prompt configuration
+    $journeyConfig = getJourneyPromptConfig($userJourney);
+
+    try {
+        switch ($photoType) {
+            case 'stool':
+                $analysis = analyzeStoolPhoto($imagePath, $journeyConfig, $symptoms, $time, $notes);
+                break;
+
+            case 'meal':
+                if ($hasCalcuPlate) {
+                    // PRO+ ONLY: CalcuPlate AI meal analysis
+                    $analysis = analyzeMealPhotoWithCalcuPlate($imagePath, $journeyConfig, $symptoms, $time, $notes);
                 } else {
-                    $analysis['wellness_nutrition'] = 'Logged for energy pattern analysis';
+                    // PRO ONLY: Manual logging required
+                    $analysis = [
+                        'manual_logging_required' => true,
+                        'upgrade_available' => [
+                            'feature' => 'CalcuPlate AI Meal Analysis',
+                            'price' => '+$2.99/month',
+                            'benefits' => ['Automatic food detection', 'Instant calorie calculation', 'Auto-logged nutrition data']
+                        ],
+                        'next_step' => 'Complete manual meal logging form to continue',
+                        'timestamp' => time(),
+                        'user_journey' => $userJourney
+                    ];
                 }
-            } else {
-                // PRO ONLY: Manual logging required - no AI meal analysis
-                $analysis['manual_logging_required'] = true;
-                $analysis['upgrade_available'] = [
-                    'feature' => 'CalcuPlate AI Meal Analysis',
-                    'price' => '+$2.99/month',
-                    'benefits' => ['Automatic food detection', 'Instant calorie calculation', 'Auto-logged nutrition data']
-                ];
-                $analysis['next_step'] = 'Complete manual meal logging form to continue';
-            }
-            break;
-            
-        case 'symptom':
-            // All users get basic symptom photo analysis
-            $analysis['symptom_category'] = ['skin reaction', 'inflammation', 'physical symptoms'][rand(0, 2)];
-            $analysis['severity_estimate'] = ['mild', 'moderate', 'notable'][rand(0, 2)];
-            $analysis['correlation_potential'] = 'Will improve with more meal and symptom data';
-            break;
+                break;
+
+            case 'symptom':
+                $analysis = analyzeSymptomPhoto($imagePath, $journeyConfig, $symptoms, $time, $notes);
+                break;
+
+            default:
+                $analysis['error'] = 'Unknown photo type';
+        }
+
+        // Add processing time
+        $analysis['processing_time'] = round(microtime(true) - $startTime, 2);
+
+    } catch (Exception $e) {
+        error_log("QuietGo AI Analysis Error: " . $e->getMessage());
+        $analysis = [
+            'error' => 'AI analysis temporarily unavailable. Please try again.',
+            'timestamp' => time(),
+            'user_journey' => $userJourney,
+            'processing_time' => round(microtime(true) - $startTime, 2)
+        ];
     }
-    
-    // Add symptom correlation if provided
-    if ($symptoms) {
-        $analysis['reported_symptoms'] = $symptoms;
-        $analysis['correlation_note'] = 'Symptoms logged for pattern analysis';
-    }
-    
+
     return $analysis;
+}
+
+function analyzeStoolPhoto($imagePath, $journeyConfig, $symptoms, $time, $notes) {
+    $base64Image = encodeImageForOpenAI($imagePath);
+    if (!$base64Image) {
+        throw new Exception('Failed to process image for AI analysis');
+    }
+
+    // Create journey-specific stool analysis prompt
+    $systemPrompt = "You are a professional digestive health AI assistant specialized in Bristol Stool Scale analysis.
+
+Analyze this stool photo and provide insights using {$journeyConfig['tone']} focused on {$journeyConfig['focus']}.
+
+Please respond ONLY with a valid JSON object containing:
+{
+    \"bristol_scale\": (1-7 number),
+    \"bristol_description\": \"Type X: Description\",
+    \"color_assessment\": \"color description\",
+    \"consistency\": \"hard/normal/loose\",
+    \"volume_estimate\": \"small/normal/large\",
+    \"confidence\": (70-95 number),
+    \"health_insights\": [\"insight1\", \"insight2\", \"insight3\"],
+    \"recommendations\": [\"rec1\", \"rec2\", \"rec3\"]
+}
+
+Context provided:";
+
+    $userPrompt = "Time: $time
+Symptoms: $symptoms
+Notes: $notes
+
+Analyze this stool photo using the Bristol Stool Scale and provide {$journeyConfig['recommendations']}.";
+
+    $messages = [
+        [
+            'role' => 'system',
+            'content' => $systemPrompt
+        ],
+        [
+            'role' => 'user',
+            'content' => [
+                [
+                    'type' => 'text',
+                    'text' => $userPrompt
+                ],
+                [
+                    'type' => 'image_url',
+                    'image_url' => [
+                        'url' => $base64Image,
+                        'detail' => 'high'
+                    ]
+                ]
+            ]
+        ]
+    ];
+
+    $response = makeOpenAIRequest($messages, OPENAI_VISION_MODEL, 800);
+
+    if (isset($response['error'])) {
+        throw new Exception($response['error']);
+    }
+
+    $aiContent = $response['choices'][0]['message']['content'];
+    $analysisData = json_decode($aiContent, true);
+
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        error_log("QuietGo Stool Analysis JSON Error: " . json_last_error_msg());
+        error_log("AI Response: " . $aiContent);
+        throw new Exception('Invalid AI response format');
+    }
+
+    // Add metadata
+    $analysisData['timestamp'] = time();
+    $analysisData['ai_model'] = OPENAI_VISION_MODEL;
+    $analysisData['reported_symptoms'] = $symptoms ?: null;
+    $analysisData['correlation_note'] = $symptoms ? 'Symptoms logged for pattern analysis' : null;
+
+    return $analysisData;
+}
+
+function analyzeMealPhotoWithCalcuPlate($imagePath, $journeyConfig, $symptoms, $time, $notes) {
+    $base64Image = encodeImageForOpenAI($imagePath);
+    if (!$base64Image) {
+        throw new Exception('Failed to process image for AI analysis');
+    }
+
+    $systemPrompt = "You are CalcuPlate, an advanced nutrition AI that analyzes meal photos for automatic logging.
+
+Analyze this meal photo and provide comprehensive nutritional data using {$journeyConfig['tone']} focused on {$journeyConfig['focus']}.
+
+Respond ONLY with valid JSON:
+{
+    \"calcuplate\": {
+        \"auto_logged\": true,
+        \"foods_detected\": [\"food1\", \"food2\", \"food3\"],
+        \"total_calories\": (number),
+        \"macros\": {
+            \"protein\": \"XXg\",
+            \"carbs\": \"XXg\",
+            \"fat\": \"XXg\",
+            \"fiber\": \"XXg\"
+        },
+        \"meal_quality_score\": \"X/10\",
+        \"portion_sizes\": \"description\",
+        \"nutritional_completeness\": \"XX%\"
+    },
+    \"confidence\": (75-95 number),
+    \"nutrition_insights\": [\"insight1\", \"insight2\", \"insight3\"],
+    \"recommendations\": [\"rec1\", \"rec2\", \"rec3\"]
+}";
+
+    $userPrompt = "Time: $time
+Context: $notes
+Symptoms: $symptoms
+
+Analyze this meal photo for automatic nutritional logging with focus on {$journeyConfig['meal_focus']}.";
+
+    $messages = [
+        [
+            'role' => 'system',
+            'content' => $systemPrompt
+        ],
+        [
+            'role' => 'user',
+            'content' => [
+                [
+                    'type' => 'text',
+                    'text' => $userPrompt
+                ],
+                [
+                    'type' => 'image_url',
+                    'image_url' => [
+                        'url' => $base64Image,
+                        'detail' => 'high'
+                    ]
+                ]
+            ]
+        ]
+    ];
+
+    $response = makeOpenAIRequest($messages, OPENAI_VISION_MODEL, 1000);
+
+    if (isset($response['error'])) {
+        throw new Exception($response['error']);
+    }
+
+    $aiContent = $response['choices'][0]['message']['content'];
+    $analysisData = json_decode($aiContent, true);
+
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        error_log("QuietGo CalcuPlate JSON Error: " . json_last_error_msg());
+        error_log("AI Response: " . $aiContent);
+        throw new Exception('Invalid CalcuPlate response format');
+    }
+
+    // Add journey-specific insights
+    switch ($_SESSION['hub_user']['journey']) {
+        case 'clinical':
+            $analysisData['clinical_nutrition'] = 'Logged for symptom correlation analysis';
+            break;
+        case 'performance':
+            $analysisData['performance_nutrition'] = 'Logged for training optimization';
+            break;
+        case 'best_life':
+            $analysisData['wellness_nutrition'] = 'Logged for energy pattern analysis';
+            break;
+    }
+
+    $analysisData['timestamp'] = time();
+    $analysisData['ai_model'] = OPENAI_VISION_MODEL;
+
+    return $analysisData;
+}
+
+function analyzeSymptomPhoto($imagePath, $journeyConfig, $symptoms, $time, $notes) {
+    $base64Image = encodeImageForOpenAI($imagePath);
+    if (!$base64Image) {
+        throw new Exception('Failed to process image for AI analysis');
+    }
+
+    $systemPrompt = "You are a health documentation AI that analyzes symptom photos for tracking purposes.
+
+Analyze this symptom photo using {$journeyConfig['tone']} focused on {$journeyConfig['focus']}.
+
+Respond ONLY with valid JSON:
+{
+    \"symptom_category\": \"category description\",
+    \"severity_estimate\": \"mild/moderate/notable\",
+    \"visual_characteristics\": [\"char1\", \"char2\", \"char3\"],
+    \"confidence\": (70-90 number),
+    \"tracking_recommendations\": [\"rec1\", \"rec2\", \"rec3\"],
+    \"correlation_potential\": \"description\"
+}
+
+IMPORTANT: This is for documentation only, not medical diagnosis.";
+
+    $userPrompt = "Time: $time
+Reported symptoms: $symptoms
+Notes: $notes
+
+Document this symptom photo for pattern tracking.";
+
+    $messages = [
+        [
+            'role' => 'system',
+            'content' => $systemPrompt
+        ],
+        [
+            'role' => 'user',
+            'content' => [
+                [
+                    'type' => 'text',
+                    'text' => $userPrompt
+                ],
+                [
+                    'type' => 'image_url',
+                    'image_url' => [
+                        'url' => $base64Image,
+                        'detail' => 'high'
+                    ]
+                ]
+            ]
+        ]
+    ];
+
+    $response = makeOpenAIRequest($messages, OPENAI_VISION_MODEL, 600);
+
+    if (isset($response['error'])) {
+        throw new Exception($response['error']);
+    }
+
+    $aiContent = $response['choices'][0]['message']['content'];
+    $analysisData = json_decode($aiContent, true);
+
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        error_log("QuietGo Symptom Analysis JSON Error: " . json_last_error_msg());
+        error_log("AI Response: " . $aiContent);
+        throw new Exception('Invalid symptom analysis response format');
+    }
+
+    $analysisData['timestamp'] = time();
+    $analysisData['ai_model'] = OPENAI_VISION_MODEL;
+    $analysisData['reported_symptoms'] = $symptoms ?: null;
+
+    return $analysisData;
 }
 
 include __DIR__ . '/includes/header-hub.php';
@@ -544,7 +689,7 @@ include __DIR__ . '/includes/header-hub.php';
     .categories-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .form-grid {
         grid-template-columns: 1fr;
     }
@@ -557,7 +702,7 @@ include __DIR__ . '/includes/header-hub.php';
     <section class="upload-results" style="background: <?php echo $uploadResult['status'] === 'success' ? 'var(--success-color)' : '#e74c3c'; ?>; color: white; padding: 1rem 0; text-align: center;">
         <div class="container">
             <?php if ($uploadResult['status'] === 'success'): ?>
-                ✅ Photo uploaded successfully! 
+                ✅ Photo uploaded successfully!
                 <?php if ($uploadResult['requires_manual_logging']): ?>
                     Please complete the manual meal logging form below.
                 <?php else: ?>
@@ -619,7 +764,7 @@ include __DIR__ . '/includes/header-hub.php';
 
                 <form method="POST" action="" id="manual-meal-form">
                     <input type="hidden" name="photo_filename" value="<?php echo htmlspecialchars($uploadResult['filename'] ?? ''); ?>">
-                    
+
                     <!-- Basic Meal Information -->
                     <div class="form-section">
                         <h4>🍽️ Meal Basics</h4>
@@ -709,7 +854,7 @@ include __DIR__ . '/includes/header-hub.php';
                         </div>
                         <div class="form-group">
                             <label>Energy Level (1-10 scale)</label>
-                            <input type="range" name="energy_level" min="1" max="10" value="5" 
+                            <input type="range" name="energy_level" min="1" max="10" value="5"
                                    oninput="document.getElementById('energy_display').textContent = this.value">
                             <div style="text-align: center; margin-top: 0.5rem;">
                                 <span style="color: var(--text-muted);">Energy: </span>
@@ -822,7 +967,7 @@ include __DIR__ . '/includes/header-hub.php';
                     </button>
                 </article>
             </div>
-            
+
             <!-- Location Permission Card -->
             <div style="display: flex; justify-content: center; margin-top: 1.5rem;">
                 <div style="background: var(--card-bg); border: 1px solid var(--accent-teal); border-radius: 12px; padding: 1.5rem; max-width: 400px; text-align: center;">
@@ -892,9 +1037,9 @@ function openUploadModal(photoType) {
     const modalTitle = document.getElementById('modal-title');
     const modalSubtitle = document.getElementById('modal-subtitle');
     const uploadIcon = document.getElementById('upload-icon');
-    
+
     photoTypeInput.value = photoType;
-    
+
     // Update modal content based on photo type
     switch(photoType) {
         case 'stool':
@@ -904,8 +1049,8 @@ function openUploadModal(photoType) {
             break;
         case 'meal':
             modalTitle.textContent = '🍽️ Upload Meal Photo';
-            modalSubtitle.textContent = hasCalcuPlate ? 
-                'CalcuPlate will automatically analyze and log your meal' : 
+            modalSubtitle.textContent = hasCalcuPlate ?
+                'CalcuPlate will automatically analyze and log your meal' :
                 'You\'ll complete a manual logging form after upload';
             uploadIcon.textContent = '🍽️';
             break;
@@ -915,12 +1060,12 @@ function openUploadModal(photoType) {
             uploadIcon.textContent = '🩺';
             break;
     }
-    
+
     // Build context fields
     buildContextFields(photoType);
-    
+
     modal.style.display = 'flex';
-    
+
     // Get location if available
     requestLocationPermission();
 }
@@ -928,7 +1073,7 @@ function openUploadModal(photoType) {
 function buildContextFields(photoType) {
     const container = document.getElementById('context-fields');
     container.innerHTML = '';
-    
+
     // Time context (all photo types)
     container.innerHTML += `
         <div style="margin: 1rem 0;">
@@ -942,7 +1087,7 @@ function buildContextFields(photoType) {
             </select>
         </div>
     `;
-    
+
     // Symptoms context (all photo types)
     container.innerHTML += `
         <div style="margin: 1rem 0;">
@@ -950,8 +1095,8 @@ function buildContextFields(photoType) {
             <input type="text" name="context_symptoms" placeholder="e.g., pain, bloating, energy changes, none" style="width: 100%; background: #222; border: 1px solid var(--card-border); color: var(--text-primary); padding: 0.75rem; border-radius: 6px;">
         </div>
     `;
-    
-    // Notes context (all photo types)  
+
+    // Notes context (all photo types)
     container.innerHTML += `
         <div style="margin: 1rem 0;">
             <label style="display: block; color: var(--text-secondary); margin-bottom: 0.5rem; font-weight: 500;">Additional Notes</label>
@@ -975,12 +1120,12 @@ function requestLocationPermission() {
                     longitude: position.coords.longitude,
                     accuracy: position.coords.accuracy
                 };
-                
+
                 // Update hidden form fields
                 document.getElementById('latitude').value = userLocation.latitude;
-                document.getElementById('longitude').value = userLocation.longitude; 
+                document.getElementById('longitude').value = userLocation.longitude;
                 document.getElementById('location-accuracy').value = userLocation.accuracy;
-                
+
                 console.log('📍 Location captured for enhanced pattern analysis');
             },
             function(error) {
@@ -994,21 +1139,21 @@ function requestLocationPermission() {
 document.getElementById('file-input').addEventListener('change', function(e) {
     if (e.target.files.length > 0) {
         selectedFile = e.target.files[0];
-        
+
         // Validate file type
         if (!selectedFile.type.startsWith('image/')) {
             alert('Please select an image file only');
             this.value = '';
             return;
         }
-        
+
         // Validate file size (10MB max)
         if (selectedFile.size > 10 * 1024 * 1024) {
             alert('File too large. Maximum size is 10MB');
             this.value = '';
             return;
         }
-        
+
         // Update UI to show selected file
         const uploadArea = document.querySelector('#upload-modal div[style*="border: 2px dashed"]');
         const instructions = uploadArea.querySelector('p');
@@ -1025,7 +1170,7 @@ document.getElementById('upload-form').addEventListener('submit', function(e) {
         alert('Please select a photo first');
         return false;
     }
-    
+
     // Show loading state
     const submitBtn = this.querySelector('button[type="submit"]');
     const originalText = submitBtn.textContent;
@@ -1034,7 +1179,7 @@ document.getElementById('upload-form').addEventListener('submit', function(e) {
 });
 
 console.log('📤 Enhanced Photo Upload System Loaded');
-console.log('✅ Pro users: AI stool analysis + manual meal forms'); 
+console.log('✅ Pro users: AI stool analysis + manual meal forms');
 console.log('⚡ Pro+ users: AI stool analysis + CalcuPlate auto-logging');
 console.log('📍 Location tracking enabled for enhanced pattern analysis');
 console.log('🎯 Journey-focused analysis: ' + <?php echo json_encode($userJourney); ?>);

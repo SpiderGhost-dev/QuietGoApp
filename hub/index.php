@@ -5,10 +5,10 @@ if (session_status() == PHP_SESSION_NONE) {
 }
 
 // Check if user has valid hub session OR is admin
-$isAdminLoggedIn = isset($_SESSION['admin_logged_in']) || 
+$isAdminLoggedIn = isset($_SESSION['admin_logged_in']) ||
                    (isset($_COOKIE['admin_logged_in']) && $_COOKIE['admin_logged_in'] === 'true') ||
                    (isset($_SESSION['hub_user']['is_admin_impersonation']));
-                   
+
 if (!isset($_SESSION['hub_user']) && !isset($_COOKIE['hub_auth']) && !$isAdminLoggedIn) {
     // Not logged into hub and not admin - redirect to hub login
     header('Location: /hub/login.php');
@@ -275,11 +275,11 @@ include __DIR__ . '/includes/header-hub.php';
         flex-direction: column;
         gap: 1rem;
     }
-    
+
     .info-grid, .actions-menu {
         grid-template-columns: 1fr;
     }
-    
+
     .dashboard-title {
         font-size: 1.5rem;
     }
@@ -287,12 +287,29 @@ include __DIR__ . '/includes/header-hub.php';
 </style>
 
 <main class="hub-main">
+    <!-- 🎉 MOBILE SYNC SUCCESS -->
+    <?php if (isset($_GET['sync']) && $_GET['sync'] === 'success'): ?>
+    <section class="sync-success-banner" style="background: linear-gradient(135deg, var(--success-color), #7aa570); color: white; padding: 1.5rem 0; text-align: center; margin-bottom: 1rem;">
+        <div class="container">
+            <h2 style="margin: 0 0 0.5rem 0; font-size: 1.5rem;">🎉 Account Sync Complete!</h2>
+            <p style="margin: 0; opacity: 0.9;">All your mobile data has been organized and is ready for analysis</p>
+            <?php if (isset($_SESSION['hub_user']['sync_results'])): ?>
+                <div style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.8;">
+                    <?php
+                    $results = $_SESSION['hub_user']['sync_results'];
+                    echo "Synced: {$results['photos_synced']} photos, {$results['logs_synced']} logs, {$results['analysis_synced']} analysis files";
+                    ?>
+                </div>
+            <?php endif; ?>
+        </div>
+    </section>
+    <?php endif; ?>
     <!-- 📋 SIMPLE CENTERED HEADER -->
     <section class="dashboard-header">
         <div class="container">
             <h1 class="dashboard-title">Welcome back, <?php echo htmlspecialchars($userName); ?>!</h1>
             <p class="dashboard-subtitle">
-                <?php 
+                <?php
                 $syncTime = time() - $lastSync;
                 if ($syncTime < 300) {
                     echo "Last synced " . ($syncTime < 60 ? "just now" : floor($syncTime/60) . " minutes ago");
@@ -317,11 +334,11 @@ include __DIR__ . '/includes/header-hub.php';
                         ⚠️ Last synced <?php echo floor($syncTime/86400); ?> days ago
                     <?php endif; ?>
                 </div>
-                
+
                 <button class="sync-btn-main" onclick="startFullSync()">
                     🔄 Sync from Mobile App
                 </button>
-                
+
                 <div class="sync-details">
                     <small style="color: white; opacity: 0.8;">Pulls all photos, logs & reports</small>
                 </div>
@@ -351,7 +368,7 @@ include __DIR__ . '/includes/header-hub.php';
                     <p>Last sync: <?php echo $syncTime < 60 ? 'Just now' : floor($syncTime/60) . ' min ago'; ?></p>
                     <p>Streak: 🔥 <?php echo $todayStats['streak_days']; ?> days</p>
                 </div>
-                
+
                 <!-- Recent Activity -->
                 <div class="info-card">
                     <h3>📱 Recent Activity</h3>
@@ -359,7 +376,7 @@ include __DIR__ . '/includes/header-hub.php';
                     <p>Health entries: <?php echo $todayStats['health_entries']; ?></p>
                     <p>Analysis ready: <?php echo $hasIncompleteData ? 'Pending' : 'Complete'; ?></p>
                 </div>
-                
+
                 <!-- Data Insights -->
                 <div class="info-card">
                     <h3>✨ Health Insights</h3>
@@ -375,7 +392,7 @@ include __DIR__ . '/includes/header-hub.php';
     <section class="actions-section">
         <div class="container">
             <h2 class="actions-title">What would you like to do?</h2>
-            
+
             <div class="actions-menu">
                 <!-- Sync Data -->
                 <a href="/hub/sync.php" class="action-item">
@@ -385,7 +402,7 @@ include __DIR__ . '/includes/header-hub.php';
                         <p>Pull ALL data from mobile app with smart conflict resolution</p>
                     </div>
                 </a>
-                
+
                 <!-- Upload Individual Items -->
                 <a href="/hub/upload.php" class="action-item">
                     <div class="action-icon">📤</div>
@@ -394,7 +411,7 @@ include __DIR__ . '/includes/header-hub.php';
                         <p>Add specific photos, logs, or reports between syncs</p>
                     </div>
                 </a>
-                
+
                 <!-- Review Analysis -->
                 <a href="/hub/patterns.php" class="action-item">
                     <div class="action-icon">📈</div>
@@ -403,7 +420,7 @@ include __DIR__ . '/includes/header-hub.php';
                         <p>View patterns, correlations, and health insights from your data</p>
                     </div>
                 </a>
-                
+
                 <!-- Generate Reports -->
                 <a href="/hub/reports.php" class="action-item">
                     <div class="action-icon">📄</div>
@@ -412,7 +429,7 @@ include __DIR__ . '/includes/header-hub.php';
                         <p>Create professional health reports for appointments</p>
                     </div>
                 </a>
-                
+
                 <!-- Browse Records -->
                 <a href="/hub/browse.php" class="action-item">
                     <div class="action-icon">🔍</div>
@@ -421,7 +438,7 @@ include __DIR__ . '/includes/header-hub.php';
                         <p>Search and filter your complete health tracking history</p>
                     </div>
                 </a>
-                
+
                 <!-- Share with Providers -->
                 <a href="/hub/share.php" class="action-item">
                     <div class="action-icon">🤝</div>
@@ -430,7 +447,7 @@ include __DIR__ . '/includes/header-hub.php';
                         <p>Send secure reports to healthcare providers, loved ones, or support communities</p>
                     </div>
                 </a>
-                
+
                 <!-- Smart Templates (Pro) -->
                 <?php if ($subscriptionPlan === 'pro' || $subscriptionPlan === 'pro_plus'): ?>
                 <a href="/hub/templates.php" class="action-item">
@@ -442,7 +459,7 @@ include __DIR__ . '/includes/header-hub.php';
                     <div class="action-badge badge-pro">Pro</div>
                 </a>
                 <?php endif; ?>
-                
+
                 <!-- Advanced Tools -->
                 <a href="/hub/advanced.php" class="action-item">
                     <div class="action-icon">🧪</div>
@@ -452,7 +469,7 @@ include __DIR__ . '/includes/header-hub.php';
                     </div>
                     <div class="action-badge badge-beta">Beta</div>
                 </a>
-                
+
                 <!-- Account & Privacy -->
                 <a href="/hub/account.php" class="action-item">
                     <div class="action-icon">⚙️</div>
@@ -461,7 +478,7 @@ include __DIR__ . '/includes/header-hub.php';
                         <p>Manage subscription, privacy settings, and data controls</p>
                     </div>
                 </a>
-                
+
                 <!-- Data Management -->
                 <a href="/hub/data.php" class="action-item">
                     <div class="action-icon">🗂️</div>

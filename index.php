@@ -349,7 +349,7 @@
     <!-- Pricing Plans Section -->
     <section id="pricing" class="section">
         <div class="container text-center">
-            <h2 class="pricing-main-title">Start with a 7-day PRO trial TODAY, and choose the plan that best fits your wellness journey.</h2>
+            <h2 class="pricing-main-title">Start with a FREE 7-day PRO trial TODAY, and choose the plan that best fits your wellness journey.</h2>
 
             <!-- Pricing Comparison -->
             <div class="pricing-grid pricing-container">

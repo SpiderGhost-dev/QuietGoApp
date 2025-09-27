@@ -2,23 +2,39 @@
 /* Easy-to-edit color variables */
 :root {
   /* User's specified brand colors */
-  --text-color: #ecece6;          /* Off-white body text - user specified */
-  --heading-color: #F5F5DC;       /* Cream for main headings */
-  --subheading-color: #F5F5DC;    /* Cream for subheadings */
-  --green-color: #6C985F;         /* Sage 500 - primary brand color */
-  --accent-color: #6A7BA2;        /* Slate Blue - primary accent */
-  --accent-dark: #4682B4;         /* Steel Blue - darker accent */
-  --teal-color: #3C9D9B;          /* Teal Blue - additional accent */
-  --midnight-color: #191970;      /* Midnight Blue - additional accent */
-  --quiet-color: #F5F5DC;         /* Cream for 'Quiet' in brand name */
-  --go-color: #D4A799;            /* Logo Rose for 'Go' in brand name */
-  
+  --text-color: #ecece6;
+  /* Off-white body text - user specified */
+  --heading-color: #F5F5DC;
+  /* Cream for main headings */
+  --subheading-color: #F5F5DC;
+  /* Cream for subheadings */
+  --green-color: #6C985F;
+  /* Sage 500 - primary brand color */
+  --accent-color: #6A7BA2;
+  /* Slate Blue - primary accent */
+  --accent-dark: #4682B4;
+  /* Steel Blue - darker accent */
+  --teal-color: #3C9D9B;
+  /* Teal Blue - additional accent */
+  --midnight-color: #191970;
+  /* Midnight Blue - additional accent */
+  --quiet-color: #F5F5DC;
+  /* Cream for 'Quiet' in brand name */
+  --go-color: #D4A799;
+  /* Logo Rose for 'Go' in brand name */
+
   /* Background and structure */
-  --bg-color: #000000;            /* Black background */
-  --card-bg: #1a1a1a;            /* Dark card backgrounds */
-  --border-color: #333;           /* Borders */
-  --muted-text: #999;             /* Muted/secondary text */
-  
+  --bg-color: #000000;
+  /* Black background */
+  --card-bg: #1a1a1a;
+  /* Dark card backgrounds */
+  --border-color: #333;
+  /* Borders */
+  --muted-text: #999;
+  /* Muted/secondary text */
+  --text-light: #ffffff;
+  /* White text for buttons */
+
   /* Spacing and layout */
   --border-radius: 8px;
   --spacing-xs: 4px;
@@ -28,7 +44,7 @@
   --spacing-xl: 32px;
   --spacing-2xl: 48px;
   --spacing-3xl: 64px;
-  
+
   /* Typography */
   --font-sans: "Inter", sans-serif;
   --font-serif: "Playfair Display", serif;
@@ -50,16 +66,29 @@ body {
 }
 
 /* Typography */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   color: var(--heading-color);
   font-family: var(--font-serif);
   font-weight: 700;
   line-height: 1.2;
 }
 
-h1 { font-size: 3.5rem; }
-h2 { font-size: 2.5rem; }
-h3 { font-size: 1.5rem; }
+h1 {
+  font-size: 3.5rem;
+}
+
+h2 {
+  font-size: 2.5rem;
+}
+
+h3 {
+  font-size: 1.5rem;
+}
 
 p {
   color: var(--text-color);
@@ -96,8 +125,13 @@ p {
   padding: 0 var(--spacing-lg);
 }
 
-.text-center { text-align: center; }
-.text-left { text-align: left; }
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
 
 /* Grid system */
 .grid {
@@ -105,11 +139,20 @@ p {
   gap: var(--spacing-lg);
 }
 
-.grid-2 { grid-template-columns: repeat(2, 1fr); }
-.grid-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.grid-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
 
 @media (max-width: 768px) {
-  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+
+  .grid-2,
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Flexbox utilities */
@@ -133,9 +176,17 @@ p {
   flex-direction: column;
 }
 
-.gap-sm { gap: var(--spacing-sm); }
-.gap-md { gap: var(--spacing-md); }
-.gap-lg { gap: var(--spacing-lg); }
+.gap-sm {
+  gap: var(--spacing-sm);
+}
+
+.gap-md {
+  gap: var(--spacing-md);
+}
+
+.gap-lg {
+  gap: var(--spacing-lg);
+}
 
 /* Navigation */
 .navbar {
@@ -214,7 +265,7 @@ p {
   .nav-links {
     display: none;
   }
-  
+
   .mobile-menu-btn {
     display: block;
   }
@@ -277,11 +328,13 @@ p {
   align-items: center;
   justify-content: center;
   margin-bottom: var(--spacing-md);
-  background-color: rgba(140, 157, 138, 0.1); /* Green with opacity */
+  background-color: rgba(140, 157, 138, 0.1);
+  /* Green with opacity */
 }
 
 .card-icon.accent {
-  background-color: rgba(189, 205, 222, 0.1); /* Accent with opacity */
+  background-color: rgba(189, 205, 222, 0.1);
+  /* Accent with opacity */
 }
 
 .card h3 {
@@ -554,7 +607,8 @@ p {
   margin-bottom: var(--spacing-sm);
 }
 
-.footer a, .footer button {
+.footer a,
+.footer button {
   color: var(--text-color);
   text-decoration: none;
   opacity: 0.8;
@@ -565,7 +619,8 @@ p {
   font-size: 0.875rem;
 }
 
-.footer a:hover, .footer button:hover {
+.footer a:hover,
+.footer button:hover {
   opacity: 1;
 }
 
@@ -640,36 +695,38 @@ p {
   .hero-title {
     font-size: 3rem;
   }
-  
+
   .hero-subtitle {
     font-size: 1.25rem;
   }
 }
 
 @media (max-width: 768px) {
-  .container, .container-wide {
+
+  .container,
+  .container-wide {
     padding: 0 var(--spacing-md);
   }
-  
+
   .hero-title {
     font-size: 2.5rem;
   }
-  
+
   .hero-subtitle {
     font-size: 1.125rem;
   }
-  
+
   .app-store-btn {
     flex-direction: column;
     text-align: center;
     min-width: auto;
   }
-  
+
   .app-store-btn svg {
     margin-right: 0;
     margin-bottom: var(--spacing-sm);
   }
-  
+
   .footer-bottom {
     flex-direction: column;
     text-align: center;
@@ -876,20 +933,20 @@ html {
   .hub-hero .hero-title {
     font-size: 2rem;
   }
-  
+
   .dashboard-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .stats-overview {
     grid-template-columns: repeat(3, 1fr);
     gap: var(--spacing-sm);
   }
-  
+
   .stat-number {
     font-size: 1.5rem;
   }
-  
+
   .app-buttons {
     flex-direction: column;
     align-items: center;
@@ -909,8 +966,8 @@ html {
   background-color: var(--card-bg);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
-  padding: var(--spacing-xl);
-  max-width: 400px;
+  padding: var(--spacing-xs);
+  max-width: 500px;
   width: 100%;
   text-align: center;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
@@ -951,14 +1008,14 @@ html {
   color: var(--bg-color);
   border: none;
   border-radius: var(--border-radius);
-  font-size: 1rem;
+  font-size: 1.3rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .login-card button:hover {
-  background-color: #7a8a78;
+  background-color: #d77578;
   transform: translateY(-1px);
 }
 
@@ -1100,7 +1157,7 @@ html {
     flex-direction: column;
     text-align: center;
   }
-  
+
   .footer-links {
     gap: var(--spacing-md);
   }
@@ -1158,11 +1215,11 @@ html {
     width: 40px !important;
     height: 40px !important;
   }
-  
+
   .brand-stack .quietgo-brand {
     font-size: 1.5rem;
   }
-  
+
   .brand-tagline {
     font-size: 0.75rem;
   }
@@ -1537,41 +1594,169 @@ html {
   margin: 0;
 }
 
+/* Sync Account Setup Section */
+.sync-setup-section {
+  text-align: center;
+  margin-top: -140px;
+  padding: 0 var(--spacing-lg);
+}
+
+.sync-setup-title {
+  color: var(--text-color);
+  margin: 0 0 var(--spacing-md) 0;
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.sync-mobile-btn {
+  background: var(--teal-color);
+  color: var(--text-light);
+  border: none;
+  padding: 0.950rem 2.5rem;
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 1.3rem;
+  transition: all 0.2s;
+}
+
+.sync-mobile-btn:hover {
+  background: #2d7a78;
+  transform: translateY(-1px);
+}
+
+/* Login page specific layout */
+.login-page {
+  overflow: hidden;
+  height: 100vh;
+}
+
+.login-page .login-container {
+  padding-top: 0;
+  padding-bottom: 0;
+  margin-top: -8rem;
+}
+
+/* Sync form styling */
+.sync-form-container {
+  margin-top: 0.5rem;
+}
+
+.sync-info-box {
+  background: rgba(60, 157, 155, 0.1);
+  border: 1px solid var(--teal-color);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.sync-info-title {
+  color: var(--teal-color);
+  margin: 0 0 var(--spacing-xs) 0;
+  font-size: 1rem;
+}
+
+.sync-info-text {
+  color: var(--text-color);
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.sync-back-btn {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--muted-text);
+  padding: 0.5rem var(--spacing-md);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  margin-top: var(--spacing-md);
+}
+
+.sync-back-btn:hover {
+  background: var(--border-color);
+}
+
+.sync-setup-title .quiet {
+  color: var(--quiet-color);
+}
+
+.sync-setup-title .go {
+  color: var(--go-color);
+}
+
+.logo-container {
+  text-align: center;
+  margin-bottom: -1px;
+}
+
+.logo-container img {
+  margin-bottom: var(--spacing-xs);
+}
+
+.error-message {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid #ef4444;
+  border-radius: var(--border-radius);
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
+}
+
+.error-message p {
+  color: #ef4444;
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+.sync-submit-btn {
+  background: var(--teal-color) !important;
+  border-color: var(--teal-color) !important;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.sync-form-hidden {
+  display: none;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .upload-header h1 {
     font-size: 2rem;
   }
-  
+
   .upload-tabs {
     flex-direction: column;
     align-items: center;
   }
-  
+
   .tab-btn {
     width: 100%;
     max-width: 300px;
     justify-content: center;
   }
-  
+
   .results-header {
     flex-direction: column;
     text-align: center;
   }
-  
+
   .results-actions {
     width: 100%;
     justify-content: center;
   }
-  
+
   .results-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .feature-list {
     grid-template-columns: 1fr;
   }
-  
+
   .char-item {
     flex-direction: column;
     text-align: center;
