@@ -1,0 +1,27 @@
+{
+    "original_name": "Fecal_poop_2.jpg",
+    "category": "photos",
+    "photo_type": "stool",
+    "upload_timestamp": 1758977104,
+    "upload_datetime": "2025-09-27 12:45:04",
+    "user_email": "Dick@dickety.com",
+    "user_journey": "best_life",
+    "subscription_plan": "pro",
+    "has_calcuplate": false,
+    "location_data": null,
+    "context": {
+        "time_of_day": "",
+        "symptoms": "",
+        "notes": ""
+    },
+    "file_info": {
+        "size": 312496,
+        "mime_type": "image\/jpeg"
+    },
+    "storage": {
+        "filepath": "\/Users\/davidbaker\/Desktop\/QuietGoApp\/hub\/includes\/..\/QuietGoData\/users\/Dick@dickety.com\/photos\/stool\/2025-09\/20250927_124504_68d7dc50c71e5.jpg",
+        "thumbnail": "\/Users\/davidbaker\/Desktop\/QuietGoApp\/hub\/includes\/..\/QuietGoData\/users\/Dick@dickety.com\/photos\/thumbnails\/thumb_20250927_124504_68d7dc50c71e5.jpg",
+        "size": 312496,
+        "stored_at": "2025-09-27 12:45:04"
+    }
+}

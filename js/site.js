@@ -13,7 +13,7 @@ function toggleMobileMenu() {
 function scrollToSection(sectionId) {
     const element = document.getElementById(sectionId);
     if (element) {
-        element.scrollIntoView({ 
+        element.scrollIntoView({
             behavior: 'smooth',
             block: 'start'
         });
@@ -21,6 +21,24 @@ function scrollToSection(sectionId) {
     // Close mobile menu if open
     const mobileMenu = document.getElementById('mobileMenu');
     mobileMenu.classList.remove('open');
+}
+
+// Handle navigation link clicks for smooth scrolling
+function setupSmoothScrolling() {
+    // Get all anchor links that point to sections on the same page
+    const anchorLinks = document.querySelectorAll('a[href^="#"]');
+
+    anchorLinks.forEach(link => {
+        link.addEventListener('click', function (e) {
+            const targetId = this.getAttribute('href').substring(1);
+            const targetElement = document.getElementById(targetId);
+
+            if (targetElement) {
+                e.preventDefault();
+                scrollToSection(targetId);
+            }
+        });
+    });
 }
 
 // Handle login redirect
@@ -48,11 +66,9 @@ function handlePlayStore() {
     // window.open('https://play.google.com/store/apps/details?id=com.quietgo.app', '_blank');
 }
 
-
-
 // Handle keyboard events
 function setupKeyboardEvents() {
-    document.addEventListener('keydown', function(e) {
+    document.addEventListener('keydown', function (e) {
         // Close mobile menu on Escape key
         if (e.key === 'Escape') {
             const mobileMenu = document.getElementById('mobileMenu');
@@ -64,9 +80,10 @@ function setupKeyboardEvents() {
 }
 
 // Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     setupKeyboardEvents();
-    
+    setupSmoothScrolling(); // Add smooth scrolling to anchor links
+
     console.log('QuietGo site initialized');
 });
 
@@ -95,25 +112,25 @@ function trackButtonClick(buttonName) {
 
 // Enhanced button handlers with tracking
 const originalHandleLogin = handleLogin;
-handleLogin = function() {
+handleLogin = function () {
     trackButtonClick('login');
     originalHandleLogin();
 };
 
 const originalHandleGetStarted = handleGetStarted;
-handleGetStarted = function() {
+handleGetStarted = function () {
     trackButtonClick('get_started');
     originalHandleGetStarted();
 };
 
 const originalHandleAppStore = handleAppStore;
-handleAppStore = function() {
+handleAppStore = function () {
     trackButtonClick('app_store');
     originalHandleAppStore();
 };
 
 const originalHandlePlayStore = handlePlayStore;
-handlePlayStore = function() {
+handlePlayStore = function () {
     trackButtonClick('play_store');
     originalHandlePlayStore();
 };
@@ -124,8 +141,8 @@ function addScrollAnimations() {
         threshold: 0.1,
         rootMargin: '0px 0px -50px 0px'
     };
-    
-    const observer = new IntersectionObserver(function(entries) {
+
+    const observer = new IntersectionObserver(function (entries) {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.style.opacity = '1';
@@ -133,7 +150,7 @@ function addScrollAnimations() {
             }
         });
     }, observerOptions);
-    
+
     // Observe cards and sections
     const animatedElements = document.querySelectorAll('.card');
     animatedElements.forEach(el => {
@@ -145,7 +162,7 @@ function addScrollAnimations() {
 }
 
 // Initialize scroll animations after page load
-window.addEventListener('load', function() {
+window.addEventListener('load', function () {
     addScrollAnimations();
 });
 // QuietGo auto-branding

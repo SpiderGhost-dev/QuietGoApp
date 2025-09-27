@@ -68,6 +68,12 @@ $currentJourneyConfig = $journeyConfig[$userJourney];
 
 // Enhanced photo upload handling with time/location stamping
 $uploadResult = null;
+
+// Handle manual meal logging form submission (Pro users)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['photo_filename']) && !isset($_FILES['health_item'])) {
+    $uploadResult = handleManualMealLogging($_POST, $user);
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['health_item'])) {
     $uploadResult = handlePhotoUpload($_FILES['health_item'], $_POST, $user);
 }
@@ -321,6 +327,61 @@ Analyze this stool photo using the Bristol Stool Scale and provide {$journeyConf
     $analysisData['correlation_note'] = $symptoms ? 'Symptoms logged for pattern analysis' : null;
 
     return $analysisData;
+}
+
+function handleManualMealLogging($postData, $user) {
+    // Include storage helper
+    require_once __DIR__ . '/includes/storage-helper.php';
+    $storage = getQuietGoStorage();
+
+    // Validate required fields
+    $required_fields = ['meal_type', 'meal_time', 'portion_size', 'main_foods'];
+    foreach ($required_fields as $field) {
+        if (empty($postData[$field])) {
+            return ['status' => 'error', 'message' => 'Please fill in all required fields: ' . str_replace('_', ' ', $field)];
+        }
+    }
+
+    // Validate time format
+    if (!preg_match('/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/', $postData['meal_time'])) {
+        return ['status' => 'error', 'message' => 'Please enter a valid time in HH:MM format'];
+    }
+
+    // Prepare meal log data
+    $mealData = [
+        'timestamp' => time(),
+        'datetime' => date('Y-m-d H:i:s'),
+        'user_email' => $user['email'],
+        'photo_filename' => $postData['photo_filename'] ?? null,
+        'meal_type' => $postData['meal_type'],
+        'meal_time' => $postData['meal_time'],
+        'portion_size' => $postData['portion_size'],
+        'main_foods' => $postData['main_foods'],
+        'estimated_calories' => !empty($postData['estimated_calories']) ? intval($postData['estimated_calories']) : null,
+        'protein_grams' => !empty($postData['protein_grams']) ? floatval($postData['protein_grams']) : null,
+        'carb_grams' => !empty($postData['carb_grams']) ? floatval($postData['carb_grams']) : null,
+        'fat_grams' => !empty($postData['fat_grams']) ? floatval($postData['fat_grams']) : null,
+        'hunger_before' => $postData['hunger_before'] ?? null,
+        'fullness_after' => $postData['fullness_after'] ?? null,
+        'energy_level' => !empty($postData['energy_level']) ? intval($postData['energy_level']) : null,
+        'meal_notes' => $postData['meal_notes'] ?? null,
+        'user_journey' => $user['journey'] ?? 'best_life',
+        'subscription_plan' => $user['subscription_plan']
+    ];
+
+    // Store the meal log
+    $logPath = $storage->storeLog($user['email'], 'manual_meals', $mealData);
+
+    if ($logPath) {
+        return [
+            'status' => 'success',
+            'message' => 'Meal logged successfully! This data will be used for pattern analysis with your stool tracking.',
+            'log_path' => $logPath,
+            'meal_data' => $mealData
+        ];
+    } else {
+        return ['status' => 'error', 'message' => 'Failed to save meal log. Please try again.'];
+    }
 }
 
 function analyzeMealPhotoWithCalcuPlate($imagePath, $journeyConfig, $symptoms, $time, $notes) {
@@ -703,7 +764,7 @@ include __DIR__ . '/includes/header-hub.php';
         <div class="container">
             <?php if ($uploadResult['status'] === 'success'): ?>
                 ✅ Photo uploaded successfully!
-                <?php if ($uploadResult['requires_manual_logging']): ?>
+                <?php if (isset($uploadResult['requires_manual_logging']) && $uploadResult['requires_manual_logging']): ?>
                     Please complete the manual meal logging form below.
                 <?php else: ?>
                     AI analysis complete.
@@ -751,7 +812,7 @@ include __DIR__ . '/includes/header-hub.php';
     </section>
 
     <!-- Manual Meal Logging Form (shows after meal photo upload for Pro users) -->
-    <?php if ($uploadResult && $uploadResult['requires_manual_logging']): ?>
+    <?php if ($uploadResult && isset($uploadResult['requires_manual_logging']) && $uploadResult['requires_manual_logging']): ?>
     <section class="manual-meal-section">
         <div class="container">
             <div class="manual-meal-form active">
@@ -783,7 +844,8 @@ include __DIR__ . '/includes/header-hub.php';
                             </div>
                             <div class="form-group">
                                 <label>Meal Time *</label>
-                                <input type="time" name="meal_time" required>
+                                <input type="time" name="meal_time" value="12:00">
+767
                             </div>
                             <div class="form-group">
                                 <label>Portion Size *</label>
@@ -868,7 +930,7 @@ include __DIR__ . '/includes/header-hub.php';
                     </div>
 
                     <div style="text-align: center; margin-top: 2rem;">
-                        <button type="submit" style="background: var(--success-color); color: white; padding: 1rem 2rem; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 600; cursor: pointer;">
+                        <button type="submit" id="complete-meal-btn" style="background: var(--success-color); color: white; padding: 1rem 2rem; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 600; cursor: pointer;">
                             ✅ Complete Meal Logging
                         </button>
                         <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">
@@ -894,6 +956,7 @@ include __DIR__ . '/includes/header-hub.php';
     <?php endif; ?>
 
     <!-- Photo Upload Categories -->
+    <?php if (!($uploadResult && isset($uploadResult['requires_manual_logging']) && $uploadResult['requires_manual_logging'])): ?>
     <section class="upload-interface" style="padding: 2rem 0;">
         <div class="container">
             <div class="categories-grid">
@@ -986,6 +1049,7 @@ include __DIR__ . '/includes/header-hub.php';
             </div>
         </div>
     </section>
+    <?php endif; ?>
 </main>
 
 <!-- Upload Modal -->
@@ -1183,6 +1247,50 @@ console.log('✅ Pro users: AI stool analysis + manual meal forms');
 console.log('⚡ Pro+ users: AI stool analysis + CalcuPlate auto-logging');
 console.log('📍 Location tracking enabled for enhanced pattern analysis');
 console.log('🎯 Journey-focused analysis: ' + <?php echo json_encode($userJourney); ?>);
+
+// Manual meal form handling
+document.addEventListener('DOMContentLoaded', function() {
+    const manualMealForm = document.getElementById('manual-meal-form');
+    if (manualMealForm) {
+        manualMealForm.addEventListener('submit', function(e) {
+            // Remove HTML5 validation that might cause "invalid value" errors
+            const timeInput = this.querySelector('input[name="meal_time"]');
+            const mealTypeSelect = this.querySelector('select[name="meal_type"]');
+            const portionSelect = this.querySelector('select[name="portion_size"]');
+            const mainFoodsTextarea = this.querySelector('textarea[name="main_foods"]');
+
+            // Custom validation instead of HTML5
+            let errors = [];
+
+            if (!mealTypeSelect.value) {
+                errors.push('Please select a meal type');
+            }
+
+            if (!timeInput.value) {
+                errors.push('Please select a meal time');
+            }
+
+            if (!portionSelect.value) {
+                errors.push('Please select a portion size');
+            }
+
+            if (!mainFoodsTextarea.value.trim()) {
+                errors.push('Please list the main foods');
+            }
+
+            if (errors.length > 0) {
+                e.preventDefault();
+                alert('Please complete all required fields:\n\n' + errors.join('\n'));
+                return false;
+            }
+
+            // Show loading state
+            const submitBtn = document.getElementById('complete-meal-btn');
+            submitBtn.textContent = '🔄 Saving Meal Log...';
+            submitBtn.disabled = true;
+        });
+    }
+});
 </script>
 
 <?php include __DIR__ . '/includes/footer-hub.php'; ?>

@@ -1,0 +1,27 @@
+{
+    "original_name": "meal.jpg",
+    "category": "photos",
+    "photo_type": "meal",
+    "upload_timestamp": 1758979182,
+    "upload_datetime": "2025-09-27 13:19:42",
+    "user_email": "Dick@dickety.com",
+    "user_journey": "best_life",
+    "subscription_plan": "pro",
+    "has_calcuplate": false,
+    "location_data": null,
+    "context": {
+        "time_of_day": "evening",
+        "symptoms": "bloating",
+        "notes": "almost too much food for me to eat at one sitting"
+    },
+    "file_info": {
+        "size": 728283,
+        "mime_type": "image\/jpeg"
+    },
+    "storage": {
+        "filepath": "\/Users\/davidbaker\/Desktop\/QuietGoApp\/hub\/includes\/..\/QuietGoData\/users\/Dick@dickety.com\/photos\/meal\/2025-09\/20250927_131942_68d7e46e5cc10.jpg",
+        "thumbnail": "\/Users\/davidbaker\/Desktop\/QuietGoApp\/hub\/includes\/..\/QuietGoData\/users\/Dick@dickety.com\/photos\/thumbnails\/thumb_20250927_131942_68d7e46e5cc10.jpg",
+        "size": 728283,
+        "stored_at": "2025-09-27 13:19:42"
+    }
+}
