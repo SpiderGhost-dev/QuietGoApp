@@ -1637,10 +1637,7 @@ html {
   margin-top: -8rem;
 }
 
-/* Sync form styling */
-.sync-form-container {
-  margin-top: 0.5rem;
-}
+/* Sync form styling - removed separate container */
 
 .sync-info-box {
   background: rgba(60, 157, 155, 0.1);
@@ -1718,8 +1715,12 @@ html {
   text-align: center;
 }
 
+#sync-box {
+  display: block;
+}
+
 .sync-form-hidden {
-  display: none;
+  display: none !important;
 }
 
 /* Responsive Design */

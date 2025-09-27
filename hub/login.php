@@ -179,23 +179,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['sync_mobile'])) {
                 <button type="submit">Access Hub</button>
             </form>
         </div>
-    </main>
 
-    <!-- Sync Mobile App Section -->
-    <div class="sync-setup-section">
-        <h3 class="sync-setup-title">
-            First Time <span class="quiet">Quiet</span><span class="go">Go</span> Hub Set-up
-        </h3>
-        <button onclick="showSyncForm()" class="sync-mobile-btn">
-            Sync Mobile App
-        </button>
-    </div>
 
-    <!-- Mobile Sync Form (hidden by default) -->
-    <div class="login-container sync-form-container">
+        <!-- Mobile Sync Form (hidden by default) -->
         <div class="login-card sync-form-hidden" id="sync-box">
             <div class="logo-container">
-                <img src="/assets/images/logo.png" alt="QuietGo" width="120" height="120">
+                <img src="/assets/images/logo.png" alt="QuietGo" width="400" height="400">
             </div>
 
             <?php if (isset($syncError)): ?>
@@ -204,12 +193,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['sync_mobile'])) {
                 </div>
             <?php endif; ?>
 
-            <div class="sync-info-box">
-                <h4 class="sync-info-title">📱 Sync Your Mobile Account</h4>
-                <p class="sync-info-text">
-                    Enter your mobile app credentials to automatically sync your account, data, and settings to the Hub.
-                </p>
-            </div>
+
 
             <form method="POST">
                 <input type="hidden" name="sync_mobile" value="1">
@@ -226,17 +210,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['sync_mobile'])) {
                 </button>
             </div>
         </div>
+    </main>
+
+    <!-- Sync Mobile App Section -->
+    <div class="sync-setup-section">
+        <h3 class="sync-setup-title">
+            First Time <span class="quiet">Quiet</span><span class="go">Go</span> Hub Set-up
+        </h3>
+        <button onclick="showSyncForm()" class="sync-mobile-btn">
+            Sync Mobile App
+        </button>
     </div>
 
     <script>
     function showSyncForm() {
         document.getElementById('login-box').classList.add('sync-form-hidden');
         document.getElementById('sync-box').classList.remove('sync-form-hidden');
+        document.querySelector('.sync-setup-section').style.display = 'none';
     }
 
     function hideSyncForm() {
         document.getElementById('sync-box').classList.add('sync-form-hidden');
         document.getElementById('login-box').classList.remove('sync-form-hidden');
+        document.querySelector('.sync-setup-section').style.display = 'block';
     }
 
     // Auto-show sync form if there was a sync error
@@ -246,3 +242,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['sync_mobile'])) {
     </script>
 </body>
 </html>
+
