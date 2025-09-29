@@ -287,7 +287,7 @@ function encodeImageForOpenAI($imagePath) {
         realpath(__DIR__ . '/../uploads/'),
         realpath(__DIR__ . '/../../uploads/'),
         realpath(__DIR__ . '/../temp/'),
-        realpath(__DIR__ . '/../../QuietGoData/')  // User data storage
+        realpath(__DIR__ . '/../QuietGoData/')  // User data storage (inside hub/)
     ];
 
     $isAllowed = false;
