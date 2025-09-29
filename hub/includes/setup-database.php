@@ -31,13 +31,30 @@ if (!file_exists($schemaFile)) {
 
 $sql = file_get_contents($schemaFile);
 
-// Split into individual statements
-$statements = array_filter(
-    array_map('trim', explode(';', $sql)),
-    function($stmt) {
-        return !empty($stmt) && strpos($stmt, '--') !== 0;
+// Remove comments
+$sql = preg_replace('/^--.*$/m', '', $sql);
+$sql = preg_replace('/\/\*.*?\*\//s', '', $sql);
+
+// Split by semicolons but keep complete statements
+$statements = [];
+$current = '';
+$lines = explode("\n", $sql);
+
+foreach ($lines as $line) {
+    $line = trim($line);
+    if (empty($line)) continue;
+    
+    $current .= $line . " ";
+    
+    // Check if line ends with semicolon
+    if (substr(rtrim($line), -1) === ';') {
+        $stmt = trim($current);
+        if (!empty($stmt)) {
+            $statements[] = $stmt;
+        }
+        $current = '';
     }
-);
+}
 
 echo "<p>Found " . count($statements) . " SQL statements to execute...</p>";
 
