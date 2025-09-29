@@ -1,0 +1,69 @@
+{
+    "photo_type": "meal",
+    "analysis": {
+        "calcuplate": {
+            "auto_logged": true,
+            "foods_detected": [
+                "sushi",
+                "tuna",
+                "cucumber",
+                "rice",
+                "seaweed",
+                "soy sauce"
+            ],
+            "total_calories": 350,
+            "macros": {
+                "protein": "20g",
+                "carbs": "50g",
+                "fat": "10g",
+                "fiber": "3g"
+            },
+            "meal_quality_score": "8\/10",
+            "portion_sizes": "8 pieces of sushi",
+            "nutritional_completeness": "75%"
+        },
+        "confidence": 85,
+        "nutrition_insights": [
+            "This sushi is a great source of lean protein from the tuna, which can help support muscle health and energy levels.",
+            "The inclusion of cucumber adds fiber and hydration, contributing to overall digestive health.",
+            "Enjoying sushi can be a fun way to mix flavors and textures, promoting a positive food experience."
+        ],
+        "recommendations": [
+            "Pair with a side of edamame for an extra protein boost and healthy fats.",
+            "Consider adding some pickled ginger for added flavor and digestive benefits.",
+            "Stay hydrated with a glass of water or green tea to complement your meal."
+        ],
+        "wellness_nutrition": "Logged for energy pattern analysis",
+        "timestamp": 1759182999,
+        "ai_model": "medium",
+        "model_confidence": 0.78,
+        "cost_tier": "$0.005",
+        "processing_time": 4.3
+    },
+    "photo_metadata": {
+        "original_name": "Meal5.jpg",
+        "category": "photos",
+        "photo_type": "meal",
+        "upload_timestamp": 1759182994,
+        "upload_datetime": "2025-09-29 21:56:34",
+        "user_email": "admin@quietgo.app",
+        "user_journey": "best_life",
+        "subscription_plan": "pro_plus",
+        "has_calcuplate": true,
+        "location_data": {
+            "latitude": 30.387572637676215,
+            "longitude": -87.27529080859343,
+            "accuracy": "64",
+            "timestamp": 1759182994
+        },
+        "context": {
+            "time_of_day": "",
+            "symptoms": "",
+            "notes": ""
+        },
+        "file_info": {
+            "size": 12562,
+            "mime_type": "image\/jpeg"
+        }
+    }
+}

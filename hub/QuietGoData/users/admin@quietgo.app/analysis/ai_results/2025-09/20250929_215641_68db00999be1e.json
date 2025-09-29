@@ -1,0 +1,64 @@
+{
+    "photo_type": "meal",
+    "analysis": {
+        "calcuplate": {
+            "auto_logged": true,
+            "foods_detected": [
+                "soda"
+            ],
+            "total_calories": 150,
+            "macros": {
+                "protein": "0g",
+                "carbs": "39g",
+                "fat": "0g",
+                "fiber": "0g"
+            },
+            "meal_quality_score": "3\/10",
+            "portion_sizes": "1 medium glass (approximately 12 oz)",
+            "nutritional_completeness": "10%"
+        },
+        "confidence": 85,
+        "nutrition_insights": [
+            "This drink contains a high amount of sugars, which can contribute to quick energy spikes.",
+            "While it provides immediate refreshment, it lacks essential nutrients and fiber.",
+            "Consider balancing sugary beverages with water or herbal teas for hydration."
+        ],
+        "recommendations": [
+            "Try to limit sugary drinks and opt for healthier options like water or infused drinks.",
+            "Include a source of protein or fiber in your meals for sustained energy.",
+            "Monitor your overall sugar intake throughout the day for optimal wellness."
+        ],
+        "wellness_nutrition": "Logged for energy pattern analysis",
+        "timestamp": 1759183001,
+        "ai_model": "medium",
+        "model_confidence": 0.78,
+        "cost_tier": "$0.005",
+        "processing_time": 2.55
+    },
+    "photo_metadata": {
+        "original_name": "Beverage2.jpg",
+        "category": "photos",
+        "photo_type": "meal",
+        "upload_timestamp": 1759182999,
+        "upload_datetime": "2025-09-29 21:56:39",
+        "user_email": "admin@quietgo.app",
+        "user_journey": "best_life",
+        "subscription_plan": "pro_plus",
+        "has_calcuplate": true,
+        "location_data": {
+            "latitude": 30.387572637676215,
+            "longitude": -87.27529080859343,
+            "accuracy": "64",
+            "timestamp": 1759182999
+        },
+        "context": {
+            "time_of_day": "",
+            "symptoms": "",
+            "notes": ""
+        },
+        "file_info": {
+            "size": 9509,
+            "mime_type": "image\/jpeg"
+        }
+    }
+}
