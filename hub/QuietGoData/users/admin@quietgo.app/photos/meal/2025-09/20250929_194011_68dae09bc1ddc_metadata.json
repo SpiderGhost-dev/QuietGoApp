@@ -1,0 +1,32 @@
+{
+    "original_name": "Meal3.jpg",
+    "category": "photos",
+    "photo_type": "meal",
+    "upload_timestamp": 1759174811,
+    "upload_datetime": "2025-09-29 19:40:11",
+    "user_email": "admin@quietgo.app",
+    "user_journey": "best_life",
+    "subscription_plan": "pro_plus",
+    "has_calcuplate": true,
+    "location_data": {
+        "latitude": 30.387746897488743,
+        "longitude": -87.27538310832719,
+        "accuracy": "64",
+        "timestamp": 1759174811
+    },
+    "context": {
+        "time_of_day": "",
+        "symptoms": "",
+        "notes": ""
+    },
+    "file_info": {
+        "size": 12693,
+        "mime_type": "image\/jpeg"
+    },
+    "storage": {
+        "filepath": "\/Users\/davidbaker\/Desktop\/QuietGoApp\/hub\/includes\/..\/QuietGoData\/users\/admin@quietgo.app\/photos\/meal\/2025-09\/20250929_194011_68dae09bc1ddc.jpg",
+        "thumbnail": "\/Users\/davidbaker\/Desktop\/QuietGoApp\/hub\/includes\/..\/QuietGoData\/users\/admin@quietgo.app\/photos\/thumbnails\/thumb_20250929_194011_68dae09bc1ddc.jpg",
+        "size": 12693,
+        "stored_at": "2025-09-29 19:40:11"
+    }
+}

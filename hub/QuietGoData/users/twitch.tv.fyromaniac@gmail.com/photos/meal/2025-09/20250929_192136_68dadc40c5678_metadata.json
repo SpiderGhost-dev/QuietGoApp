@@ -1,0 +1,32 @@
+{
+    "original_name": "meal.jpg",
+    "category": "photos",
+    "photo_type": "meal",
+    "upload_timestamp": 1759173696,
+    "upload_datetime": "2025-09-29 19:21:36",
+    "user_email": "twitch.tv.fyromaniac@gmail.com",
+    "user_journey": "best_life",
+    "subscription_plan": "pro",
+    "has_calcuplate": false,
+    "location_data": {
+        "latitude": 30.387707613793186,
+        "longitude": -87.27531520456257,
+        "accuracy": "64",
+        "timestamp": 1759173696
+    },
+    "context": {
+        "time_of_day": "",
+        "symptoms": "",
+        "notes": ""
+    },
+    "file_info": {
+        "size": 728283,
+        "mime_type": "image\/jpeg"
+    },
+    "storage": {
+        "filepath": "\/Users\/davidbaker\/Desktop\/QuietGoApp\/hub\/includes\/..\/QuietGoData\/users\/twitch.tv.fyromaniac@gmail.com\/photos\/meal\/2025-09\/20250929_192136_68dadc40c5678.jpg",
+        "thumbnail": "\/Users\/davidbaker\/Desktop\/QuietGoApp\/hub\/includes\/..\/QuietGoData\/users\/twitch.tv.fyromaniac@gmail.com\/photos\/thumbnails\/thumb_20250929_192136_68dadc40c5678.jpg",
+        "size": 728283,
+        "stored_at": "2025-09-29 19:21:36"
+    }
+}
