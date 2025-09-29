@@ -311,8 +311,9 @@ function handlePhotoUpload($file, $postData, $user) {
 }
 
 function generateAIAnalysis($postData, $userJourney, $hasCalcuPlate, $imagePath = null) {
-    // Include OpenAI configuration
+    // Include OpenAI configuration and analysis functions
     require_once __DIR__ . '/includes/openai-config.php';
+    require_once __DIR__ . '/includes/analysis-functions.php';
 
     $photoType = $postData['photo_type'] ?? 'general';
     $symptoms = $postData['context_symptoms'] ?? '';
@@ -1342,20 +1343,33 @@ function closeUploadModal() {
     document.getElementById('upload-modal').style.display = 'none';
     document.getElementById('upload-form').reset();
     
-    // Reset multi-photo interface
+    // COMPLETE RESET of multi-photo interface
     allSelectedFiles = [];
     selectedFile = null;
     
     const initialArea = document.getElementById('initial-upload-area');
     const previewGrid = document.getElementById('photo-preview-grid');
+    const previewImages = document.getElementById('preview-images');
     
+    // Clear preview images
+    if (previewImages) {
+        previewImages.innerHTML = '';
+    }
+    
+    // Reset visibility
     initialArea.style.display = 'block';
     previewGrid.style.display = 'none';
     
-    // Reset add more button
+    // Reset add more button completely
     const addMoreBtn = document.getElementById('add-more-btn');
     if (addMoreBtn) {
         addMoreBtn.innerHTML = '<span style="font-size: 1.2rem;">+</span> Add More Photos';
+    }
+    
+    // Reset file input
+    const fileInput = document.getElementById('file-input');
+    if (fileInput) {
+        fileInput.value = '';
     }
 }
 
