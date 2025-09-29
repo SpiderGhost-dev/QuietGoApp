@@ -444,6 +444,9 @@ function handleManualMealLogging($postData, $user) {
 }
 
 function analyzeMealPhotoWithCalcuPlate($imagePath, $journeyConfig, $symptoms, $time, $notes) {
+    // Include smart router for multi-model cost optimization
+    require_once __DIR__ . '/includes/smart-ai-router.php';
+    
     $base64Image = encodeImageForOpenAI($imagePath);
     if (!$base64Image) {
         throw new Exception('Failed to process image for AI analysis');
@@ -503,7 +506,8 @@ Analyze this meal photo for automatic nutritional logging with focus on {$journe
         ]
     ];
 
-    $response = makeOpenAIRequest($messages, OPENAI_VISION_MODEL, 1000);
+    // Use smart router instead of direct API call
+    $response = SmartAIRouter::routeImageAnalysis($imagePath, $messages, 'meal', 1000);
 
     if (isset($response['error'])) {
         throw new Exception($response['error']);
@@ -516,6 +520,20 @@ Analyze this meal photo for automatic nutritional logging with focus on {$journe
         error_log("QuietGo CalcuPlate JSON Error: " . json_last_error_msg());
         error_log("AI Response: " . $aiContent);
         throw new Exception('Invalid CalcuPlate response format');
+    }
+
+    // Check if we need to retry with better model
+    if (isset($response['routing_info']) && SmartAIRouter::needsRetry($response, $response['routing_info']['tier_used'])) {
+        error_log("QuietGo: Retrying with higher tier model");
+        
+        // Force expensive tier
+        $messages[0]['content'] .= "\n\nIMPORTANT: This is a retry request. Provide the most accurate analysis possible.";
+        $retryResponse = makeOpenAIRequest($messages, OPENAI_VISION_MODEL, 1000);
+        
+        if (!isset($retryResponse['error'])) {
+            $aiContent = $retryResponse['choices'][0]['message']['content'];
+            $analysisData = json_decode($aiContent, true);
+        }
     }
 
     // Add journey-specific insights
@@ -532,7 +550,9 @@ Analyze this meal photo for automatic nutritional logging with focus on {$journe
     }
 
     $analysisData['timestamp'] = time();
-    $analysisData['ai_model'] = OPENAI_VISION_MODEL;
+    $analysisData['ai_model'] = $response['routing_info']['tier_used'] ?? 'unknown';
+    $analysisData['model_confidence'] = $response['routing_info']['confidence'] ?? null;
+    $analysisData['cost_tier'] = $response['routing_info']['cost_tier'] ?? null;
 
     return $analysisData;
 }

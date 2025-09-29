@@ -47,6 +47,20 @@ define('OPENAI_API_URL', 'https://api.openai.com/v1/chat/completions');
 define('OPENAI_VISION_MODEL', 'gpt-4-vision-preview');
 define('OPENAI_TEXT_MODEL', 'gpt-4');
 
+// Anthropic API Settings - Multi-model strategy for cost optimization
+if (!empty($_ENV['ANTHROPIC_API_KEY'])) {
+    define('ANTHROPIC_API_KEY', $_ENV['ANTHROPIC_API_KEY']);
+    define('ANTHROPIC_API_URL', 'https://api.anthropic.com/v1/messages');
+    define('ANTHROPIC_HAIKU_MODEL', 'claude-3-haiku-20240307');
+    define('ANTHROPIC_SONNET_MODEL', 'claude-3-5-sonnet-20241022');
+}
+
+// Model routing configuration
+define('MODEL_ROUTING_ENABLED', true);
+define('CONFIDENCE_THRESHOLD_HIGH', 0.85);  // Use cheap model (Haiku)
+define('CONFIDENCE_THRESHOLD_MEDIUM', 0.70); // Use medium model (GPT-4o-mini)
+// Below medium threshold = use expensive model (GPT-4 Vision)
+
 /**
  * Make OpenAI API Request with enhanced error handling
  * @param array $messages - Array of messages for the API
@@ -120,6 +134,145 @@ function makeOpenAIRequest($messages, $model = OPENAI_TEXT_MODEL, $max_tokens = 
     error_log("QuietGo AI Success: Tokens used=" . ($usage['total_tokens'] ?? 'unknown'));
 
     return $decoded;
+}
+
+/**
+ * Make Anthropic API Request (Claude models) for cost-optimized analysis
+ * @param array $messages - Array of messages for the API
+ * @param string $model - Model to use (Haiku or Sonnet)
+ * @param int $max_tokens - Maximum tokens in response
+ * @return array - API response normalized to OpenAI format for compatibility
+ */
+function makeAnthropicRequest($messages, $model = ANTHROPIC_HAIKU_MODEL, $max_tokens = 1000) {
+    if (!defined('ANTHROPIC_API_KEY')) {
+        error_log('QuietGo: Anthropic API not configured, falling back to OpenAI');
+        return ['error' => 'Anthropic API not configured'];
+    }
+
+    $headers = [
+        'Content-Type: application/json',
+        'x-api-key: ' . ANTHROPIC_API_KEY,
+        'anthropic-version: 2023-06-01'
+    ];
+
+    // Convert OpenAI message format to Anthropic format
+    $anthropicMessages = [];
+    $systemPrompt = '';
+    
+    foreach ($messages as $msg) {
+        if ($msg['role'] === 'system') {
+            $systemPrompt = $msg['content'];
+        } else {
+            // Handle content that might be array (for vision) or string
+            if (is_array($msg['content'])) {
+                $convertedContent = [];
+                foreach ($msg['content'] as $item) {
+                    if ($item['type'] === 'text') {
+                        $convertedContent[] = [
+                            'type' => 'text',
+                            'text' => $item['text']
+                        ];
+                    } elseif ($item['type'] === 'image_url') {
+                        // Extract base64 data and mime type from data URL
+                        $imageUrl = $item['image_url']['url'];
+                        if (preg_match('/^data:(image\/[^;]+);base64,(.+)$/', $imageUrl, $matches)) {
+                            $mimeType = $matches[1];
+                            $base64Data = $matches[2];
+                            
+                            $convertedContent[] = [
+                                'type' => 'image',
+                                'source' => [
+                                    'type' => 'base64',
+                                    'media_type' => $mimeType,
+                                    'data' => $base64Data
+                                ]
+                            ];
+                        }
+                    }
+                }
+                $anthropicMessages[] = [
+                    'role' => $msg['role'],
+                    'content' => $convertedContent
+                ];
+            } else {
+                $anthropicMessages[] = [
+                    'role' => $msg['role'],
+                    'content' => $msg['content']
+                ];
+            }
+        }
+    }
+
+    $data = [
+        'model' => $model,
+        'messages' => $anthropicMessages,
+        'max_tokens' => $max_tokens,
+        'temperature' => 0.7
+    ];
+
+    if (!empty($systemPrompt)) {
+        $data['system'] = $systemPrompt;
+    }
+
+    error_log("QuietGo Anthropic Request: Model=$model, Messages=" . count($anthropicMessages));
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, ANTHROPIC_API_URL);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curlError = curl_error($ch);
+    curl_close($ch);
+
+    if ($curlError) {
+        error_log("QuietGo Anthropic CURL Error: $curlError");
+        return ['error' => 'Network connection failed'];
+    }
+
+    if ($httpCode !== 200) {
+        error_log("QuietGo Anthropic HTTP Error: HTTP $httpCode - Response: " . substr($response, 0, 500));
+        $errorData = json_decode($response, true);
+        if (isset($errorData['error']['message'])) {
+            return ['error' => 'AI service error: ' . $errorData['error']['message']];
+        }
+        return ['error' => "AI service temporarily unavailable (HTTP $httpCode)"];
+    }
+
+    $decoded = json_decode($response, true);
+
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        error_log("QuietGo Anthropic JSON Error: " . json_last_error_msg());
+        return ['error' => 'Invalid response from AI service'];
+    }
+
+    if (!isset($decoded['content'][0]['text'])) {
+        error_log("QuietGo Anthropic Response Error: Missing content");
+        return ['error' => 'Incomplete response from AI service'];
+    }
+
+    // Normalize Anthropic response to match OpenAI format for compatibility
+    $normalized = [
+        'choices' => [
+            [
+                'message' => [
+                    'content' => $decoded['content'][0]['text']
+                ]
+            ]
+        ],
+        'usage' => [
+            'total_tokens' => ($decoded['usage']['input_tokens'] ?? 0) + ($decoded['usage']['output_tokens'] ?? 0)
+        ]
+    ];
+
+    error_log("QuietGo Anthropic Success: Tokens used=" . $normalized['usage']['total_tokens']);
+
+    return $normalized;
 }
 
 /**
@@ -249,5 +402,8 @@ function checkAPIRateLimit($userId = null) {
 
 // Security: Clear any sensitive variables from memory
 unset($_ENV['OPENAI_API_KEY']);
+if (isset($_ENV['ANTHROPIC_API_KEY'])) {
+    unset($_ENV['ANTHROPIC_API_KEY']);
+}
 
 ?>
