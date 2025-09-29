@@ -87,6 +87,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['photo_filename']) && 
     $uploadResult = handleManualMealLogging($_POST, $user);
 }
 
+// Check if this is an AJAX request - return JSON instead of HTML
+$isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['health_item'])) {
     // Handle multiple file uploads properly
     $uploadResults = [];
@@ -141,13 +144,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['health_item'])) {
             $uploadResult = ['status' => 'error', 'message' => 'No file was selected for upload.'];
         }
     }
+    
+    // If AJAX request, return JSON and exit
+    if ($isAjax && $uploadResult) {
+        ob_clean();
+        header('Content-Type: application/json');
+        echo json_encode($uploadResult);
+        exit;
+    }
 }
 
 function handlePhotoUpload($file, $postData, $user) {
     global $hasCalcuPlate, $userJourney;
 
-    // Include storage helper
+    // Include storage helper and database operations
     require_once __DIR__ . '/includes/storage-helper.php';
+    require_once __DIR__ . '/includes/db-operations.php';
     $storage = getQuietGoStorage();
 
     // Ensure user structure exists
@@ -217,7 +229,60 @@ function handlePhotoUpload($file, $postData, $user) {
     // Generate AI analysis
     $aiAnalysis = generateAIAnalysis($postData, $userJourney, $hasCalcuPlate, $storeResult['filepath']);
 
-    // Store AI analysis in organized location
+    // Get/create user in database
+    $userId = getOrCreateUser($user['email'], [
+        'name' => $user['name'] ?? 'User',
+        'journey' => $userJourney,
+        'subscription_plan' => $user['subscription_plan'] ?? 'free',
+        'subscription_status' => 'active'
+    ]);
+
+    // Save photo metadata to database
+    $photoId = savePhoto($userId, [
+        'photo_type' => $photoType,
+        'filename' => basename($storeResult['filepath']),
+        'filepath' => $storeResult['filepath'],
+        'thumbnail_path' => $storeResult['thumbnail'] ?? null,
+        'file_size' => $file['size'],
+        'mime_type' => $mimeType,
+        'location_latitude' => $locationData['latitude'] ?? null,
+        'location_longitude' => $locationData['longitude'] ?? null,
+        'location_accuracy' => $locationData['accuracy'] ?? null,
+        'context_time' => $postData['context_time'] ?? null,
+        'context_symptoms' => $postData['context_symptoms'] ?? null,
+        'context_notes' => $postData['context_notes'] ?? null,
+        'original_filename' => $file['name']
+    ]);
+
+    // Save analysis to database based on type
+    if (!isset($aiAnalysis['error']) && !isset($aiAnalysis['manual_logging_required'])) {
+        switch ($photoType) {
+            case 'stool':
+                saveStoolAnalysis($photoId, $userId, $aiAnalysis);
+                break;
+            case 'meal':
+                if ($hasCalcuPlate) {
+                    saveMealAnalysis($photoId, $userId, $aiAnalysis);
+                }
+                break;
+            case 'symptom':
+                saveSymptomAnalysis($photoId, $userId, $aiAnalysis);
+                break;
+        }
+        
+        // Track AI cost
+        if (isset($aiAnalysis['ai_model'])) {
+            trackAICost($userId, [
+                'photo_type' => $photoType,
+                'ai_model' => $aiAnalysis['ai_model'],
+                'model_tier' => $aiAnalysis['model_tier'] ?? $aiAnalysis['ai_model'] ?? 'expensive',
+                'tokens_used' => null,
+                'processing_time' => $aiAnalysis['processing_time'] ?? null
+            ]);
+        }
+    }
+
+    // Store AI analysis in organized location (legacy file system)
     if (!isset($aiAnalysis['error'])) {
         $storage->storeAnalysis($user['email'], 'ai_results', [
             'photo_type' => $photoType,
@@ -228,6 +293,7 @@ function handlePhotoUpload($file, $postData, $user) {
 
     $result = [
         'status' => 'success',
+        'photo_id' => $photoId ?? null,
         'filename' => basename($storeResult['filepath']),
         'thumbnail' => $storeResult['thumbnail'],
         'ai_analysis' => $aiAnalysis,
@@ -1478,22 +1544,38 @@ document.getElementById('upload-form').addEventListener('submit', function(e) {
         '🔄 Analyzing...';
     submitBtn.disabled = true;
     
-    // Submit via fetch
+    // Submit via fetch with AJAX header
     fetch(window.location.href, {
         method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        },
         body: formData
     })
     .then(response => {
-        console.log('Upload response status:', response.status);
-        return response.text();
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
     })
-    .then(responseText => {
-        console.log('Upload response:', responseText.substring(0, 500));
-        // Check if response contains success indicators
-        if (responseText.includes('Photo uploaded successfully') || responseText.includes('✅')) {
-            window.location.reload();
+    .then(result => {
+        console.log('Upload result:', result);
+        
+        if (result.status === 'success') {
+            // Close upload modal
+            closeUploadModal();
+            
+            // Show success modal with AI results
+            if (!result.requires_manual_logging) {
+                showSuccessModal(result);
+            } else {
+                // For Pro users with meal photos, reload to show manual logging form
+                window.location.reload();
+            }
         } else {
-            throw new Error('Upload may have failed');
+            alert(result.message || 'Upload failed. Please try again.');
+            submitBtn.textContent = originalText;
+            submitBtn.disabled = false;
         }
     })
     .catch(error => {
@@ -1556,6 +1638,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
+
+<!-- Success Modal -->
+<?php include __DIR__ . '/includes/success-modal.php'; ?>
 
 <?php include __DIR__ . '/includes/footer-hub.php'; ?>
 
