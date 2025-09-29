@@ -76,6 +76,12 @@ $currentJourneyConfig = $journeyConfig[$userJourney];
 // Enhanced photo upload handling with time/location stamping
 $uploadResult = null;
 
+// Check for pending manual logging from previous upload (SESSION persistence)
+if (isset($_SESSION['pending_manual_logging'])) {
+    $uploadResult = $_SESSION['pending_manual_logging'];
+    unset($_SESSION['pending_manual_logging']); // Clear after retrieving
+}
+
 // Handle manual meal logging form submission (Pro users)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['photo_filename']) && !isset($_FILES['health_item'])) {
     $uploadResult = handleManualMealLogging($_POST, $user);
@@ -220,7 +226,7 @@ function handlePhotoUpload($file, $postData, $user) {
         ]);
     }
 
-    return [
+    $result = [
         'status' => 'success',
         'filename' => basename($storeResult['filepath']),
         'thumbnail' => $storeResult['thumbnail'],
@@ -229,6 +235,13 @@ function handlePhotoUpload($file, $postData, $user) {
         'requires_manual_logging' => (!$hasCalcuPlate && $postData['photo_type'] === 'meal'),
         'storage_path' => $storeResult['filepath']
     ];
+    
+    // Store in SESSION if manual logging required (for persistence across page reload)
+    if ($result['requires_manual_logging']) {
+        $_SESSION['pending_manual_logging'] = $result;
+    }
+    
+    return $result;
 }
 
 function generateAIAnalysis($postData, $userJourney, $hasCalcuPlate, $imagePath = null) {
