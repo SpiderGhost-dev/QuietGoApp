@@ -1,4 +1,11 @@
 <?php
+// Prevent any output before HTML starts
+ob_start();
+
+// Suppress notices and warnings that might cause stray output
+error_reporting(E_ERROR | E_PARSE);
+ini_set('display_errors', 0);
+
 // Hub authentication check - ONLY Pro and Pro+ users have hub access
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
@@ -75,7 +82,59 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['photo_filename']) && 
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['health_item'])) {
-    $uploadResult = handlePhotoUpload($_FILES['health_item'], $_POST, $user);
+    // Handle multiple file uploads properly
+    $uploadResults = [];
+    
+    // Check if files were actually uploaded
+    if (is_array($_FILES['health_item']['name'])) {
+        // Multiple files - check if any files were selected
+        $hasFiles = false;
+        for ($i = 0; $i < count($_FILES['health_item']['name']); $i++) {
+            if (!empty($_FILES['health_item']['name'][$i]) && $_FILES['health_item']['error'][$i] === UPLOAD_ERR_OK) {
+                $hasFiles = true;
+                break;
+            }
+        }
+        
+        if (!$hasFiles) {
+            $uploadResult = ['status' => 'error', 'message' => 'No files were selected for upload.'];
+        } else {
+            // Process multiple files
+            for ($i = 0; $i < count($_FILES['health_item']['name']); $i++) {
+                if (!empty($_FILES['health_item']['name'][$i])) {
+                    $singleFile = [
+                        'name' => $_FILES['health_item']['name'][$i],
+                        'type' => $_FILES['health_item']['type'][$i],
+                        'tmp_name' => $_FILES['health_item']['tmp_name'][$i],
+                        'error' => $_FILES['health_item']['error'][$i],
+                        'size' => $_FILES['health_item']['size'][$i]
+                    ];
+                    $result = handlePhotoUpload($singleFile, $_POST, $user);
+                    $uploadResults[] = $result;
+                }
+            }
+            
+            // Use the first successful result for display
+            $uploadResult = null;
+            foreach ($uploadResults as $result) {
+                if ($result['status'] === 'success') {
+                    $uploadResult = $result;
+                    $uploadResult['message'] = count($uploadResults) . ' photo(s) uploaded successfully!';
+                    break;
+                }
+            }
+            if (!$uploadResult) {
+                $uploadResult = $uploadResults[0]; // Show first error if all failed
+            }
+        }
+    } else {
+        // Single file
+        if (!empty($_FILES['health_item']['name']) && $_FILES['health_item']['error'] === UPLOAD_ERR_OK) {
+            $uploadResult = handlePhotoUpload($_FILES['health_item'], $_POST, $user);
+        } else {
+            $uploadResult = ['status' => 'error', 'message' => 'No file was selected for upload.'];
+        }
+    }
 }
 
 function handlePhotoUpload($file, $postData, $user) {
@@ -576,12 +635,19 @@ include __DIR__ . '/includes/header-hub.php';
     text-align: center;
 }
 
-.subscription-info {
-    background: var(--primary-blue);
-    color: white;
+main.hub-main section.subscription-info {
+    background: #000000 !important;
+    background-color: #000000 !important;
+    background-image: none !important;
+    color: var(--text-primary) !important;
     padding: 1rem 0;
     text-align: center;
-    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--card-border);
+}
+
+main.hub-main section.subscription-info * {
+    background: transparent !important;
+    background-color: transparent !important;
 }
 
 .manual-meal-form {
@@ -785,7 +851,7 @@ include __DIR__ . '/includes/header-hub.php';
                 <?php else: ?>
                     🏆 Pro Member: AI stool analysis + manual meal logging forms
                     <span style="margin-left: 1rem;">
-                        <a href="/hub/account.php?upgrade=pro_plus" style="color: yellow; text-decoration: underline;">
+                        <a href="/hub/account.php?upgrade=pro_plus" style="color: var(--accent-teal); text-decoration: underline;">
                             Upgrade to Pro+ for CalcuPlate (+$2.99/mo)
                         </a>
                     </span>
@@ -845,7 +911,6 @@ include __DIR__ . '/includes/header-hub.php';
                             <div class="form-group">
                                 <label>Meal Time *</label>
                                 <input type="time" name="meal_time" value="12:00">
-767
                             </div>
                             <div class="form-group">
                                 <label>Portion Size *</label>
@@ -1066,11 +1131,26 @@ include __DIR__ . '/includes/header-hub.php';
             <input type="hidden" id="longitude" name="longitude" value="">
             <input type="hidden" id="location-accuracy" name="accuracy" value="">
 
-            <div style="border: 2px dashed var(--card-border); border-radius: 8px; padding: 2rem; text-align: center; margin: 1rem 0; cursor: pointer;" onclick="document.getElementById('file-input').click()">
-                <div style="font-size: 3rem; margin-bottom: 1rem;" id="upload-icon">📁</div>
-                <h4 style="color: var(--text-primary); margin: 0 0 0.5rem 0;">Choose Photo</h4>
-                <p style="color: var(--text-secondary); margin: 0;">Click here or drag and drop your photo</p>
-                <input type="file" id="file-input" name="health_item" accept="image/*" hidden>
+            <!-- Multi-Photo Upload Area -->
+            <div id="photo-upload-container">
+                <div id="initial-upload-area" style="border: 2px dashed var(--card-border); border-radius: 8px; padding: 2rem; text-align: center; margin: 1rem 0; cursor: pointer;" onclick="document.getElementById('file-input').click()">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;" id="upload-icon">📁</div>
+                    <h4 style="color: var(--text-primary); margin: 0 0 0.5rem 0;">Choose First Photo</h4>
+                    <p style="color: var(--text-secondary); margin: 0;">Click here to select your first image</p>
+                </div>
+                
+                <div id="photo-preview-grid" style="display: none; margin: 1rem 0;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 1rem; margin-bottom: 1rem;" id="preview-images"></div>
+                    
+                    <div style="text-align: center;">
+                        <button type="button" id="add-more-btn" onclick="document.getElementById('file-input').click()" style="background: var(--primary-blue); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 50px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem;">
+                            <span style="font-size: 1.2rem;">+</span> Add More Photos
+                        </button>
+                        <p style="color: var(--text-muted); font-size: 0.8rem; margin: 0.5rem 0 0 0;">Max 10MB per photo, 50MB total</p>
+                    </div>
+                </div>
+                
+                <input type="file" id="file-input" name="health_item[]" accept="image/*" multiple hidden>
             </div>
 
             <div id="context-fields">
@@ -1082,7 +1162,7 @@ include __DIR__ . '/includes/header-hub.php';
                     Cancel
                 </button>
                 <button type="submit" style="flex: 2; background: var(--success-color); color: white; border: none; padding: 0.875rem; border-radius: 6px; font-weight: 600; cursor: pointer;">
-                    🚀 Upload & Analyze
+                    🚀 Upload & Analyze Photos
                 </button>
             </div>
         </form>
@@ -1112,10 +1192,10 @@ function openUploadModal(photoType) {
             uploadIcon.textContent = '🚽';
             break;
         case 'meal':
-            modalTitle.textContent = '🍽️ Upload Meal Photo';
+            modalTitle.textContent = '🍽️ Upload Meal Photos';
             modalSubtitle.textContent = hasCalcuPlate ?
-                'CalcuPlate will automatically analyze and log your meal' :
-                'You\'ll complete a manual logging form after upload';
+                'CalcuPlate will analyze all photos and automatically log your meal' :
+                'Upload multiple angles, then complete the manual logging form';
             uploadIcon.textContent = '🍽️';
             break;
         case 'symptom':
@@ -1137,42 +1217,29 @@ function openUploadModal(photoType) {
 function buildContextFields(photoType) {
     const container = document.getElementById('context-fields');
     container.innerHTML = '';
-
-    // Time context (all photo types)
-    container.innerHTML += `
-        <div style="margin: 1rem 0;">
-            <label style="display: block; color: var(--text-secondary); margin-bottom: 0.5rem; font-weight: 500;">Time of Day</label>
-            <select name="context_time" style="width: 100%; background: #222; border: 1px solid var(--card-border); color: var(--text-primary); padding: 0.75rem; border-radius: 6px;">
-                <option value="">Select time...</option>
-                <option value="morning">Morning</option>
-                <option value="afternoon">Afternoon</option>
-                <option value="evening">Evening</option>
-                <option value="night">Night</option>
-            </select>
-        </div>
-    `;
-
-    // Symptoms context (all photo types)
-    container.innerHTML += `
-        <div style="margin: 1rem 0;">
-            <label style="display: block; color: var(--text-secondary); margin-bottom: 0.5rem; font-weight: 500;">Any Symptoms?</label>
-            <input type="text" name="context_symptoms" placeholder="e.g., pain, bloating, energy changes, none" style="width: 100%; background: #222; border: 1px solid var(--card-border); color: var(--text-primary); padding: 0.75rem; border-radius: 6px;">
-        </div>
-    `;
-
-    // Notes context (all photo types)
-    container.innerHTML += `
-        <div style="margin: 1rem 0;">
-            <label style="display: block; color: var(--text-secondary); margin-bottom: 0.5rem; font-weight: 500;">Additional Notes</label>
-            <textarea name="context_notes" placeholder="Any additional context, patterns, or observations..." style="width: 100%; background: #222; border: 1px solid var(--card-border); color: var(--text-primary); padding: 0.75rem; border-radius: 6px; min-height: 80px;"></textarea>
-        </div>
-    `;
+    
+    // No context fields needed - keep upload modal clean and simple
 }
 
 function closeUploadModal() {
     document.getElementById('upload-modal').style.display = 'none';
     document.getElementById('upload-form').reset();
+    
+    // Reset multi-photo interface
+    allSelectedFiles = [];
     selectedFile = null;
+    
+    const initialArea = document.getElementById('initial-upload-area');
+    const previewGrid = document.getElementById('photo-preview-grid');
+    
+    initialArea.style.display = 'block';
+    previewGrid.style.display = 'none';
+    
+    // Reset add more button
+    const addMoreBtn = document.getElementById('add-more-btn');
+    if (addMoreBtn) {
+        addMoreBtn.innerHTML = '<span style="font-size: 1.2rem;">+</span> Add More Photos';
+    }
 }
 
 function requestLocationPermission() {
@@ -1199,47 +1266,193 @@ function requestLocationPermission() {
     }
 }
 
-// File input handling
+// File input handling - MULTIPLE FILES WITH PREVIEW
+let allSelectedFiles = [];
+
 document.getElementById('file-input').addEventListener('change', function(e) {
-    if (e.target.files.length > 0) {
-        selectedFile = e.target.files[0];
-
-        // Validate file type
-        if (!selectedFile.type.startsWith('image/')) {
-            alert('Please select an image file only');
+    const newFiles = Array.from(e.target.files);
+    
+    if (newFiles.length > 0) {
+        // Validate all new files
+        let validNewFiles = [];
+        
+        for (let file of newFiles) {
+            if (!file.type.startsWith('image/')) {
+                alert(`${file.name} is not an image file. Please select images only.`);
+                this.value = '';
+                return;
+            }
+            
+            if (file.size > 10 * 1024 * 1024) {
+                alert(`${file.name} is too large. Maximum size is 10MB per image.`);
+                this.value = '';
+                return;
+            }
+            
+            validNewFiles.push(file);
+        }
+        
+        // Add to existing files
+        allSelectedFiles = allSelectedFiles.concat(validNewFiles);
+        
+        // Check total size
+        let totalSize = allSelectedFiles.reduce((sum, file) => sum + file.size, 0);
+        if (totalSize > 50 * 1024 * 1024) {
+            alert('Total file size too large. Maximum total size is 50MB.');
+            allSelectedFiles = allSelectedFiles.slice(0, -validNewFiles.length); // Remove the new files
             this.value = '';
             return;
         }
-
-        // Validate file size (10MB max)
-        if (selectedFile.size > 10 * 1024 * 1024) {
-            alert('File too large. Maximum size is 10MB');
-            this.value = '';
-            return;
-        }
-
-        // Update UI to show selected file
-        const uploadArea = document.querySelector('#upload-modal div[style*="border: 2px dashed"]');
-        const instructions = uploadArea.querySelector('p');
-        instructions.textContent = `Selected: ${selectedFile.name} (${(selectedFile.size / 1024 / 1024).toFixed(1)}MB)`;
-        uploadArea.style.borderColor = 'var(--success-color)';
-        uploadArea.style.background = 'rgba(108, 152, 95, 0.1)';
+        
+        updatePhotoPreview();
+        selectedFile = allSelectedFiles; // Update global variable
     }
+    
+    // Clear the input so same file can be selected again
+    this.value = '';
 });
 
-// Form submission
+function updatePhotoPreview() {
+    const initialArea = document.getElementById('initial-upload-area');
+    const previewGrid = document.getElementById('photo-preview-grid');
+    const previewImages = document.getElementById('preview-images');
+    
+    if (allSelectedFiles.length > 0) {
+        // Hide initial area, show preview grid
+        initialArea.style.display = 'none';
+        previewGrid.style.display = 'block';
+        
+        // Clear and rebuild preview
+        previewImages.innerHTML = '';
+        
+        allSelectedFiles.forEach((file, index) => {
+            const previewItem = document.createElement('div');
+            previewItem.style.cssText = `
+                position: relative;
+                background: var(--card-bg);
+                border: 1px solid var(--card-border);
+                border-radius: 8px;
+                padding: 0.5rem;
+                text-align: center;
+                min-height: 120px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            `;
+            
+            // Create image preview if possible
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewItem.innerHTML = `
+                        <div style="position: relative;">
+                            <img src="${e.target.result}" style="width: 100%; height: 80px; object-fit: cover; border-radius: 4px; margin-bottom: 0.5rem;">
+                            <button type="button" onclick="removePhoto(${index})" style="position: absolute; top: -8px; right: -8px; width: 20px; height: 20px; border-radius: 50%; background: #e74c3c; color: white; border: none; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center;">×</button>
+                        </div>
+                        <div style="font-size: 0.7rem; color: var(--text-muted); word-break: break-word;">
+                            ${file.name.length > 15 ? file.name.substring(0, 12) + '...' : file.name}
+                        </div>
+                        <div style="font-size: 0.6rem; color: var(--text-muted);">
+                            ${(file.size / 1024 / 1024).toFixed(1)}MB
+                        </div>
+                    `;
+                };
+                reader.readAsDataURL(file);
+            } else {
+                previewItem.innerHTML = `
+                    <div style="position: relative;">
+                        <div style="width: 100%; height: 80px; background: var(--card-border); border-radius: 4px; margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: center; font-size: 2rem;">📄</div>
+                        <button type="button" onclick="removePhoto(${index})" style="position: absolute; top: -8px; right: -8px; width: 20px; height: 20px; border-radius: 50%; background: #e74c3c; color: white; border: none; font-size: 12px; cursor: pointer;">×</button>
+                    </div>
+                    <div style="font-size: 0.7rem; color: var(--text-muted); word-break: break-word;">
+                        ${file.name.length > 15 ? file.name.substring(0, 12) + '...' : file.name}
+                    </div>
+                    <div style="font-size: 0.6rem; color: var(--text-muted);">
+                        ${(file.size / 1024 / 1024).toFixed(1)}MB
+                    </div>
+                `;
+            }
+            
+            previewImages.appendChild(previewItem);
+        });
+        
+        // Update add more button text
+        const addMoreBtn = document.getElementById('add-more-btn');
+        if (addMoreBtn) {
+            addMoreBtn.innerHTML = `<span style="font-size: 1.2rem;">+</span> Add More (${allSelectedFiles.length} selected)`;
+        }
+        
+    } else {
+        // Show initial area, hide preview
+        initialArea.style.display = 'block';
+        previewGrid.style.display = 'none';
+    }
+}
+
+function removePhoto(index) {
+    allSelectedFiles.splice(index, 1);
+    updatePhotoPreview();
+    selectedFile = allSelectedFiles;
+}
+
+// Form submission with proper FormData handling
 document.getElementById('upload-form').addEventListener('submit', function(e) {
-    if (!selectedFile) {
+    if (!selectedFile || selectedFile.length === 0) {
         e.preventDefault();
-        alert('Please select a photo first');
+        alert('Please select at least one photo first');
         return false;
     }
 
+    // Create FormData object and append files manually
+    e.preventDefault();
+    
+    const formData = new FormData();
+    
+    // Add all selected files
+    selectedFile.forEach((file, index) => {
+        formData.append('health_item[]', file);
+    });
+    
+    // Add other form data
+    formData.append('photo_type', document.getElementById('photo-type').value);
+    formData.append('latitude', document.getElementById('latitude').value);
+    formData.append('longitude', document.getElementById('longitude').value);
+    formData.append('accuracy', document.getElementById('location-accuracy').value);
+    
     // Show loading state
     const submitBtn = this.querySelector('button[type="submit"]');
     const originalText = submitBtn.textContent;
-    submitBtn.textContent = '🔄 Analyzing...';
+    submitBtn.textContent = selectedFile.length > 1 ? 
+        `🔄 Analyzing ${selectedFile.length} photos...` : 
+        '🔄 Analyzing...';
     submitBtn.disabled = true;
+    
+    // Submit via fetch
+    fetch(window.location.href, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        console.log('Upload response status:', response.status);
+        return response.text();
+    })
+    .then(responseText => {
+        console.log('Upload response:', responseText.substring(0, 500));
+        // Check if response contains success indicators
+        if (responseText.includes('Photo uploaded successfully') || responseText.includes('✅')) {
+            window.location.reload();
+        } else {
+            throw new Error('Upload may have failed');
+        }
+    })
+    .catch(error => {
+        console.error('Upload error:', error);
+        alert('Upload failed. Please try again.');
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+    });
+    
+    return false;
 });
 
 console.log('📤 Enhanced Photo Upload System Loaded');

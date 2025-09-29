@@ -1,0 +1,45 @@
+{
+    "photo_type": "meal",
+    "analysis": {
+        "manual_logging_required": true,
+        "upgrade_available": {
+            "feature": "CalcuPlate AI Meal Analysis",
+            "price": "+$2.99\/month",
+            "benefits": [
+                "Automatic food detection",
+                "Instant calorie calculation",
+                "Auto-logged nutrition data"
+            ]
+        },
+        "next_step": "Complete manual meal logging form to continue",
+        "timestamp": 1758992364,
+        "user_journey": "best_life",
+        "processing_time": 0
+    },
+    "photo_metadata": {
+        "original_name": "meal.jpg",
+        "category": "photos",
+        "photo_type": "meal",
+        "upload_timestamp": 1758992364,
+        "upload_datetime": "2025-09-27 16:59:24",
+        "user_email": "twitch.tv.fyromaniac@gmail.com",
+        "user_journey": "best_life",
+        "subscription_plan": "pro",
+        "has_calcuplate": false,
+        "location_data": {
+            "latitude": 30.387699522771328,
+            "longitude": -87.27531956399208,
+            "accuracy": "64",
+            "timestamp": 1758992364
+        },
+        "context": {
+            "time_of_day": "",
+            "symptoms": "",
+            "notes": ""
+        },
+        "file_info": {
+            "size": 728283,
+            "mime_type": "image\/jpeg"
+        }
+    }
+}

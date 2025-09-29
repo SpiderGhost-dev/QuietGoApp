@@ -69,8 +69,6 @@ $switchHref = hub_logged_in() || is_impersonating() ? '/hub/login.php?logout=1' 
           <a href="/" class="nav-link">Home</a>
           <a href="/hub/" class="nav-link">Dashboard</a>
           <a href="/hub/upload.php" class="nav-link">📸 Upload</a>
-          <a href="/hub/#insights" class="nav-link">Insights</a>
-          <a href="/hub/#support" class="nav-link">Support</a>
         </div>
         <div class="nav-profile" id="userProfile">
           <img id="userAvatar" src="" alt="" aria-hidden="true">
@@ -93,8 +91,6 @@ $switchHref = hub_logged_in() || is_impersonating() ? '/hub/login.php?logout=1' 
         <a href="/" class="nav-link">Home</a>
         <a href="/hub/" class="nav-link">Dashboard</a>
         <a href="/hub/upload.php" class="nav-link">📸 Upload</a>
-        <a href="/hub/#insights" class="nav-link">Insights</a>
-        <a href="/hub/#support" class="nav-link">Support</a>
         <div class="nav-profile" id="userProfileMobile">
           <img id="userAvatarMobile" src="" alt="" aria-hidden="true">
           <div class="nav-profile-info">

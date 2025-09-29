@@ -1760,3 +1760,48 @@ html {
     gap: var(--spacing-xs);
   }
 }
+
+/* Hub Index Page Specific Styles */
+
+/* Sync Section */
+.sync-section {
+  background: var(--bg-color);
+  text-align: center;
+  padding: var(--spacing-xl) 0;
+}
+
+.sync-description {
+  color: white;
+  opacity: 0.8;
+  margin-top: var(--spacing-sm);
+}
+
+/* Section Title */
+.section-title {
+  margin-bottom: var(--spacing-2xl);
+}
+
+/* Feature Grid */
+.feature-grid {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* Feature Cards */
+.feature-card {
+  text-decoration: none;
+  color: inherit;
+  position: relative;
+}
+
+.pro-feature .status-badge {
+  position: absolute;
+  top: var(--spacing-md);
+  right: var(--spacing-md);
+}
+
+.beta-feature .badge {
+  position: absolute;
+  top: var(--spacing-md);
+  right: var(--spacing-md);
+}

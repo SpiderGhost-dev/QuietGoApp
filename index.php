@@ -1,5 +1,6 @@
 <?php $pageTitle = 'QuietGo — Your gut talks. QuietGo translates.'; ?>
-<!-- Force deploy: privacy section fix --!>
+<!-- Force deploy: privacy section 740
+  --!>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -34,7 +35,8 @@
 
             <!-- We Believe Statement -->
             <p class="hero-description">
-                We believe digestive health insights should be private, actionable, and designed for real life.
+                We believe digestive health insights 760
+                uld be private, actionable, and designed for real life.
                 No social features, no judgment—just patterns that help you understand your body better.
             </p>
 
@@ -193,7 +195,8 @@
             <div class="journeys-intro">
                 <h2>Your Journey, Your Way</h2>
                 <p class="subheading">
-                    Whether you're working with healthcare providers, training for peak performance, or simply living your best life — QuietGo adapts to your unique goals and delivers personalized insights.
+                    Whether you're working with healthcare providers, training for peak performance, or 34
+                    ply living your best life — QuietGo adapts to your unique goals and delivers personalized insights.
                 </p>
             </div>
 
