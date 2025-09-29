@@ -8,10 +8,15 @@
  * Analyze Stool Photo using Bristol Stool Scale
  */
 function analyzeStoolPhoto($imagePath, $journeyConfig, $symptoms, $time, $notes) {
+    error_log("QuietGo: analyzeStoolPhoto called for: $imagePath");
+    
     $base64Image = encodeImageForOpenAI($imagePath);
     if (!$base64Image) {
+        error_log("QuietGo ERROR: Failed to encode image for stool analysis");
         throw new Exception('Failed to process image for AI analysis');
     }
+    
+    error_log("QuietGo: Image encoded successfully, preparing AI request");
 
     $systemPrompt = "You are a professional digestive health AI assistant specialized in Bristol Stool Scale analysis.
 
@@ -62,11 +67,15 @@ Analyze this stool photo using the Bristol Stool Scale and provide {$journeyConf
 
     $response = makeOpenAIRequest($messages, OPENAI_VISION_MODEL, 800);
 
+    error_log("QuietGo: OpenAI response received. Has error: " . (isset($response['error']) ? 'YES - ' . $response['error'] : 'NO'));
+
     if (isset($response['error'])) {
+        error_log("QuietGo ERROR: " . $response['error']);
         throw new Exception($response['error']);
     }
 
     $aiContent = $response['choices'][0]['message']['content'];
+    error_log("QuietGo: AI content length: " . strlen($aiContent));
     
     // Strip markdown code blocks if present
     $aiContent = preg_replace('/^```json\s*/m', '', $aiContent);
@@ -80,6 +89,8 @@ Analyze this stool photo using the Bristol Stool Scale and provide {$journeyConf
         error_log("AI Response: " . $aiContent);
         throw new Exception('Invalid AI response format');
     }
+    
+    error_log("QuietGo: Stool analysis parsed successfully. Bristol: " . ($analysisData['bristol_scale'] ?? 'NULL') . ", Confidence: " . ($analysisData['confidence'] ?? 'NULL'));
 
     // Add metadata
     $analysisData['timestamp'] = time();

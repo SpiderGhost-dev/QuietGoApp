@@ -44,8 +44,8 @@ if (empty($_ENV['OPENAI_API_KEY'])) {
 // OpenAI API Settings - Now loaded securely from environment
 define('OPENAI_API_KEY', $_ENV['OPENAI_API_KEY']);
 define('OPENAI_API_URL', 'https://api.openai.com/v1/chat/completions');
-define('OPENAI_VISION_MODEL', 'gpt-4-vision-preview');
-define('OPENAI_TEXT_MODEL', 'gpt-4');
+define('OPENAI_VISION_MODEL', 'gpt-4o');  // Updated from deprecated gpt-4-vision-preview
+define('OPENAI_TEXT_MODEL', 'gpt-4o');
 
 // Anthropic API Settings - Multi-model strategy for cost optimization
 if (!empty($_ENV['ANTHROPIC_API_KEY'])) {

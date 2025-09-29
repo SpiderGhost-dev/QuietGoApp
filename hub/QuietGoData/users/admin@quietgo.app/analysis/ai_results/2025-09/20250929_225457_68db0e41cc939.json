@@ -1,0 +1,65 @@
+{
+    "photo_type": "meal",
+    "analysis": {
+        "calcuplate": {
+            "auto_logged": true,
+            "foods_detected": [
+                "beef",
+                "mushrooms"
+            ],
+            "total_calories": 300,
+            "macros": {
+                "protein": "30g",
+                "carbs": "10g",
+                "fat": "20g",
+                "fiber": "5g"
+            },
+            "meal_quality_score": "8\/10",
+            "portion_sizes": "moderate portions of beef and mushrooms",
+            "nutritional_completeness": "85%"
+        },
+        "confidence": 85,
+        "nutrition_insights": [
+            "This meal provides a good balance of protein, carbs, and healthy fats to help fuel your body and keep you energized throughout the day.",
+            "The mushrooms add beneficial fiber and antioxidants to support your overall wellness.",
+            "The moderate portion sizes are ideal for maintaining a healthy weight and promoting long-term wellbeing."
+        ],
+        "recommendations": [
+            "Consider adding some leafy greens or other vegetables to further boost the nutritional value of this meal.",
+            "Stay hydrated by drinking water or herbal tea alongside your meal.",
+            "Pair this protein-rich dish with a whole grain, such as brown rice or quinoa, for an extra energy boost."
+        ],
+        "wellness_nutrition": "Logged for energy pattern analysis",
+        "timestamp": 1759186497,
+        "ai_model": "cheap",
+        "model_confidence": 0.8793204498291016,
+        "cost_tier": "$0.002",
+        "processing_time": 3.07
+    },
+    "photo_metadata": {
+        "original_name": "Fecal_poop_2.jpg",
+        "category": "photos",
+        "photo_type": "meal",
+        "upload_timestamp": 1759186494,
+        "upload_datetime": "2025-09-29 22:54:54",
+        "user_email": "admin@quietgo.app",
+        "user_journey": "best_life",
+        "subscription_plan": "pro_plus",
+        "has_calcuplate": true,
+        "location_data": {
+            "latitude": 30.38770848534416,
+            "longitude": -87.27531983621124,
+            "accuracy": "64",
+            "timestamp": 1759186494
+        },
+        "context": {
+            "time_of_day": "",
+            "symptoms": "",
+            "notes": ""
+        },
+        "file_info": {
+            "size": 312496,
+            "mime_type": "image\/jpeg"
+        }
+    }
+}
