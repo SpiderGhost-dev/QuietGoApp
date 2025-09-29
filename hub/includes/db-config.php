@@ -6,20 +6,19 @@
 
 // Load environment variables if not already loaded
 if (!isset($_ENV['DB_HOST'])) {
-    require_once __DIR__ . '/../../.env.php';
-    if (!file_exists(__DIR__ . '/../../.env.php')) {
-        // Load .env manually
-        $envFile = __DIR__ . '/../../.env';
-        if (file_exists($envFile)) {
-            $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-            foreach ($lines as $line) {
-                if (strpos($line, '#') === 0) continue;
-                if (strpos($line, '=') !== false) {
-                    list($key, $value) = explode('=', $line, 2);
-                    $_ENV[trim($key)] = trim($value);
-                }
+    // Load .env file
+    $envFile = __DIR__ . '/../../.env';
+    if (file_exists($envFile)) {
+        $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        foreach ($lines as $line) {
+            if (strpos($line, '#') === 0) continue;
+            if (strpos($line, '=') !== false) {
+                list($key, $value) = explode('=', $line, 2);
+                $_ENV[trim($key)] = trim($value);
             }
         }
+    } else {
+        die('ERROR: .env file not found at: ' . $envFile);
     }
 }
 

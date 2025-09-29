@@ -1,0 +1,69 @@
+{
+    "photo_type": "meal",
+    "analysis": {
+        "calcuplate": {
+            "auto_logged": true,
+            "foods_detected": [
+                "sushi",
+                "tuna",
+                "avocado",
+                "cucumber",
+                "seaweed",
+                "soy sauce"
+            ],
+            "total_calories": 350,
+            "macros": {
+                "protein": "20g",
+                "carbs": "45g",
+                "fat": "10g",
+                "fiber": "4g"
+            },
+            "meal_quality_score": "8\/10",
+            "portion_sizes": "8 pieces of sushi",
+            "nutritional_completeness": "85%"
+        },
+        "confidence": 90,
+        "nutrition_insights": [
+            "This meal provides a great balance of protein and healthy fats, especially from the tuna and avocado.",
+            "High in omega-3 fatty acids, this sushi is great for heart health and can boost your mood.",
+            "The presence of vegetables adds fiber, supporting digestion and keeping you satisfied longer."
+        ],
+        "recommendations": [
+            "Consider adding a side salad for extra vitamins and minerals.",
+            "Pair with green tea for additional antioxidants.",
+            "Stay hydrated with water to support overall wellness."
+        ],
+        "wellness_nutrition": "Logged for energy pattern analysis",
+        "timestamp": 1759175930,
+        "ai_model": "medium",
+        "model_confidence": 0.78,
+        "cost_tier": "$0.005",
+        "processing_time": 3.87
+    },
+    "photo_metadata": {
+        "original_name": "Meal5.jpg",
+        "category": "photos",
+        "photo_type": "meal",
+        "upload_timestamp": 1759175926,
+        "upload_datetime": "2025-09-29 19:58:46",
+        "user_email": "admin@quietgo.app",
+        "user_journey": "best_life",
+        "subscription_plan": "pro_plus",
+        "has_calcuplate": true,
+        "location_data": {
+            "latitude": 30.387482456177988,
+            "longitude": -87.27526248177499,
+            "accuracy": "64",
+            "timestamp": 1759175926
+        },
+        "context": {
+            "time_of_day": "",
+            "symptoms": "",
+            "notes": ""
+        },
+        "file_info": {
+            "size": 12562,
+            "mime_type": "image\/jpeg"
+        }
+    }
+}
