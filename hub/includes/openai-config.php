@@ -286,7 +286,8 @@ function encodeImageForOpenAI($imagePath) {
     $allowedBasePaths = [
         realpath(__DIR__ . '/../uploads/'),
         realpath(__DIR__ . '/../../uploads/'),
-        realpath(__DIR__ . '/../temp/')
+        realpath(__DIR__ . '/../temp/'),
+        realpath(__DIR__ . '/../../QuietGoData/')  // User data storage
     ];
 
     $isAllowed = false;
