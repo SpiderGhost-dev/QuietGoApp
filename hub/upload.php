@@ -1340,16 +1340,24 @@ function buildContextFields(photoType) {
 }
 
 function closeUploadModal() {
-    document.getElementById('upload-modal').style.display = 'none';
-    document.getElementById('upload-form').reset();
-    
-    // COMPLETE RESET of multi-photo interface
-    allSelectedFiles = [];
-    selectedFile = null;
-    
+    const modal = document.getElementById('upload-modal');
+    const form = document.getElementById('upload-form');
     const initialArea = document.getElementById('initial-upload-area');
     const previewGrid = document.getElementById('photo-preview-grid');
     const previewImages = document.getElementById('preview-images');
+    const fileInput = document.getElementById('file-input');
+    const addMoreBtn = document.getElementById('add-more-btn');
+    const submitBtn = form.querySelector('button[type="submit"]');
+    
+    // Hide modal
+    modal.style.display = 'none';
+    
+    // Reset form
+    form.reset();
+    
+    // COMPLETE RESET of all state
+    allSelectedFiles = [];
+    selectedFile = null;
     
     // Clear preview images
     if (previewImages) {
@@ -1357,17 +1365,21 @@ function closeUploadModal() {
     }
     
     // Reset visibility
-    initialArea.style.display = 'block';
-    previewGrid.style.display = 'none';
+    if (initialArea) initialArea.style.display = 'block';
+    if (previewGrid) previewGrid.style.display = 'none';
     
-    // Reset add more button completely
-    const addMoreBtn = document.getElementById('add-more-btn');
+    // Reset button text
     if (addMoreBtn) {
         addMoreBtn.innerHTML = '<span style="font-size: 1.2rem;">+</span> Add More Photos';
     }
     
-    // Reset file input
-    const fileInput = document.getElementById('file-input');
+    // Reset submit button text and state
+    if (submitBtn) {
+        submitBtn.textContent = '🚀 Upload & Analyze Photos';
+        submitBtn.disabled = false;
+    }
+    
+    // Clear file input
     if (fileInput) {
         fileInput.value = '';
     }
