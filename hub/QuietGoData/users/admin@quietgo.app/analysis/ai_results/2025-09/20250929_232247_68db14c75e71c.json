@@ -1,0 +1,49 @@
+{
+    "photo_type": "symptom",
+    "analysis": {
+        "symptom_category": "Skin irritation",
+        "severity_estimate": "mild",
+        "visual_characteristics": [
+            "redness",
+            "slight patchiness",
+            "smooth texture"
+        ],
+        "confidence": 85,
+        "tracking_recommendations": [
+            "Monitor changes in color and size",
+            "Note any additional symptoms",
+            "Keep skin moisturized"
+        ],
+        "correlation_potential": "May correlate with environmental factors or skin sensitivity",
+        "timestamp": 1759188167,
+        "ai_model": "gpt-4o",
+        "reported_symptoms": null,
+        "processing_time": 2.84
+    },
+    "photo_metadata": {
+        "original_name": "armrash.jpeg",
+        "category": "photos",
+        "photo_type": "symptom",
+        "upload_timestamp": 1759188164,
+        "upload_datetime": "2025-09-29 23:22:44",
+        "user_email": "admin@quietgo.app",
+        "user_journey": "best_life",
+        "subscription_plan": "pro_plus",
+        "has_calcuplate": true,
+        "location_data": {
+            "latitude": 30.38770847816867,
+            "longitude": -87.27531982639775,
+            "accuracy": "64",
+            "timestamp": 1759188164
+        },
+        "context": {
+            "time_of_day": "",
+            "symptoms": "",
+            "notes": ""
+        },
+        "file_info": {
+            "size": 175017,
+            "mime_type": "image\/jpeg"
+        }
+    }
+}

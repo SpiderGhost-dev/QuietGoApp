@@ -1,0 +1,52 @@
+{
+    "photo_type": "stool",
+    "analysis": {
+        "bristol_scale": 5,
+        "bristol_description": "Type 5: Soft blobs with clear-cut edges",
+        "color_assessment": "medium brown",
+        "consistency": "normal",
+        "volume_estimate": "normal",
+        "confidence": 85,
+        "health_insights": [
+            "Your stool consistency is generally healthy, indicating good digestion.",
+            "The medium brown color suggests a balanced diet.",
+            "Regular soft blobs can be a sign of adequate fiber intake."
+        ],
+        "recommendations": [
+            "Continue maintaining a diet rich in fruits, vegetables, and whole grains.",
+            "Stay hydrated to support digestive health and overall wellness.",
+            "Incorporate regular physical activity to boost energy levels and digestion."
+        ],
+        "timestamp": 1759188022,
+        "ai_model": "gpt-4o",
+        "reported_symptoms": null,
+        "correlation_note": null,
+        "processing_time": 4.41
+    },
+    "photo_metadata": {
+        "original_name": "Fecal_poop_2.jpg",
+        "category": "photos",
+        "photo_type": "stool",
+        "upload_timestamp": 1759188017,
+        "upload_datetime": "2025-09-29 23:20:17",
+        "user_email": "admin@quietgo.app",
+        "user_journey": "best_life",
+        "subscription_plan": "pro_plus",
+        "has_calcuplate": true,
+        "location_data": {
+            "latitude": 30.387708577251065,
+            "longitude": -87.27531997087938,
+            "accuracy": "64",
+            "timestamp": 1759188017
+        },
+        "context": {
+            "time_of_day": "",
+            "symptoms": "",
+            "notes": ""
+        },
+        "file_info": {
+            "size": 312496,
+            "mime_type": "image\/jpeg"
+        }
+    }
+}

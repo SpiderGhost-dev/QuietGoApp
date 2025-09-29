@@ -1,0 +1,32 @@
+{
+    "original_name": "armrash.jpeg",
+    "category": "photos",
+    "photo_type": "symptom",
+    "upload_timestamp": 1759188164,
+    "upload_datetime": "2025-09-29 23:22:44",
+    "user_email": "admin@quietgo.app",
+    "user_journey": "best_life",
+    "subscription_plan": "pro_plus",
+    "has_calcuplate": true,
+    "location_data": {
+        "latitude": 30.38770847816867,
+        "longitude": -87.27531982639775,
+        "accuracy": "64",
+        "timestamp": 1759188164
+    },
+    "context": {
+        "time_of_day": "",
+        "symptoms": "",
+        "notes": ""
+    },
+    "file_info": {
+        "size": 175017,
+        "mime_type": "image\/jpeg"
+    },
+    "storage": {
+        "filepath": "\/Users\/davidbaker\/Desktop\/QuietGoApp\/hub\/includes\/..\/QuietGoData\/users\/admin@quietgo.app\/photos\/symptom\/2025-09\/20250929_232244_68db14c47de5c.jpeg",
+        "thumbnail": "\/Users\/davidbaker\/Desktop\/QuietGoApp\/hub\/includes\/..\/QuietGoData\/users\/admin@quietgo.app\/photos\/thumbnails\/thumb_20250929_232244_68db14c47de5c.jpeg",
+        "size": 175017,
+        "stored_at": "2025-09-29 23:22:44"
+    }
+}

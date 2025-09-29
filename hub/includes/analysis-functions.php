@@ -115,7 +115,15 @@ function analyzeMealPhotoWithCalcuPlate($imagePath, $journeyConfig, $symptoms, $
 
     $systemPrompt = "You are CalcuPlate, an advanced nutrition AI that analyzes meal photos for automatic logging.
 
-Analyze this meal photo and provide comprehensive nutritional data using {$journeyConfig['tone']} focused on {$journeyConfig['focus']}.
+IMPORTANT FIRST STEP: Verify this is actually a food/meal photo. If the image shows:
+- Biological waste (stool, urine, vomit)
+- Medical imagery (wounds, rashes, symptoms)
+- Non-food items
+- Inappropriate content
+
+Respond with: {\"error\": \"not_food\", \"message\": \"This doesn't appear to be a meal photo\"}
+
+If it IS a valid food/meal photo, analyze it and provide comprehensive nutritional data using {$journeyConfig['tone']} focused on {$journeyConfig['focus']}.
 
 Respond ONLY with valid JSON:
 {
@@ -187,6 +195,12 @@ Analyze this meal photo for automatic nutritional logging with focus on {$journe
         error_log("QuietGo CalcuPlate JSON Error: " . json_last_error_msg());
         error_log("AI Response: " . $aiContent);
         throw new Exception('Invalid CalcuPlate response format');
+    }
+    
+    // Check if AI detected non-food content
+    if (isset($analysisData['error']) && $analysisData['error'] === 'not_food') {
+        error_log("QuietGo CalcuPlate: Non-food image detected");
+        throw new Exception('This doesn\'t appear to be a meal photo. Please upload a photo of food, or use the Stool or Symptom upload options for other types of health tracking.');
     }
 
     // Check if we need to retry with better model
