@@ -384,6 +384,12 @@ Analyze this stool photo using the Bristol Stool Scale and provide {$journeyConf
     }
 
     $aiContent = $response['choices'][0]['message']['content'];
+    
+    // Strip markdown code blocks if present
+    $aiContent = preg_replace('/^```json\s*/m', '', $aiContent);
+    $aiContent = preg_replace('/\s*```$/m', '', $aiContent);
+    $aiContent = trim($aiContent);
+    
     $analysisData = json_decode($aiContent, true);
 
     if (json_last_error() !== JSON_ERROR_NONE) {
@@ -527,6 +533,12 @@ Analyze this meal photo for automatic nutritional logging with focus on {$journe
     }
 
     $aiContent = $response['choices'][0]['message']['content'];
+    
+    // Strip markdown code blocks if present (GPT-4o-mini sometimes wraps JSON)
+    $aiContent = preg_replace('/^```json\s*/m', '', $aiContent);
+    $aiContent = preg_replace('/\s*```$/m', '', $aiContent);
+    $aiContent = trim($aiContent);
+    
     $analysisData = json_decode($aiContent, true);
 
     if (json_last_error() !== JSON_ERROR_NONE) {
@@ -628,6 +640,12 @@ Document this symptom photo for pattern tracking.";
     }
 
     $aiContent = $response['choices'][0]['message']['content'];
+    
+    // Strip markdown code blocks if present
+    $aiContent = preg_replace('/^```json\s*/m', '', $aiContent);
+    $aiContent = preg_replace('/\s*```$/m', '', $aiContent);
+    $aiContent = trim($aiContent);
+    
     $analysisData = json_decode($aiContent, true);
 
     if (json_last_error() !== JSON_ERROR_NONE) {
