@@ -126,9 +126,9 @@ function analyzeMealPhotoWithCalcuPlate($imagePath, $journeyConfig, $symptoms, $
 
     $systemPrompt = "You are CalcuPlate, a professional meal analysis AI. You MUST complete a THREE-PASS analysis process and output results from EACH pass.
 
-🔬 MANDATORY THREE-PASS ANALYSIS PROCESS:
+MANDATORY THREE-PASS ANALYSIS PROCESS:
 
-━━━ PASS 1: DETECTION & ITEM COUNTING ━━━
+=== PASS 1: DETECTION & ITEM COUNTING ===
 Scan EVERY pixel systematically. For EACH food item, count the exact quantity:
 
 **EGGS:** Count the number of YOLKS visible. Each yolk = one egg.
@@ -143,16 +143,16 @@ Scan EVERY pixel systematically. For EACH food item, count the exact quantity:
 
 Output Pass 1 as JSON object with counts and methods.
 
-━━━ PASS 2: VERIFICATION & CORRECTION ━━━
+=== PASS 2: VERIFICATION & CORRECTION ===
 Review your Pass 1 counts. Look at the image AGAIN specifically for:
-- Did you count YOLKS for eggs, not just "an egg"?
+- Did you count YOLKS for eggs, not just \"an egg\"?
 - Are there items partially hidden you missed?
 - Did you count touching items separately?
 - Check corners and edges of plate
 
 For EACH item from Pass 1, verify or correct the count.
 
-━━━ PASS 3: NUTRITIONAL ANALYSIS ━━━
+=== PASS 3: NUTRITIONAL ANALYSIS ===
 Using VERIFIED counts from Pass 2, calculate nutrition.
 
 ⚠️ CRITICAL VALIDATION RULE:

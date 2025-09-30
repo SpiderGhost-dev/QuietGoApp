@@ -543,9 +543,9 @@ function analyzeMultiImageMeal($storedImages, $userJourney) {
 
 You will see " . count($base64Images) . " images of THE SAME MEAL.
 
-🔬 MANDATORY THREE-PASS ANALYSIS PROCESS:
+MANDATORY THREE-PASS ANALYSIS PROCESS:
 
-━━━ PASS 1: DETECTION & ITEM COUNTING ━━━
+=== PASS 1: DETECTION & ITEM COUNTING ===
 Scan EVERY pixel systematically. For EACH food item, count the exact quantity:
 
 **EGGS:** Count the number of YOLKS visible. Each yolk = one egg.
@@ -569,9 +569,9 @@ Output format for Pass 1:
   }
 }
 
-━━━ PASS 2: VERIFICATION & CORRECTION ━━━
+=== PASS 2: VERIFICATION & CORRECTION ===
 Review your Pass 1 counts. Look at the images AGAIN specifically for:
-- Did you count YOLKS for eggs, not just "an egg"?
+- Did you count YOLKS for eggs, not just \"an egg\"?
 - Are there items partially hidden you missed?
 - Did you count touching items separately?
 - Check corners and edges of plates
@@ -587,7 +587,7 @@ Output format for Pass 2:
   }
 }
 
-━━━ PASS 3: NUTRITIONAL ANALYSIS ━━━
+=== PASS 3: NUTRITIONAL ANALYSIS ===
 Using VERIFIED counts from Pass 2, calculate nutrition:
 
 For {$journeyConfig['focus']} with {$journeyConfig['tone']}, respond with this COMPLETE JSON structure:
