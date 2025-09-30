@@ -1520,7 +1520,10 @@ document.getElementById("upload-form").addEventListener("submit", function(e) {
         return response.json();
     })
     .then(result => {
-        console.log("Upload result:", result);
+        console.log('Upload result:', result);
+        console.log('result.ai_analysis:', result.ai_analysis);
+        console.log('result.thumbnail:', result.thumbnail);
+        console.log('result.metadata:', result.metadata);
 
         if (result.status === "success") {
             // Close upload modal

@@ -58,7 +58,7 @@ function savePhoto($userId, $photoData) {
             file_size, mime_type, location_latitude, location_longitude,
             location_accuracy, context_time, context_symptoms, context_notes,
             original_filename, upload_timestamp
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
     ");
     
     $stmt->execute([
@@ -98,7 +98,7 @@ function saveStoolAnalysis($photoId, $userId, $analysis) {
             color_assessment, consistency, volume_estimate, confidence_score,
             health_insights, recommendations, reported_symptoms, correlation_note,
             ai_model, processing_time, analysis_timestamp
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
     ");
     
     return $stmt->execute([
@@ -141,7 +141,7 @@ function saveMealAnalysis($photoId, $userId, $analysis) {
             confidence_score, nutrition_insights, recommendations,
             journey_specific_note, ai_model, model_tier, cost_tier,
             processing_time, analysis_timestamp
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
     ");
     
     return $stmt->execute([
@@ -184,7 +184,7 @@ function saveSymptomAnalysis($photoId, $userId, $analysis) {
             visual_characteristics, confidence_score, tracking_recommendations,
             correlation_potential, reported_symptoms, ai_model,
             processing_time, analysis_timestamp
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
     ");
     
     return $stmt->execute([
@@ -220,7 +220,7 @@ function saveManualMealLog($userId, $photoId, $mealData) {
             protein_grams, carb_grams, fat_grams,
             hunger_before, fullness_after, energy_level, meal_notes,
             log_timestamp
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
     ");
     
     return $stmt->execute([
@@ -262,7 +262,7 @@ function trackAICost($userId, $costData) {
         INSERT INTO ai_cost_tracking (
             user_id, photo_type, ai_model, model_tier,
             cost_estimate, tokens_used, processing_time, request_timestamp
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'))
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
     ");
     
     return $stmt->execute([

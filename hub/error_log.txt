@@ -95,3 +95,106 @@
 [30-Sep-2025 17:54:54 UTC] QuietGo upload.php: Processing POST request
 [30-Sep-2025 17:54:54 UTC] QuietGo upload.php: Photo type = meal
 [30-Sep-2025 17:54:54 UTC] PHP Fatal error:  Cannot redeclare function getJourneyPromptConfig() (previously declared in /Users/davidbaker/Desktop/QuietGoApp/hub/includes/openai-config.php:378) in /Users/davidbaker/Desktop/QuietGoApp/hub/includes/analysis-functions.php on line 10
+55
+[30-Sep-2025 17:59:55 UTC] QuietGo upload.php: Script started at 2025-09-30 17:59:55
+[30-Sep-2025 17:59:55 UTC] QuietGo: isAjax = false, X-Requested-With = not set
+[30-Sep-2025 18:00:02 UTC] QuietGo upload.php: Script started at 2025-09-30 18:00:02
+[30-Sep-2025 18:00:02 UTC] QuietGo: isAjax = true, X-Requested-With = XMLHttpRequest
+[30-Sep-2025 18:00:02 UTC] QuietGo upload.php: Processing POST request
+[30-Sep-2025 18:00:02 UTC] QuietGo upload.php: Photo type = meal
+[30-Sep-2025 18:00:02 UTC] QuietGo CalcuPlate: Starting analysis for: /Users/davidbaker/Desktop/QuietGoApp/hub/includes/../QuietGoData/users/admin@quietgo.app/photos/meal/2025-09/20250930_180002_68dc1aa22a131.jpeg
+[30-Sep-2025 18:00:02 UTC] QuietGo Image: Encoded 9762 bytes for AI analysis
+[30-Sep-2025 18:00:02 UTC] QuietGo CalcuPlate: Image encoded successfully, preparing prompt
+[30-Sep-2025 18:00:02 UTC] PHP Warning:  Undefined array key "meal_focus" in /Users/davidbaker/Desktop/QuietGoApp/hub/includes/analysis-functions.php on line 232
+[30-Sep-2025 18:00:02 UTC] QuietGo CalcuPlate: Using direct OpenAI call
+[30-Sep-2025 18:00:02 UTC] QuietGo AI Request: Model=gpt-4o, Messages=2, MaxTokens=1000
+[30-Sep-2025 18:00:06 UTC] QuietGo AI Success: Tokens used=1520
+[30-Sep-2025 18:00:06 UTC] QuietGo CalcuPlate: Response received, has error: NO
+[30-Sep-2025 18:00:06 UTC] QuietGo CalcuPlate Analysis Complete:
+[30-Sep-2025 18:00:06 UTC]  - Analysis Type: complete_meal
+[30-Sep-2025 18:00:06 UTC]    • 1 cupx Cappuccino: 80 cal (beverage)
+[30-Sep-2025 18:00:06 UTC]    • 2x Croissant: 460 cal (pastry)
+[30-Sep-2025 18:00:06 UTC]  - Total Calories: 540
+[30-Sep-2025 18:00:06 UTC]  - Macros: P:12g C:55g F:30g
+[30-Sep-2025 18:00:06 UTC]  - Sodium: 400mg
+[30-Sep-2025 18:00:06 UTC]  - Confidence: 90
+[30-Sep-2025 18:00:06 UTC]  - Data Source: Generic breakfast database
+[30-Sep-2025 18:00:06 UTC] QuietGo: Attempting to get/create user in database
+[30-Sep-2025 18:00:06 UTC] QuietGo DB: Connected successfully to MySQL - quietgo_local
+[30-Sep-2025 18:00:06 UTC] QuietGo: User ID retrieved: 1
+[30-Sep-2025 18:00:06 UTC] QuietGo ERROR: Failed to save photo metadata - SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '('now'))' at line 6
+[30-Sep-2025 18:00:06 UTC] QuietGo: Sending JSON response for AJAX request
+[30-Sep-2025 18:00:06 UTC] QuietGo: uploadResult status = success
+[30-Sep-2025 18:00:06 UTC] QuietGo: JSON response length = 2125
+[30-Sep-2025 18:00:39 UTC] QuietGo upload.php: Script started at 2025-09-30 18:00:39
+[30-Sep-2025 18:00:39 UTC] QuietGo: isAjax = false, X-Requested-With = not set
+[30-Sep-2025 18:00:50 UTC] QuietGo upload.php: Script started at 2025-09-30 18:00:50
+[30-Sep-2025 18:00:50 UTC] QuietGo: isAjax = true, X-Requested-With = XMLHttpRequest
+[30-Sep-2025 18:00:50 UTC] QuietGo upload.php: Processing POST request
+[30-Sep-2025 18:00:50 UTC] QuietGo upload.php: Photo type = meal
+[30-Sep-2025 18:00:50 UTC] QuietGo CalcuPlate: Starting analysis for: /Users/davidbaker/Desktop/QuietGoApp/hub/includes/../QuietGoData/users/admin@quietgo.app/photos/meal/2025-09/20250930_180050_68dc1ad2ac5e7.jpeg
+[30-Sep-2025 18:00:50 UTC] QuietGo Image: Encoded 9662 bytes for AI analysis
+[30-Sep-2025 18:00:50 UTC] QuietGo CalcuPlate: Image encoded successfully, preparing prompt
+[30-Sep-2025 18:00:50 UTC] PHP Warning:  Undefined array key "meal_focus" in /Users/davidbaker/Desktop/QuietGoApp/hub/includes/analysis-functions.php on line 232
+[30-Sep-2025 18:00:50 UTC] QuietGo CalcuPlate: Using direct OpenAI call
+[30-Sep-2025 18:00:50 UTC] QuietGo AI Request: Model=gpt-4o, Messages=2, MaxTokens=1000
+[30-Sep-2025 18:00:55 UTC] QuietGo AI Success: Tokens used=1636
+[30-Sep-2025 18:00:55 UTC] QuietGo CalcuPlate: Response received, has error: NO
+[30-Sep-2025 18:00:55 UTC] QuietGo CalcuPlate Analysis Complete:
+[30-Sep-2025 18:00:55 UTC]  - Analysis Type: complete_meal
+[30-Sep-2025 18:00:55 UTC]    • 10x Chicken nuggets: 440 cal (fast_food)
+[30-Sep-2025 18:00:55 UTC]    • mediumx French fries: 320 cal (fast_food)
+[30-Sep-2025 18:00:55 UTC]    • 21ozx Coca-Cola: 200 cal (beverage)
+[30-Sep-2025 18:00:55 UTC]  - Condiments Used: ["BBQ sauce (2 packets, 100 cal)"]
+[30-Sep-2025 18:00:55 UTC]  - Total Calories: 1060
+[30-Sep-2025 18:00:55 UTC]  - Macros: P:32g C:130g F:48g
+[30-Sep-2025 18:00:55 UTC]  - Sodium: 2020mg
+[30-Sep-2025 18:00:55 UTC]  - Confidence: 95
+[30-Sep-2025 18:00:55 UTC]  - Data Source: Restaurant: McDonald's
+[30-Sep-2025 18:00:55 UTC] QuietGo: Attempting to get/create user in database
+[30-Sep-2025 18:00:55 UTC] QuietGo DB: Connected successfully to MySQL - quietgo_local
+[30-Sep-2025 18:00:55 UTC] QuietGo: User ID retrieved: 1
+[30-Sep-2025 18:00:55 UTC] QuietGo ERROR: Failed to save photo metadata - SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '('now'))' at line 6
+[30-Sep-2025 18:00:55 UTC] QuietGo: Sending JSON response for AJAX request
+[30-Sep-2025 18:00:55 UTC] QuietGo: uploadResult status = success
+[30-Sep-2025 18:00:55 UTC] QuietGo: JSON response length = 2311
+[30-Sep-2025 18:02:02 UTC] QuietGo upload.php: Script started at 2025-09-30 18:02:02
+[30-Sep-2025 18:02:02 UTC] QuietGo: isAjax = true, X-Requested-With = XMLHttpRequest
+[30-Sep-2025 18:02:02 UTC] QuietGo upload.php: Processing POST request
+[30-Sep-2025 18:02:02 UTC] QuietGo upload.php: Photo type = meal
+[30-Sep-2025 18:02:02 UTC] QuietGo CalcuPlate: Starting analysis for: /Users/davidbaker/Desktop/QuietGoApp/hub/includes/../QuietGoData/users/admin@quietgo.app/photos/meal/2025-09/20250930_180202_68dc1b1a2db3c.jpg
+[30-Sep-2025 18:02:02 UTC] QuietGo Image: Encoded 9509 bytes for AI analysis
+[30-Sep-2025 18:02:02 UTC] QuietGo CalcuPlate: Image encoded successfully, preparing prompt
+[30-Sep-2025 18:02:02 UTC] PHP Warning:  Undefined array key "meal_focus" in /Users/davidbaker/Desktop/QuietGoApp/hub/includes/analysis-functions.php on line 232
+[30-Sep-2025 18:02:02 UTC] QuietGo CalcuPlate: Using direct OpenAI call
+[30-Sep-2025 18:02:02 UTC] QuietGo AI Request: Model=gpt-4o, Messages=2, MaxTokens=1000
+[30-Sep-2025 18:02:04 UTC] QuietGo AI Success: Tokens used=1415
+[30-Sep-2025 18:02:04 UTC] QuietGo CalcuPlate: Response received, has error: NO
+[30-Sep-2025 18:02:04 UTC] QuietGo CalcuPlate: Non-food image detected
+[30-Sep-2025 18:02:04 UTC] QuietGo Multi-Image Analysis Error: This doesn't appear to be a meal photo. Please upload a photo of food, or use the Stool or Symptom upload options for other types of health tracking.
+[30-Sep-2025 18:02:04 UTC] QuietGo DB: Connected successfully to MySQL - quietgo_local
+[30-Sep-2025 18:02:04 UTC] QuietGo upload.php: Exception caught - SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '('now'))' at line 6
+[30-Sep-2025 18:02:04 UTC] QuietGo upload.php: Stack trace - #0 /Users/davidbaker/Desktop/QuietGoApp/hub/includes/db-operations.php(55): PDO->prepare('\n        INSERT...')
+#1 /Users/davidbaker/Desktop/QuietGoApp/hub/upload.php(471): savePhoto(1, Array)
+#2 /Users/davidbaker/Desktop/QuietGoApp/hub/upload.php(146): handleMultiImageMeal(Array, Array, Array)
+#3 {main}
+[30-Sep-2025 18:06:23 UTC] QuietGo upload.php: Script started at 2025-09-30 18:06:23
+[30-Sep-2025 18:06:23 UTC] QuietGo: isAjax = false, X-Requested-With = not set
+[30-Sep-2025 18:06:36 UTC] QuietGo upload.php: Script started at 2025-09-30 18:06:36
+[30-Sep-2025 18:06:36 UTC] QuietGo: isAjax = true, X-Requested-With = XMLHttpRequest
+[30-Sep-2025 18:06:36 UTC] QuietGo upload.php: Processing POST request
+[30-Sep-2025 18:06:36 UTC] QuietGo upload.php: Photo type = meal
+[30-Sep-2025 18:06:37 UTC] QuietGo CalcuPlate: Starting analysis for: /Users/davidbaker/Desktop/QuietGoApp/hub/includes/../QuietGoData/users/admin@quietgo.app/photos/meal/2025-09/20250930_180636_68dc1c2cf0897.jpg
+[30-Sep-2025 18:06:37 UTC] QuietGo Image: Encoded 9509 bytes for AI analysis
+[30-Sep-2025 18:06:37 UTC] QuietGo CalcuPlate: Image encoded successfully, preparing prompt
+[30-Sep-2025 18:06:37 UTC] PHP Warning:  Undefined array key "meal_focus" in /Users/davidbaker/Desktop/QuietGoApp/hub/includes/analysis-functions.php on line 232
+[30-Sep-2025 18:06:37 UTC] QuietGo CalcuPlate: Using direct OpenAI call
+[30-Sep-2025 18:06:37 UTC] QuietGo AI Request: Model=gpt-4o, Messages=2, MaxTokens=1000
+[30-Sep-2025 18:06:38 UTC] QuietGo AI Success: Tokens used=1415
+[30-Sep-2025 18:06:38 UTC] QuietGo CalcuPlate: Response received, has error: NO
+[30-Sep-2025 18:06:38 UTC] QuietGo CalcuPlate: Non-food image detected
+[30-Sep-2025 18:06:38 UTC] QuietGo Multi-Image Analysis Error: This doesn't appear to be a meal photo. Please upload a photo of food, or use the Stool or Symptom upload options for other types of health tracking.
+[30-Sep-2025 18:06:38 UTC] QuietGo DB: Connected successfully to MySQL - quietgo_local
+[30-Sep-2025 18:06:38 UTC] QuietGo: Sending JSON response for AJAX request
+[30-Sep-2025 18:06:38 UTC] QuietGo: uploadResult status = success
+[30-Sep-2025 18:06:38 UTC] QuietGo: JSON response length = 444
