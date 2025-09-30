@@ -628,7 +628,7 @@ function generateAIAnalysis($postData, $userJourney, $hasCalcuPlate, $imagePath 
 
 // Analysis functions now in /includes/analysis-functions.php
 
-include __DIR__ . '/includes/header-hub.php';
+include __DIR__ . "/includes/header-hub.php";
 ?>
 
 <style>
@@ -1593,14 +1593,14 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <!-- Success Modal -->
-<?php include __DIR__ . '/includes/success-modal.php'; ?>
+<?php include __DIR__ . "/includes/success-modal.php"; ?>
 
 <!-- Clarification Modal for CalcuPlate Pro+ -->
 <?php if ($hasCalcuPlate): ?>
-<?php include __DIR__ . '/includes/clarification-modal.php'; ?>
+<?php include __DIR__ . "/includes/clarification-modal.php"; ?>
 <?php endif; ?>
 
-<?php include __DIR__ . '/includes/footer-hub.php'; ?>
+<?php include __DIR__ . "/includes/footer-hub.php"; ?>
 
 <!-- AI Support Chatbot -->
-<?php include __DIR__ . '/../includes/chatbot-widget.php'; ?>
+<?php include __DIR__ . "/../includes/chatbot-widget.php"; ?>
