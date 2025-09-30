@@ -378,3 +378,75 @@ iously declared in /Users/davidbaker/Desktop/QuietGoApp/hub/includes/openai-conf
 [30-Sep-2025 19:11:32 UTC] QuietGo: uploadResult status = success
 [30-Sep-2025 19:11:32 UTC] QuietGo: JSON response length = 444
 [30-Sep-2025 19:11:40 UTC] QuietGo upload.php: Script started at 2025-09-30 19:11:40
+[30-Sep-2025 19:15:48 UTC] QuietGo upload.php: Script started at 2025-09-30 19:15:48
+[30-Sep-2025 19:15:48 UTC] QuietGo: isAjax = false, X-Requested-With = not set
+[30-Sep-2025 19:15:55 UTC] QuietGo upload.php: Script started at 2025-09-30 19:15:55
+[30-Sep-2025 19:15:55 UTC] QuietGo: isAjax = true, X-Requested-With = XMLHttpRequest
+[30-Sep-2025 19:15:55 UTC] QuietGo upload.php: Processing POST request
+[30-Sep-2025 19:15:55 UTC] QuietGo upload.php: Photo type = meal
+[30-Sep-2025 19:15:55 UTC] QuietGo CalcuPlate: Starting analysis for: /Users/davidbaker/Desktop/QuietGoApp/hub/includes/../QuietGoData/users/admin@quietgo.app/photos/meal/2025-09/20250930_191555_68dc2c6b8c9d2.jpg
+[30-Sep-2025 19:15:55 UTC] QuietGo Image: Encoded 9509 bytes for AI analysis
+[30-Sep-2025 19:15:55 UTC] QuietGo CalcuPlate: Image encoded successfully, preparing prompt
+[30-Sep-2025 19:15:55 UTC] QuietGo CalcuPlate: Using direct OpenAI call
+[30-Sep-2025 19:15:55 UTC] QuietGo AI Request: Model=gpt-4o, Messages=2, MaxTokens=1000
+[30-Sep-2025 19:15:59 UTC] QuietGo AI Success: Tokens used=1656
+[30-Sep-2025 19:15:59 UTC] QuietGo CalcuPlate: Response received, has error: NO
+[30-Sep-2025 19:15:59 UTC] QuietGo CalcuPlate Analysis Complete:
+[30-Sep-2025 19:15:59 UTC]  - Analysis Type: meal_component
+[30-Sep-2025 19:15:59 UTC]    • 12oz glassx Cola: 140 cal (beverage)
+[30-Sep-2025 19:15:59 UTC]  - Total Calories: 140
+[30-Sep-2025 19:15:59 UTC]  - Macros: P:0g C:39g F:0g
+[30-Sep-2025 19:15:59 UTC]  - Sodium: 45mg
+[30-Sep-2025 19:15:59 UTC]  - Confidence: 95
+[30-Sep-2025 19:15:59 UTC]  - Data Source: Generic beverage database
+[30-Sep-2025 19:15:59 UTC] QuietGo: Attempting to get/create user in database
+[30-Sep-2025 19:15:59 UTC] QuietGo DB: Connected successfully to MySQL - quietgo_local
+[30-Sep-2025 19:15:59 UTC] QuietGo: User ID retrieved: 1
+[30-Sep-2025 19:15:59 UTC] QuietGo: Sending JSON response for AJAX request
+[30-Sep-2025 19:15:59 UTC] QuietGo: uploadResult status = success
+[30-Sep-2025 19:15:59 UTC] QuietGo: JSON response length = 2050
+[30-Sep-2025 19:16:13 UTC] QuietGo upload.php: Script started at 2025-09-30 19:16:13
+[30-Sep-2025 19:16:13 UTC] QuietGo: isAjax = true, X-Requested-With = XMLHttpRequest
+[30-Sep-2025 19:16:13 UTC] QuietGo upload.php: Processing POST request
+[30-Sep-2025 19:16:13 UTC] QuietGo upload.php: Photo type = meal
+[30-Sep-2025 19:16:13 UTC] QuietGo CalcuPlate: Starting analysis for: /Users/davidbaker/Desktop/QuietGoApp/hub/includes/../QuietGoData/users/admin@quietgo.app/photos/meal/2025-09/20250930_191613_68dc2c7d3f03d.jpg
+[30-Sep-2025 19:16:13 UTC] QuietGo Image: Encoded 10404 bytes for AI analysis
+[30-Sep-2025 19:16:13 UTC] QuietGo CalcuPlate: Image encoded successfully, preparing prompt
+[30-Sep-2025 19:16:13 UTC] QuietGo CalcuPlate: Using direct OpenAI call
+[30-Sep-2025 19:16:13 UTC] QuietGo AI Request: Model=gpt-4o, Messages=2, MaxTokens=1000
+[30-Sep-2025 19:16:18 UTC] QuietGo AI Success: Tokens used=1800
+[30-Sep-2025 19:16:18 UTC] QuietGo CalcuPlate: Response received, has error: NO
+[30-Sep-2025 19:16:18 UTC] QuietGo CalcuPlate Analysis Complete:
+[30-Sep-2025 19:16:18 UTC]  - Analysis Type: complete_meal
+[30-Sep-2025 19:16:18 UTC]    • 1 servingx Grilled chicken: 200 cal (protein)
+[30-Sep-2025 19:16:18 UTC]    • 1/2 cupx Brown rice: 110 cal (carbohydrate)
+[30-Sep-2025 19:16:18 UTC]    • 1/2 cupx Mixed vegetables: 50 cal (vegetable)
+[30-Sep-2025 19:16:18 UTC]    • 1 servingx Salad with cherry tomatoes: 30 cal (vegetable)
+[30-Sep-2025 19:16:18 UTC]  - Total Calories: 390
+[30-Sep-2025 19:16:18 UTC]  - Macros: P:30g C:45g F:5g
+[30-Sep-2025 19:16:18 UTC]  - Sodium: 400mg
+[30-Sep-2025 19:16:18 UTC]  - Confidence: 90
+[30-Sep-2025 19:16:18 UTC]  - Data Source: Generic nutritional database
+[30-Sep-2025 19:16:18 UTC] QuietGo: Attempting to get/create user in database
+[30-Sep-2025 19:16:18 UTC] QuietGo DB: Connected successfully to MySQL - quietgo_local
+[30-Sep-2025 19:16:18 UTC] QuietGo: User ID retrieved: 1
+[30-Sep-2025 19:16:18 UTC] QuietGo: Sending JSON response for AJAX request
+[30-Sep-2025 19:16:18 UTC] QuietGo: uploadResult status = success
+[30-Sep-2025 19:16:18 UTC] QuietGo: JSON response length = 2478
+[30-Sep-2025 19:16:57 UTC] QuietGo upload.php: Script started at 2025-09-30 19:16:57
+[30-Sep-2025 19:16:57 UTC] QuietGo: isAjax = true, X-Requested-With = XMLHttpRequest
+[30-Sep-2025 19:16:57 UTC] QuietGo upload.php: Processing POST request
+[30-Sep-2025 19:16:57 UTC] QuietGo upload.php: Photo type = meal
+[30-Sep-2025 19:16:57 UTC] QuietGo CalcuPlate: Starting analysis for: /Users/davidbaker/Desktop/QuietGoApp/hub/includes/../QuietGoData/users/admin@quietgo.app/photos/meal/2025-09/20250930_191657_68dc2ca99e894.jpg
+[30-Sep-2025 19:16:57 UTC] QuietGo Image: Encoded 9509 bytes for AI analysis
+[30-Sep-2025 19:16:57 UTC] QuietGo CalcuPlate: Image encoded successfully, preparing prompt
+[30-Sep-2025 19:16:57 UTC] QuietGo CalcuPlate: Using direct OpenAI call
+[30-Sep-2025 19:16:57 UTC] QuietGo AI Request: Model=gpt-4o, Messages=2, MaxTokens=1000
+[30-Sep-2025 19:17:00 UTC] QuietGo AI Success: Tokens used=1544
+[30-Sep-2025 19:17:00 UTC] QuietGo CalcuPlate: Response received, has error: NO
+[30-Sep-2025 19:17:00 UTC] QuietGo CalcuPlate: Non-food image detected
+[30-Sep-2025 19:17:00 UTC] QuietGo Multi-Image Analysis Error: This doesn't appear to be a meal photo. Please upload a photo of food, or use the Stool or Symptom upload options for other types of health tracking.
+[30-Sep-2025 19:17:00 UTC] QuietGo DB: Connected successfully to MySQL - quietgo_local
+[30-Sep-2025 19:17:00 UTC] QuietGo: Sending JSON response for AJAX request
+[30-Sep-2025 19:17:00 UTC] QuietGo: uploadResult status = success
+[30-Sep-2025 19:17:00 UTC] QuietGo: JSON response length = 444
