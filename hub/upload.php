@@ -644,9 +644,16 @@ function generateAIAnalysis($postData, $userJourney, $hasCalcuPlate, $imagePath 
 
 // Analysis functions now in /includes/analysis-functions.php
 
-// CRITICAL: Don't include header for AJAX requests
-if (!$isAjax) {
-    include __DIR__ . "/includes/header-hub.php";
+// CRITICAL: Only output HTML if NOT an AJAX request
+if ($isAjax) {
+    // For AJAX, we should have already exited above with JSON
+    // If we're still here, something went wrong
+    error_log("QuietGo ERROR: AJAX request reached HTML section");
+    exit();
+}
+
+// Now safe to output HTML for normal page loads
+include __DIR__ . "/includes/header-hub.php";
 ?>
 
 <style>
@@ -1621,7 +1628,4 @@ document.addEventListener("DOMContentLoaded", function() {
 <?php include __DIR__ . "/includes/footer-hub.php"; ?>
 
 <!-- AI Support Chatbot -->
-<?php 
-    include __DIR__ . "/../includes/chatbot-widget.php";
-} // End of if (!$isAjax)
-?>
+<?php include __DIR__ . "/../includes/chatbot-widget.php"; ?>
