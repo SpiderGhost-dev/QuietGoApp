@@ -1000,7 +1000,7 @@ main.hub-main section.subscription-info * {
                         <div class="form-group">
                             <label>Energy Level (1-10 scale)</label>
                             <input type="range" name="energy_level" min="1" max="10" value="5"
-                                   oninput="document.getElementById("energy_display").textContent = this.value">
+                                   oninput="document.getElementById('energy_display').textContent = this.value">
                             <div style="text-align: center; margin-top: 0.5rem;">
                                 <span style="color: var(--text-muted);">Energy: </span>
                                 <span id="energy_display" style="color: var(--text-primary); font-weight: 600;">5</span>/10
@@ -1044,7 +1044,7 @@ main.hub-main section.subscription-info * {
         <div class="container">
             <div class="categories-grid">
                 <!-- Stool Photos -->
-                <article class="category-card" onclick="openUploadModal("stool")">
+                <article class="category-card" onclick="openUploadModal('stool')">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
                         <div style="font-size: 3rem;">🚽</div>
                         <span style="background: var(--success-color); color: white; padding: 0.25rem 0.75rem; border-radius: 15px; font-size: 0.75rem; font-weight: 600;">AI Analysis</span>
@@ -1064,7 +1064,7 @@ main.hub-main section.subscription-info * {
                 </article>
 
                 <!-- Meal Photos -->
-                <article class="category-card" onclick="openUploadModal("meal")">
+                <article class="category-card" onclick="openUploadModal('meal')">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
                         <div style="font-size: 3rem;">🍽️</div>
                         <span style="background: <?php echo $hasCalcuPlate ? "var(--success-color)" : "var(--slate-blue)"; ?>; color: white; padding: 0.25rem 0.75rem; border-radius: 15px; font-size: 0.75rem; font-weight: 600;">
@@ -1092,7 +1092,7 @@ main.hub-main section.subscription-info * {
                 </article>
 
                 <!-- Symptom Photos -->
-                <article class="category-card" onclick="openUploadModal("symptom")">
+                <article class="category-card" onclick="openUploadModal('symptom')">
                     <div class="card-content">
                         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
                             <div style="font-size: 3rem;">🩺</div>
@@ -1151,7 +1151,7 @@ main.hub-main section.subscription-info * {
 
             <!-- Multi-Photo Upload Area -->
             <div id="photo-upload-container">
-                <div id="initial-upload-area" style="border: 2px dashed var(--card-border); border-radius: 8px; padding: 2rem; text-align: center; margin: 1rem 0; cursor: pointer;" onclick="document.getElementById("file-input").click()">
+                <div id="initial-upload-area" style="border: 2px dashed var(--card-border); border-radius: 8px; padding: 2rem; text-align: center; margin: 1rem 0; cursor: pointer;" onclick="document.getElementById('file-input').click()">
                     <div style="font-size: 3rem; margin-bottom: 1rem;" id="upload-icon">📁</div>
                     <h4 style="color: var(--text-primary); margin: 0 0 0.5rem 0;">Choose First Photo</h4>
                     <p style="color: var(--text-secondary); margin: 0;">Click here to select your first image</p>
@@ -1161,7 +1161,7 @@ main.hub-main section.subscription-info * {
                     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 1rem; margin-bottom: 1rem;" id="preview-images"></div>
 
                     <div style="text-align: center;">
-                        <button type="button" id="add-more-btn" onclick="document.getElementById("file-input").click()" style="background: var(--primary-blue); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 50px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem;">
+                        <button type="button" id="add-more-btn" onclick="document.getElementById('file-input').click()" style="background: var(--primary-blue); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 50px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem;">
                             <span style="font-size: 1.2rem;">+</span> Add More Photos
                         </button>
                         <p style="color: var(--text-muted); font-size: 0.8rem; margin: 0.5rem 0 0 0;">Max 10MB per photo, 50MB total</p>
@@ -1216,7 +1216,7 @@ function openUploadModal(photoType) {
                 "Upload multiple angles, then complete the manual logging form";
             uploadIcon.textContent = "🍽️";
             break;
-        case "symptom"
+        case "symptom":
             modalTitle.textContent = "🩺 Upload Symptom Photo";
             modalSubtitle.textContent = "Document physical symptoms for pattern tracking";
             uploadIcon.textContent = "🩺";
@@ -1247,7 +1247,7 @@ function closeUploadModal() {
     const previewImages = document.getElementById("preview-images");
     const fileInput = document.getElementById("file-input");
     const addMoreBtn = document.getElementById("add-more-btn");
-    const submitBtn = form.querySelector("button[type="submit"]");
+    const submitBtn = form.querySelector('button[type="submit"]');
 
     // Hide modal
     modal.style.display = "none";
@@ -1270,7 +1270,7 @@ function closeUploadModal() {
 
     // Reset button text
     if (addMoreBtn) {
-        addMoreBtn.innerHTML = "<span style="font-size: 1.2rem;">+</span> Add More Photos";
+        addMoreBtn.innerHTML = '<span style="font-size: 1.2rem;">+</span> Add More Photos';
     }
 
     // Reset submit button text and state
@@ -1463,7 +1463,7 @@ document.getElementById("upload-form").addEventListener("submit", function(e) {
     formData.append("accuracy", document.getElementById("location-accuracy").value);
 
     // Show loading state
-    const submitBtn = this.querySelector("button[type="submit"]");
+    const submitBtn = this.querySelector('button[type="submit"]');
     const originalText = submitBtn.textContent;
     submitBtn.textContent = selectedFile.length > 1 ?
         `🔄 Analyzing ${selectedFile.length} photos...` :
@@ -1553,10 +1553,10 @@ document.addEventListener("DOMContentLoaded", function() {
     if (manualMealForm) {
         manualMealForm.addEventListener("submit", function(e) {
             // Remove HTML5 validation that might cause "invalid value" errors
-            const timeInput = this.querySelector("input[name="meal_time"]");
-            const mealTypeSelect = this.querySelector("select[name="meal_type"]");
-            const portionSelect = this.querySelector("select[name="portion_size"]");
-            const mainFoodsTextarea = this.querySelector("textarea[name="main_foods"]");
+            const timeInput = this.querySelector('input[name="meal_time"]');
+            const mealTypeSelect = this.querySelector('select[name="meal_type"]');
+            const portionSelect = this.querySelector('select[name="portion_size"]');
+            const mainFoodsTextarea = this.querySelector('textarea[name="main_foods"]');
 
             // Custom validation instead of HTML5
             let errors = [];
