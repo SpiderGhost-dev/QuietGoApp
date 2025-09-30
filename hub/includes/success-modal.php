@@ -285,6 +285,9 @@ function closeSuccessModal() {
 }
 
 function showSuccessModal(result) {
+    console.log('showSuccessModal called with:', result);
+    console.log('result.ai_analysis:', result.ai_analysis);
+    
     const modal = document.getElementById('success-modal');
     const body = document.getElementById('success-body');
     const icon = document.getElementById('success-icon');
@@ -314,6 +317,10 @@ function showSuccessModal(result) {
     
     const analysis = result.ai_analysis;
     const photoType = result.metadata?.photo_type || result.ai_analysis?.photo_type || 'general';
+    
+    console.log('photoType:', photoType);
+    console.log('analysis object:', analysis);
+    console.log('analysis.calcuplate:', analysis?.calcuplate);
     
     // Build image preview section
     let imagePreviewHTML = '';
