@@ -290,6 +290,28 @@ function showSuccessModal(result) {
     const icon = document.getElementById('success-icon');
     const title = document.getElementById('success-title');
     
+    // Check if there's an error in the response
+    if (result.ai_analysis && result.ai_analysis.error) {
+        icon.textContent = '⚠️';
+        title.textContent = 'Analysis Issue';
+        body.innerHTML = `
+            <div class="result-section">
+                <h3 style="color: #e74c3c;">⚠️ ${result.ai_analysis.error === 'not_food' ? 'Non-Food Image Detected' : 'Analysis Error'}</h3>
+                <p style="color: var(--text-secondary); margin: 1rem 0;">
+                    ${result.ai_analysis.message || 'There was an issue analyzing your photo.'}
+                </p>
+                <div style="margin-top: 1.5rem;">
+                    <button onclick="closeSuccessModal(); openUploadModal('meal')" 
+                            style="background: var(--primary-blue); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer;">
+                        🔄 Try Again
+                    </button>
+                </div>
+            </div>
+        `;
+        modal.style.display = 'flex';
+        return;
+    }
+    
     const analysis = result.ai_analysis;
     const photoType = result.metadata?.photo_type || result.ai_analysis?.photo_type || 'general';
     

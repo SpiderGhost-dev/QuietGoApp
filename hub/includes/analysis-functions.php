@@ -229,7 +229,7 @@ REMEMBER: Users pay for ACCURACY. Count correctly, identify types properly, incl
 Context: $notes
 Symptoms: $symptoms
 
-Analyze this meal photo for automatic nutritional logging with focus on {$journeyConfig['meal_focus']}.";
+Analyze this meal photo for automatic nutritional logging with focus on {$journeyConfig['focus']}.";
 
     $messages = [
         [
