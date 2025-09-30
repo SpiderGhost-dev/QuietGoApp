@@ -1429,8 +1429,12 @@ document.getElementById('upload-form').addEventListener('submit', function(e) {
             // Close upload modal
             closeUploadModal();
             
-            // Show success modal with AI results
-            if (!result.requires_manual_logging) {
+            // Check if clarification is needed (Pro+ CalcuPlate)
+            if (result.ai_analysis && result.ai_analysis.needs_clarification) {
+                // Show clarification modal for quick questions
+                showClarificationModal(result.ai_analysis.questions, result);
+            } else if (!result.requires_manual_logging) {
+                // Show success modal with AI results
                 showSuccessModal(result);
             } else {
                 // For Pro users with meal photos, reload to show manual logging form
@@ -1505,6 +1509,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <!-- Success Modal -->
 <?php include __DIR__ . '/includes/success-modal.php'; ?>
+
+<!-- Clarification Modal for CalcuPlate Pro+ -->
+<?php if ($hasCalcuPlate): ?>
+<?php include __DIR__ . '/includes/clarification-modal.php'; ?>
+<?php endif; ?>
 
 <?php include __DIR__ . '/includes/footer-hub.php'; ?>
 
