@@ -16,64 +16,72 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-$isAdminLoggedIn = isset($_SESSION['admin_logged_in']) ||
-                   (isset($_COOKIE['admin_logged_in']) && $_COOKIE['admin_logged_in'] === 'true') ||
-                   isset($_SESSION['hub_user']['is_admin_impersonation']);
+// Check for admin login in multiple ways
+$isAdminLoggedIn = false;
+if (isset($_SESSION["admin_logged_in"])) {
+    $isAdminLoggedIn = true;
+}
+if (isset($_COOKIE["admin_logged_in"]) && $_COOKIE["admin_logged_in"] === "true") {
+    $isAdminLoggedIn = true;
+}
+if (isset($_SESSION["hub_user"]) && isset($_SESSION["hub_user"]["is_admin_impersonation"])) {
+    $isAdminLoggedIn = true;
+}
 
-if (!isset($_SESSION['hub_user']) && !isset($_COOKIE['hub_auth']) && !$isAdminLoggedIn) {
-    header('Location: /hub/login.php');
+if (!isset($_SESSION["hub_user"]) && !isset($_COOKIE["hub_auth"]) && !$isAdminLoggedIn) {
+    header("Location: /hub/login.php");
     exit;
 }
 
-if ($isAdminLoggedIn && !isset($_SESSION['hub_user'])) {
-    $_SESSION['hub_user'] = [
-        'email' => 'admin@quietgo.app',
-        'name' => 'Admin User',
-        'login_time' => time(),
-        'is_admin_impersonation' => true,
-        'subscription_plan' => 'pro_plus',
-        'journey' => 'best_life'
+if ($isAdminLoggedIn && !isset($_SESSION["hub_user"])) {
+    $_SESSION["hub_user"] = [
+        "email" => "admin@quietgo.app",
+        "name" => "Admin User",
+        "login_time" => time(),
+        "is_admin_impersonation" => true,
+        "subscription_plan" => "pro_plus",
+        "journey" => "best_life"
     ];
 }
 
 // Get user subscription status and journey preferences
-$user = $_SESSION['hub_user'];
-$subscriptionPlan = $user['subscription_plan'] ?? 'free';
+$user = $_SESSION["hub_user"];
+$subscriptionPlan = $user["subscription_plan"] ?? "free";
 
 // CORRECTED SUBSCRIPTION LOGIC
-$hasCalcuPlate = in_array($subscriptionPlan, ['pro_plus']);  // Only Pro+ has CalcuPlate
-$isProUser = in_array($subscriptionPlan, ['pro', 'pro_plus']); // Pro and Pro+ have hub access
-$isFreeTier = ($subscriptionPlan === 'free');
+$hasCalcuPlate = in_array($subscriptionPlan, ["pro_plus"]);  // Only Pro+ has CalcuPlate
+$isProUser = in_array($subscriptionPlan, ["pro", "pro_plus"]); // Pro and Pro+ have hub access
+$isFreeTier = ($subscriptionPlan === "free");
 
 // Free users get NO hub access - redirect immediately
 if ($isFreeTier && !$isAdminLoggedIn) {
-    header('Location: /hub/login.php?message=pro_required');
+    header("Location: /hub/login.php?message=pro_required");
     exit;
 }
 
 // Journey personalization
-$userJourney = $user['journey'] ?? 'best_life';
+$userJourney = $user["journey"] ?? "best_life";
 $journeyConfig = [
-    'clinical' => [
-        'title' => '🏥 Clinical Focus',
-        'focus' => 'symptom patterns and provider collaboration',
-        'ai_tone' => 'clinical insights with medical terminology',
-        'meal_focus' => 'symptom triggers and digestive impact',
-        'recommendations' => 'healthcare provider communication and medical appointment preparation'
+    "clinical" => [
+        "title" => "🏥 Clinical Focus",
+        "focus" => "symptom patterns and provider collaboration",
+        "ai_tone" => "clinical insights with medical terminology",
+        "meal_focus" => "symptom triggers and digestive impact",
+        "recommendations" => "healthcare provider communication and medical appointment preparation"
     ],
-    'performance' => [
-        'title' => '💪 Peak Performance',
-        'focus' => 'nutrition impact on training and recovery',
-        'ai_tone' => 'performance-focused analysis and coaching',
-        'meal_focus' => 'energy, recovery, and performance optimization',
-        'recommendations' => 'performance enhancement, training optimization, and macro timing'
+    "performance" => [
+        "title" => "💪 Peak Performance",
+        "focus" => "nutrition impact on training and recovery",
+        "ai_tone" => "performance-focused analysis and coaching",
+        "meal_focus" => "energy, recovery, and performance optimization",
+        "recommendations" => "performance enhancement, training optimization, and macro timing"
     ],
-    'best_life' => [
-        'title' => '✨ Best Life Mode',
-        'focus' => 'energy levels and living your best life daily',
-        'ai_tone' => 'lifestyle optimization and feel-good insights',
-        'meal_focus' => 'energy levels and overall wellness',
-        'recommendations' => 'lifestyle improvements, wellness habits, and energy optimization'
+    "best_life" => [
+        "title" => "✨ Best Life Mode",
+        "focus" => "energy levels and living your best life daily",
+        "ai_tone" => "lifestyle optimization and feel-good insights",
+        "meal_focus" => "energy levels and overall wellness",
+        "recommendations" => "lifestyle improvements, wellness habits, and energy optimization"
     ]
 ];
 $currentJourneyConfig = $journeyConfig[$userJourney];
@@ -82,52 +90,52 @@ $currentJourneyConfig = $journeyConfig[$userJourney];
 $uploadResult = null;
 
 // Check for pending manual logging from previous upload (SESSION persistence)
-if (isset($_SESSION['pending_manual_logging'])) {
-    $uploadResult = $_SESSION['pending_manual_logging'];
-    unset($_SESSION['pending_manual_logging']); // Clear after retrieving
+if (isset($_SESSION["pending_manual_logging"])) {
+    $uploadResult = $_SESSION["pending_manual_logging"];
+    unset($_SESSION["pending_manual_logging"]); // Clear after retrieving
 }
 
 // Handle manual meal logging form submission (Pro users)
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['photo_filename']) && !isset($_FILES['health_item'])) {
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["photo_filename"]) && !isset($_FILES["health_item"])) {
     $uploadResult = handleManualMealLogging($_POST, $user);
 }
 
 // Check if this is an AJAX request - return JSON instead of HTML
-$isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
+$isAjax = !empty($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtolower($_SERVER["HTTP_X_REQUESTED_WITH"]) == "xmlhttprequest";
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['health_item'])) {
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_FILES["health_item"])) {
     try {
         error_log("QuietGo upload.php: Processing POST request");
         
         // Handle multiple file uploads properly
         $uploadResults = [];
-        $photoType = $_POST['photo_type'] ?? 'general';
+        $photoType = $_POST["photo_type"] ?? "general";
         
         error_log("QuietGo upload.php: Photo type = $photoType");
     
     // Check if files were actually uploaded
-    if (is_array($_FILES['health_item']['name'])) {
+    if (is_array($_FILES["health_item"]["name"])) {
         // Multiple files - check if any files were selected
         $hasFiles = false;
         $fileList = [];
-        for ($i = 0; $i < count($_FILES['health_item']['name']); $i++) {
-            if (!empty($_FILES['health_item']['name'][$i]) && $_FILES['health_item']['error'][$i] === UPLOAD_ERR_OK) {
+        for ($i = 0; $i < count($_FILES["health_item"]["name"]); $i++) {
+            if (!empty($_FILES["health_item"]["name"][$i]) && $_FILES["health_item"]["error"][$i] === UPLOAD_ERR_OK) {
                 $hasFiles = true;
                 $fileList[] = [
-                    'name' => $_FILES['health_item']['name'][$i],
-                    'type' => $_FILES['health_item']['type'][$i],
-                    'tmp_name' => $_FILES['health_item']['tmp_name'][$i],
-                    'error' => $_FILES['health_item']['error'][$i],
-                    'size' => $_FILES['health_item']['size'][$i]
+                    "name" => $_FILES["health_item"]["name"][$i],
+                    "type" => $_FILES["health_item"]["type"][$i],
+                    "tmp_name" => $_FILES["health_item"]["tmp_name"][$i],
+                    "error" => $_FILES["health_item"]["error"][$i],
+                    "size" => $_FILES["health_item"]["size"][$i]
                 ];
             }
         }
         
         if (!$hasFiles) {
-            $uploadResult = ['status' => 'error', 'message' => 'No files were selected for upload.'];
+            $uploadResult = ["status" => "error", "message" => "No files were selected for upload."];
         } else {
             // CRITICAL: For meal photos with CalcuPlate, aggregate all images
-            if ($photoType === 'meal' && $hasCalcuPlate && count($fileList) > 1) {
+            if ($photoType === "meal" && $hasCalcuPlate && count($fileList) > 1) {
                 // Process as multi-image meal for CalcuPlate
                 $uploadResult = handleMultiImageMeal($fileList, $_POST, $user);
             } else {
@@ -140,9 +148,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['health_item'])) {
                 // Use the first successful result for display
                 $uploadResult = null;
                 foreach ($uploadResults as $result) {
-                    if ($result['status'] === 'success') {
+                    if ($result["status"] === "success") {
                         $uploadResult = $result;
-                        $uploadResult['message'] = count($uploadResults) . ' photo(s) uploaded successfully!';
+                        $uploadResult["message"] = count($uploadResults) . " photo(s) uploaded successfully!";
                         break;
                     }
                 }
@@ -153,17 +161,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['health_item'])) {
         }
     } else {
         // Single file
-        if (!empty($_FILES['health_item']['name']) && $_FILES['health_item']['error'] === UPLOAD_ERR_OK) {
-            $uploadResult = handlePhotoUpload($_FILES['health_item'], $_POST, $user);
+        if (!empty($_FILES["health_item"]["name"]) && $_FILES["health_item"]["error"] === UPLOAD_ERR_OK) {
+            $uploadResult = handlePhotoUpload($_FILES["health_item"], $_POST, $user);
         } else {
-            $uploadResult = ['status' => 'error', 'message' => 'No file was selected for upload.'];
+            $uploadResult = ["status" => "error", "message" => "No file was selected for upload."];
         }
     }
     
     // If AJAX request, return JSON and exit
     if ($isAjax && $uploadResult) {
         ob_clean();
-        header('Content-Type: application/json');
+        header("Content-Type: application/json");
         echo json_encode($uploadResult);
         exit;
     }
@@ -173,17 +181,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['health_item'])) {
         error_log("QuietGo upload.php: Stack trace - " . $e->getTraceAsString());
         
         $uploadResult = [
-            'status' => 'error',
-            'message' => 'Server error: ' . $e->getMessage(),
-            'debug' => [
-                'file' => $e->getFile(),
-                'line' => $e->getLine()
+            "status" => "error",
+            "message" => "Server error: " . $e->getMessage(),
+            "debug" => [
+                "file" => $e->getFile(),
+                "line" => $e->getLine()
             ]
         ];
         
         if ($isAjax) {
             ob_clean();
-            header('Content-Type: application/json');
+            header("Content-Type: application/json");
             http_response_code(500);
             echo json_encode($uploadResult);
             exit;
@@ -195,30 +203,30 @@ function handlePhotoUpload($file, $postData, $user) {
     global $hasCalcuPlate, $userJourney;
 
     // Include storage helper and database operations
-    require_once __DIR__ . '/includes/storage-helper.php';
-    require_once __DIR__ . '/includes/db-operations.php';
+    require_once __DIR__ . "/includes/storage-helper.php";
+    require_once __DIR__ . "/includes/db-operations.php";
     $storage = getQuietGoStorage();
 
     // Ensure user structure exists
-    $storage->createUserStructure($user['email']);
+    $storage->createUserStructure($user["email"]);
 
-    if ($file['error'] !== UPLOAD_ERR_OK) {
-        return ['status' => 'error', 'message' => 'Upload failed: ' . $file['error']];
+    if ($file["error"] !== UPLOAD_ERR_OK) {
+        return ["status" => "error", "message" => "Upload failed: " . $file["error"]];
     }
 
     // Validate image file
-    $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    $allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
     $finfo = finfo_open(FILEINFO_MIME_TYPE);
-    $mimeType = finfo_file($finfo, $file['tmp_name']);
+    $mimeType = finfo_file($finfo, $file["tmp_name"]);
     finfo_close($finfo);
 
     if (!in_array($mimeType, $allowedTypes)) {
-        return ['status' => 'error', 'message' => 'Invalid file type. Please upload images only.'];
+        return ["status" => "error", "message" => "Invalid file type. Please upload images only."];
     }
 
     // Check file size (max 10MB)
-    if ($file['size'] > 10 * 1024 * 1024) {
-        return ['status' => 'error', 'message' => 'File too large. Maximum size is 10MB.'];
+    if ($file["size"] > 10 * 1024 * 1024) {
+        return ["status" => "error", "message" => "File too large. Maximum size is 10MB."];
     }
 
     // Location data
