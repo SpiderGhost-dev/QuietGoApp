@@ -844,17 +844,17 @@ main.hub-main section.subscription-info * {
 <main class="hub-main">
     <!-- Upload Result Display -->
     <?php if ($uploadResult): ?>
-    <section class="upload-results" style="background: <?php echo $uploadResult['status'] === 'success' ? 'var(--success-color)' : '#e74c3c'; ?>; color: white; padding: 1rem 0; text-align: center;">
+    <section class="upload-results" style="background: <?php echo $uploadResult["status"] === "success" ? "var(--success-color)" : "#e74c3c"; ?>; color: white; padding: 1rem 0; text-align: center;">
         <div class="container">
-            <?php if ($uploadResult['status'] === 'success'): ?>
+            <?php if ($uploadResult["status"] === "success"): ?>
                 ✅ Photo uploaded successfully!
-                <?php if (isset($uploadResult['requires_manual_logging']) && $uploadResult['requires_manual_logging']): ?>
+                <?php if (isset($uploadResult["requires_manual_logging"]) && $uploadResult["requires_manual_logging"]): ?>
                     Please complete the manual meal logging form below.
                 <?php else: ?>
                     AI analysis complete.
                 <?php endif; ?>
             <?php else: ?>
-                ❌ Upload failed: <?php echo htmlspecialchars($uploadResult['message']); ?>
+                ❌ Upload failed: <?php echo htmlspecialchars($uploadResult["message"]); ?>
             <?php endif; ?>
         </div>
     </section>
@@ -883,20 +883,20 @@ main.hub-main section.subscription-info * {
         <div class="container">
             <h1 style="color: var(--text-primary); font-size: 2.5rem; margin: 0 0 0.5rem 0;">📤 Upload & Analyze Photos</h1>
             <p style="color: var(--text-secondary); font-size: 1.2rem; margin: 0 0 1rem 0;">
-                Journey: <?php echo htmlspecialchars($currentJourneyConfig['title']); ?>
+                Journey: <?php echo htmlspecialchars($currentJourneyConfig["title"]); ?>
             </p>
             <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto;">
                 <?php if ($hasCalcuPlate): ?>
-                    Upload photos for instant AI analysis and automatic meal logging focused on <?php echo htmlspecialchars($currentJourneyConfig['meal_focus']); ?>.
+                    Upload photos for instant AI analysis and automatic meal logging focused on <?php echo htmlspecialchars($currentJourneyConfig["meal_focus"]); ?>.
                 <?php else: ?>
-                    Upload photos for AI stool analysis and manual meal logging focused on <?php echo htmlspecialchars($currentJourneyConfig['meal_focus']); ?>.
+                    Upload photos for AI stool analysis and manual meal logging focused on <?php echo htmlspecialchars($currentJourneyConfig["meal_focus"]); ?>.
                 <?php endif; ?>
             </p>
         </div>
     </section>
 
     <!-- Manual Meal Logging Form (shows after meal photo upload for Pro users) -->
-    <?php if ($uploadResult && isset($uploadResult['requires_manual_logging']) && $uploadResult['requires_manual_logging']): ?>
+    <?php if ($uploadResult && isset($uploadResult["requires_manual_logging"]) && $uploadResult["requires_manual_logging"]): ?>
     <section class="manual-meal-section">
         <div class="container">
             <div class="manual-meal-form active">
@@ -908,7 +908,7 @@ main.hub-main section.subscription-info * {
                 </div>
 
                 <form method="POST" action="" id="manual-meal-form">
-                    <input type="hidden" name="photo_filename" value="<?php echo htmlspecialchars($uploadResult['filename'] ?? ''); ?>">
+                    <input type="hidden" name="photo_filename" value="<?php echo htmlspecialchars($uploadResult["filename"] ?? ""); ?>">
 
                     <!-- Basic Meal Information -->
                     <div class="form-section">
@@ -1039,7 +1039,7 @@ main.hub-main section.subscription-info * {
     <?php endif; ?>
 
     <!-- Photo Upload Categories -->
-    <?php if (!($uploadResult && isset($uploadResult['requires_manual_logging']) && $uploadResult['requires_manual_logging'])): ?>
+    <?php if (!($uploadResult && isset($uploadResult["requires_manual_logging"]) && $uploadResult["requires_manual_logging"])): ?>
     <section class="upload-interface" style="padding: 2rem 0;">
         <div class="container">
             <div class="categories-grid">
@@ -1056,7 +1056,7 @@ main.hub-main section.subscription-info * {
                     <div style="margin-bottom: 1.5rem;">
                         <div style="color: var(--text-muted); font-size: 0.9rem; margin: 0.25rem 0;">• Bristol Scale classification</div>
                         <div style="color: var(--text-muted); font-size: 0.9rem; margin: 0.25rem 0;">• Color and consistency analysis</div>
-                        <div style="color: var(--text-muted); font-size: 0.9rem; margin: 0.25rem 0;">• <?php echo htmlspecialchars(ucfirst($currentJourneyConfig['ai_tone'])); ?></div>
+                        <div style="color: var(--text-muted); font-size: 0.9rem; margin: 0.25rem 0;">• <?php echo htmlspecialchars(ucfirst($currentJourneyConfig["ai_tone"])); ?></div>
                     </div>
                     <button class="card-button" style="background: var(--success-color); color: white;">
                         📸 Upload Stool Photo
@@ -1067,13 +1067,13 @@ main.hub-main section.subscription-info * {
                 <article class="category-card" onclick="openUploadModal('meal')">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
                         <div style="font-size: 3rem;">🍽️</div>
-                        <span style="background: <?php echo $hasCalcuPlate ? 'var(--success-color)' : 'var(--slate-blue)'; ?>; color: white; padding: 0.25rem 0.75rem; border-radius: 15px; font-size: 0.75rem; font-weight: 600;">
-                            <?php echo $hasCalcuPlate ? 'Auto-Logging' : 'Manual Form'; ?>
+                        <span style="background: <?php echo $hasCalcuPlate ? "var(--success-color)" : "var(--slate-blue)"; ?>; color: white; padding: 0.25rem 0.75rem; border-radius: 15px; font-size: 0.75rem; font-weight: 600;">
+                            <?php echo $hasCalcuPlate ? "Auto-Logging" : "Manual Form"; ?>
                         </span>
                     </div>
                     <h3 style="color: var(--text-primary); margin: 0 0 0.75rem 0;">Meal Photos</h3>
                     <p style="color: var(--text-secondary); margin: 0 0 1rem 0;">
-                        <?php echo $hasCalcuPlate ? 'CalcuPlate AI analysis with automatic logging' : 'Manual logging form for robust analysis'; ?>
+                        <?php echo $hasCalcuPlate ? "CalcuPlate AI analysis with automatic logging" : "Manual logging form for robust analysis"; ?>
                     </p>
                     <div style="margin-bottom: 1.5rem;">
                         <?php if ($hasCalcuPlate): ?>
