@@ -545,26 +545,46 @@ You will see " . count($base64Images) . " images of THE SAME MEAL taken from dif
 
 ⚠️ CRITICAL ACCURACY REQUIREMENTS:
 
-1. EXAMINE EVERY PIXEL: Scan the entire image systematically. Do not skip any area.
-2. COUNT EACH ITEM INDIVIDUALLY: If you see 2 eggs, log 2 eggs. If you see 8 cherry tomatoes, count all 8.
-3. USE MULTIPLE IMAGES: Different angles help you see items that might be hidden in one view.
-4. DISTINGUISH QUANTITIES: 
-   - \"1 egg\" if there is ONE egg
-   - \"2 eggs\" if there are TWO eggs
-   - \"3 pieces salmon\" if there are THREE distinct pieces
-5. VERIFY BEFORE FINALIZING: Before responding, mentally review the image again to ensure nothing was missed.
+1. EXAMINE EVERY PIXEL: Scan the entire image systematically, section by section. Look at EACH part of the plate.
 
-🎯 DETECTION CHECKLIST:
-□ Main protein (meat, fish, eggs, tofu) - COUNT EACH PIECE
-□ Vegetables - COUNT EACH TYPE AND AMOUNT
-□ Grains/starches (rice, pasta, bread)
-□ Fruits - COUNT EACH PIECE
-□ Beverages - CHECK ALL IMAGES
-□ Condiments/sauces
-□ Garnishes (lemon, herbs)
-□ Sides or accompaniments
+2. COUNT OVERLAPPING/TOUCHING ITEMS SEPARATELY:
+   - If you see 2 egg yolks = 2 fried eggs (NOT 1 egg)
+   - If salmon pieces are touching = count each piece individually
+   - If tomatoes are clustered = count EACH tomato
+   - Items touching each other are STILL separate items - count them ALL
 
-If you see the same item in multiple images, COUNT IT ONLY ONCE. But if you see MULTIPLE instances of an item (like 2 eggs), you MUST count both.
+3. LOOK FOR VISUAL CUES:
+   - Multiple yolks = multiple eggs
+   - Multiple stems = multiple vegetables  
+   - Distinct portions = count each one
+   - Different colors/textures = different items
+
+4. USE THESE IMAGES TOGETHER:
+   - Image 1 might show items that Image 2 reveals better
+   - Different angles help distinguish overlapping items
+   - Compare both images before finalizing counts
+
+5. BEFORE RESPONDING, ASK YOURSELF:
+   - Did I count the eggs correctly? (Look for multiple yolks)
+   - Did I count ALL the vegetables separately?
+   - Did I miss anything in the corners or edges?
+   - Are there items partially hidden I need to account for?
+
+6. QUANTITY PRECISION:
+   - Write "2 eggs" if you see TWO egg yolks
+   - Write "6 cherry tomatoes" if you count SIX tomatoes
+   - Write "3 pieces salmon" if there are THREE distinct portions
+   - DO NOT round down or estimate low - count what you SEE
+
+🎯 DETECTION CHECKLIST (check EACH category):
+□ Eggs: Count yolks visible - each yolk = one egg
+□ Proteins (meat, fish): Count distinct pieces even if touching
+□ Vegetables: Count each vegetable separately by type
+□ Grains/starches: Estimate volume/portion
+□ Fruits: Count individual pieces
+□ Beverages: Check ALL images
+□ Condiments: Note any sauces or toppings
+□ Garnishes: Include lemon, herbs, etc.
 
 For {$journeyConfig['focus']} analysis with {$journeyConfig['tone']}, respond ONLY with valid JSON:
 
@@ -635,8 +655,8 @@ IMPORTANT: Users are paying for ACCURATE tracking. Missing items or miscounting 
     ];
 
     try {
-        // Call OpenAI with ALL images
-        $response = makeOpenAIRequest($messages, OPENAI_VISION_MODEL, 1000);
+        // Call OpenAI with ALL images - increased tokens for thorough analysis
+        $response = makeOpenAIRequest($messages, OPENAI_VISION_MODEL, 1500);
 
         if (isset($response['error'])) {
             throw new Exception($response['error']);
