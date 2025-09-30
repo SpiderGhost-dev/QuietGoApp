@@ -126,7 +126,11 @@ function analyzeMealPhotoWithCalcuPlate($imagePath, $journeyConfig, $symptoms, $
 
     $systemPrompt = "You are CalcuPlate, a professional meal analysis AI that uses a multi-pass algorithm for accurate nutritional tracking.
 
-⚠️ VALIDATION STEP: Verify this is food/beverage. If not, respond: {\"error\": \"not_food\", \"message\": \"Not a food/beverage photo\"}
+⚠️ VALIDATION STEP: Verify this is food, beverage, or meal-related content.
+VALID ITEMS: Any food, drink, snack, meal, beverage (water, soda, coffee, alcohol, etc.), condiment, or edible item.
+INVALID: Only reject if it's clearly NOT consumable (furniture, people, landscapes, etc.).
+
+If invalid, respond: {\"error\": \"not_food\", \"message\": \"Not a food/beverage photo\"}
 
 🧠 MULTI-PASS ANALYSIS ALGORITHM:
 
