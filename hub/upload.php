@@ -2,9 +2,14 @@
 // Prevent any output before HTML starts
 ob_start();
 
-// Suppress notices and warnings that might cause stray output
-error_reporting(E_ERROR | E_PARSE);
-ini_set('display_errors', 0);
+// TEMPORARILY ENABLE ERROR REPORTING TO DEBUG
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+ini_set('log_errors', 1);
+ini_set('error_log', __DIR__ . '/error_log.txt');
+
+// Log that upload.php started
+error_log("QuietGo upload.php: Script started at " . date('Y-m-d H:i:s"));
 
 // Hub authentication check - ONLY Pro and Pro+ users have hub access
 if (session_status() == PHP_SESSION_NONE) {
@@ -13,7 +18,7 @@ if (session_status() == PHP_SESSION_NONE) {
 
 $isAdminLoggedIn = isset($_SESSION['admin_logged_in']) ||
                    (isset($_COOKIE['admin_logged_in']) && $_COOKIE['admin_logged_in'] === 'true') ||
-                   (isset($_SESSION['hub_user']['is_admin_impersonation']));
+                   isset($_SESSION['hub_user']['is_admin_impersonation']);
 
 if (!isset($_SESSION['hub_user']) && !isset($_COOKIE['hub_auth']) && !$isAdminLoggedIn) {
     header('Location: /hub/login.php');
@@ -91,9 +96,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['photo_filename']) && 
 $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['health_item'])) {
-    // Handle multiple file uploads properly
-    $uploadResults = [];
-    $photoType = $_POST['photo_type'] ?? 'general';
+    try {
+        error_log("QuietGo upload.php: Processing POST request");
+        
+        // Handle multiple file uploads properly
+        $uploadResults = [];
+        $photoType = $_POST['photo_type'] ?? 'general';
+        
+        error_log("QuietGo upload.php: Photo type = $photoType");
     
     // Check if files were actually uploaded
     if (is_array($_FILES['health_item']['name'])) {
@@ -156,6 +166,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['health_item'])) {
         header('Content-Type: application/json');
         echo json_encode($uploadResult);
         exit;
+    }
+    
+    } catch (Exception $e) {
+        error_log("QuietGo upload.php: Exception caught - " . $e->getMessage());
+        error_log("QuietGo upload.php: Stack trace - " . $e->getTraceAsString());
+        
+        $uploadResult = [
+            'status' => 'error',
+            'message' => 'Server error: ' . $e->getMessage(),
+            'debug' => [
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]
+        ];
+        
+        if ($isAjax) {
+            ob_clean();
+            header('Content-Type: application/json');
+            http_response_code(500);
+            echo json_encode($uploadResult);
+            exit;
+        }
     }
 }
 
@@ -234,56 +266,76 @@ function handlePhotoUpload($file, $postData, $user) {
     // Generate AI analysis
     $aiAnalysis = generateAIAnalysis($postData, $userJourney, $hasCalcuPlate, $storeResult['filepath']);
 
-    // Get/create user in database
-    $userId = getOrCreateUser($user['email'], [
-        'name' => $user['name'] ?? 'User',
-        'journey' => $userJourney,
-        'subscription_plan' => $user['subscription_plan'] ?? 'free',
-        'subscription_status' => 'active'
-    ]);
+    // Get/create user in database - WITH ERROR HANDLING
+    $userId = null;
+    try {
+        error_log("QuietGo: Attempting to get/create user in database");
+        $userId = getOrCreateUser($user['email'], [
+            'name' => $user['name'] ?? 'User',
+            'journey' => $userJourney,
+            'subscription_plan' => $user['subscription_plan'] ?? 'free',
+            'subscription_status' => 'active'
+        ]);
+        error_log("QuietGo: User ID retrieved: " . ($userId ?? 'NULL'));
+    } catch (Exception $e) {
+        error_log("QuietGo ERROR: Database operation failed - " . $e->getMessage());
+        // Continue without database for now
+    }
 
     // Save photo metadata to database
-    $photoId = savePhoto($userId, [
-        'photo_type' => $photoType,
-        'filename' => basename($storeResult['filepath']),
-        'filepath' => $storeResult['filepath'],
-        'thumbnail_path' => $storeResult['thumbnail'] ?? null,
-        'file_size' => $file['size'],
-        'mime_type' => $mimeType,
-        'location_latitude' => $locationData['latitude'] ?? null,
-        'location_longitude' => $locationData['longitude'] ?? null,
-        'location_accuracy' => $locationData['accuracy'] ?? null,
-        'context_time' => $postData['context_time'] ?? null,
-        'context_symptoms' => $postData['context_symptoms'] ?? null,
-        'context_notes' => $postData['context_notes'] ?? null,
-        'original_filename' => $file['name']
-    ]);
+    $photoId = null;
+    if ($userId) {
+        try {
+            $photoId = savePhoto($userId, [
+                'photo_type' => $photoType,
+                'filename' => basename($storeResult['filepath']),
+                'filepath' => $storeResult['filepath'],
+                'thumbnail_path' => $storeResult['thumbnail'] ?? null,
+                'file_size' => $file['size'],
+                'mime_type' => $mimeType,
+                'location_latitude' => $locationData['latitude'] ?? null,
+                'location_longitude' => $locationData['longitude'] ?? null,
+                'location_accuracy' => $locationData['accuracy'] ?? null,
+                'context_time' => $postData['context_time'] ?? null,
+                'context_symptoms' => $postData['context_symptoms'] ?? null,
+                'context_notes' => $postData['context_notes'] ?? null,
+                'original_filename' => $file['name']
+            ]);
+        } catch (Exception $e) {
+            error_log("QuietGo ERROR: Failed to save photo metadata - " . $e->getMessage());
+        }
+    }
 
     // Save analysis to database based on type
-    if (!isset($aiAnalysis['error']) && !isset($aiAnalysis['manual_logging_required'])) {
-        switch ($photoType) {
-            case 'stool':
-                saveStoolAnalysis($photoId, $userId, $aiAnalysis);
-                break;
-            case 'meal':
-                if ($hasCalcuPlate) {
-                    saveMealAnalysis($photoId, $userId, $aiAnalysis);
-                }
-                break;
-            case 'symptom':
-                saveSymptomAnalysis($photoId, $userId, $aiAnalysis);
-                break;
-        }
-        
-        // Track AI cost
-        if (isset($aiAnalysis['ai_model'])) {
-            trackAICost($userId, [
-                'photo_type' => $photoType,
-                'ai_model' => $aiAnalysis['ai_model'],
-                'model_tier' => $aiAnalysis['model_tier'] ?? $aiAnalysis['ai_model'] ?? 'expensive',
-                'tokens_used' => null,
-                'processing_time' => $aiAnalysis['processing_time'] ?? null
-            ]);
+    if (!isset($aiAnalysis['error']) && !isset($aiAnalysis['manual_logging_required']) && $userId && $photoId) {
+        try {
+            switch ($photoType) {
+                case 'stool':
+                    saveStoolAnalysis($photoId, $userId, $aiAnalysis);
+                    break;
+                case 'meal':
+                    if ($hasCalcuPlate) {
+                        saveMealAnalysis($photoId, $userId, $aiAnalysis);
+                    }
+                    break;
+                case 'symptom':
+                    saveSymptomAnalysis($photoId, $userId, $aiAnalysis);
+                    break;
+            }
+            
+            // Track AI cost
+            if (isset($aiAnalysis['ai_model'])) {
+                trackAICost($userId, [
+                    'photo_type' => $photoType,
+                    'ai_model' => $aiAnalysis['ai_model'],
+                    'model_tier' => $aiAnalysis['model_tier'] ?? $aiAnalysis['ai_model'] ?? 'expensive',
+                    'tokens_used' => null,
+                    'processing_time' => $aiAnalysis['processing_time'] ?? null
+                ]);
+            }
+        } catch (Exception $e) {
+            error_log("QuietGo ERROR: Failed to save analysis - " . $e->getMessage());
+            // Continue anyway
         }
     }
 
@@ -300,7 +352,7 @@ function handlePhotoUpload($file, $postData, $user) {
         'status' => 'success',
         'photo_id' => $photoId ?? null,
         'filename' => basename($storeResult['filepath']),
-        'thumbnail' => $storeResult['thumbnail'],
+        'thumbnail' => '/hub/view-image.php?type=thumbnail&path=' . urlencode(basename($storeResult['thumbnail'])),
         'ai_analysis' => $aiAnalysis,
         'metadata' => $metadata,
         'requires_manual_logging' => (!$hasCalcuPlate && $postData['photo_type'] === 'meal'),
@@ -426,7 +478,9 @@ function handleMultiImageMeal($fileList, $postData, $user) {
         'ai_analysis' => $aiAnalysis,
         'requires_manual_logging' => false, // NEVER for Pro+ users
         'message' => 'CalcuPlate analyzed ' . count($storedImages) . ' images as complete meal',
-        'thumbnails' => array_column($storedImages, 'thumbnail')
+        'thumbnails' => array_map(function($img) {
+            return '/hub/view-image.php?type=thumbnail&path=' . urlencode(basename($img['thumbnail']));
+        }, $storedImages)
     ];
 }
 
@@ -1417,8 +1471,15 @@ document.getElementById('upload-form').addEventListener('submit', function(e) {
         body: formData
     })
     .then(response => {
+        console.log('Response status:', response.status);
+        console.log('Response headers:', response.headers);
+        
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            // Try to get error text
+            return response.text().then(text => {
+                console.error('Response body:', text);
+                throw new Error(`HTTP error! status: ${response.status}, body: ${text.substring(0, 500)}`);
+            });
         }
         return response.json();
     })
@@ -1447,8 +1508,24 @@ document.getElementById('upload-form').addEventListener('submit', function(e) {
         }
     })
     .catch(error => {
-        console.error('Upload error:', error);
-        alert('Upload failed. Please try again.');
+        console.error('Upload error details:', error);
+        console.error('Error message:', error.message);
+        console.error('Error stack:', error.stack);
+        
+        // More specific error messages
+        let errorMessage = 'Upload failed: ';
+        
+        if (error.message.includes('NetworkError') || error.message.includes('Failed to fetch')) {
+            errorMessage += 'Network connection error. Please check your internet connection.';
+        } else if (error.message.includes('HTTP error')) {
+            errorMessage += error.message;
+        } else if (error.message.includes('JSON')) {
+            errorMessage += 'Invalid response from server. Please try again.';
+        } else {
+            errorMessage += error.message || 'Unknown error. Please try again.';
+        }
+        
+        alert(errorMessage);
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
     });

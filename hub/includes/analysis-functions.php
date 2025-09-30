@@ -5,6 +5,34 @@
  */
 
 /**
+ * Get journey-specific prompt configuration
+ */
+function getJourneyPromptConfig($userJourney) {
+    $configs = [
+        'clinical' => [
+            'tone' => 'clinical and precise language',
+            'focus' => 'symptom correlations and medical documentation',
+            'meal_focus' => 'potential trigger foods and digestive impact',
+            'recommendations' => 'healthcare provider communication insights'
+        ],
+        'performance' => [
+            'tone' => 'athletic and performance-oriented language',
+            'focus' => 'nutrition optimization for training and recovery',
+            'meal_focus' => 'macronutrient timing and energy availability',
+            'recommendations' => 'performance enhancement strategies'
+        ],
+        'best_life' => [
+            'tone' => 'supportive and lifestyle-focused language',
+            'focus' => 'overall wellness and energy optimization',
+            'meal_focus' => 'balanced nutrition and sustained energy',
+            'recommendations' => 'practical wellness improvements'
+        ]
+    ];
+    
+    return $configs[$userJourney] ?? $configs['best_life'];
+}
+
+/**
  * Analyze Stool Photo using Bristol Stool Scale
  */
 function analyzeStoolPhoto($imagePath, $journeyConfig, $symptoms, $time, $notes) {
@@ -105,13 +133,22 @@ Analyze this stool photo using the Bristol Stool Scale and provide {$journeyConf
  * Analyze Meal Photo with CalcuPlate AI
  */
 function analyzeMealPhotoWithCalcuPlate($imagePath, $journeyConfig, $symptoms, $time, $notes) {
-    // Include smart router for multi-model cost optimization
-    require_once __DIR__ . '/smart-ai-router.php';
+    error_log("QuietGo CalcuPlate: Starting analysis for: $imagePath");
+    
+    // Try smart router first, but have fallback
+    $useSmartRouter = false; // Temporarily disable smart router to isolate issue
+    
+    if ($useSmartRouter && file_exists(__DIR__ . '/smart-ai-router.php')) {
+        require_once __DIR__ . '/smart-ai-router.php';
+    }
     
     $base64Image = encodeImageForOpenAI($imagePath);
     if (!$base64Image) {
+        error_log("QuietGo CalcuPlate ERROR: Failed to encode image");
         throw new Exception('Failed to process image for AI analysis');
     }
+    
+    error_log("QuietGo CalcuPlate: Image encoded successfully, preparing prompt");
 
     $systemPrompt = "You are CalcuPlate, a professional meal analysis AI that uses a multi-pass algorithm for accurate nutritional tracking.
 
@@ -243,8 +280,16 @@ Analyze this meal photo for automatic nutritional logging with focus on {$journe
         ]
     ];
 
-    // Use smart router instead of direct API call
-    $response = SmartAIRouter::routeImageAnalysis($imagePath, $messages, 'meal', 1000);
+    // Use direct API call instead of smart router for now
+    if ($useSmartRouter && class_exists('SmartAIRouter')) {
+        error_log("QuietGo CalcuPlate: Using smart router");
+        $response = SmartAIRouter::routeImageAnalysis($imagePath, $messages, 'meal', 1000);
+    } else {
+        error_log("QuietGo CalcuPlate: Using direct OpenAI call");
+        $response = makeOpenAIRequest($messages, OPENAI_VISION_MODEL, 1000);
+    }
+    
+    error_log("QuietGo CalcuPlate: Response received, has error: " . (isset($response['error']) ? 'YES' : 'NO"));
 
     if (isset($response['error'])) {
         throw new Exception($response['error']);

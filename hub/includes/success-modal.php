@@ -404,8 +404,36 @@ function renderStoolAnalysis(analysis) {
 }
 
 function renderMealAnalysis(analysis) {
-    if (!analysis.calcuplate) {
+    // Pro+ users should NEVER see manual logging message
+    const isProPlus = <?php echo json_encode($hasCalcuPlate ?? false); ?>;
+    
+    if (!analysis.calcuplate && !isProPlus) {
+        // Only Pro users (not Pro+) should see manual logging message
         return '<div class="result-section"><p style="color: var(--text-secondary);">Manual meal logging required. Analysis will be saved once you complete the form.</p></div>';
+    } else if (!analysis.calcuplate && isProPlus) {
+        // Pro+ users get error message if CalcuPlate failed
+        return `
+            <div class="result-section">
+                <h3 style="color: #e74c3c;">⚠️ CalcuPlate Analysis Error</h3>
+                <p style="color: var(--text-secondary); margin: 1rem 0;">
+                    CalcuPlate encountered an issue analyzing your meal photo. This could be due to:
+                </p>
+                <ul style="color: var(--text-muted); text-align: left; margin: 1rem 0;">
+                    <li>Image quality or lighting issues</li>
+                    <li>Temporary AI service interruption</li>
+                    <li>Complex meal composition</li>
+                </ul>
+                <p style="color: var(--text-secondary);">
+                    Please try uploading again with better lighting, or contact support if this persists.
+                </p>
+                <div style="margin-top: 1.5rem;">
+                    <button onclick="closeSuccessModal(); openUploadModal('meal')" 
+                            style="background: var(--primary-blue); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer;">
+                        🔄 Try Again
+                    </button>
+                </div>
+            </div>
+        `;
     }
     
     const calcuplate = analysis.calcuplate;

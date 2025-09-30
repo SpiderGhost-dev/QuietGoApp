@@ -4,6 +4,42 @@
 // ================================================
 
 /**
+ * Check API rate limits for user
+ */
+function checkAPIRateLimit($userEmail) {
+    // Simple rate limiting: 100 requests per hour per user
+    $cacheDir = __DIR__ . '/../QuietGoData/system/cache';
+    if (!is_dir($cacheDir)) {
+        mkdir($cacheDir, 0755, true);
+    }
+    
+    $rateLimitFile = $cacheDir . '/rate_limit_' . md5($userEmail) . '.json';
+    $currentHour = date('Y-m-d-H');
+    $maxRequests = 100;
+    
+    if (file_exists($rateLimitFile)) {
+        $data = json_decode(file_get_contents($rateLimitFile), true);
+        
+        if ($data['hour'] === $currentHour) {
+            if ($data['count'] >= $maxRequests) {
+                error_log("QuietGo: Rate limit exceeded for user $userEmail");
+                return false;
+            }
+            $data['count']++;
+        } else {
+            // New hour, reset counter
+            $data = ['hour' => $currentHour, 'count' => 1];
+        }
+    } else {
+        // First request
+        $data = ['hour' => $currentHour, 'count' => 1];
+    }
+    
+    file_put_contents($rateLimitFile, json_encode($data));
+    return true;
+}
+
+/**
  * Load environment variables securely
  */
 function loadEnvironmentVariables() {
