@@ -115,7 +115,7 @@ function analyzeMealPhotoWithCalcuPlate($imagePath, $journeyConfig, $symptoms, $
 
     $systemPrompt = "You are CalcuPlate, an advanced nutrition AI that analyzes meal photos for automatic logging.
 
-IMPORTANT FIRST STEP: Verify this is actually a food/meal photo. If the image shows:
+⚠️ CRITICAL FIRST STEP: Verify this is actually a food/meal photo. If the image shows:
 - Biological waste (stool, urine, vomit)
 - Medical imagery (wounds, rashes, symptoms)
 - Non-food items
@@ -123,14 +123,39 @@ IMPORTANT FIRST STEP: Verify this is actually a food/meal photo. If the image sh
 
 Respond with: {\"error\": \"not_food\", \"message\": \"This doesn't appear to be a meal photo\"}
 
-If it IS a valid food/meal photo, analyze it and provide comprehensive nutritional data using {$journeyConfig['tone']} focused on {$journeyConfig['focus']}.
+📊 ACCURACY REQUIREMENTS FOR FOOD ANALYSIS:
+1. COUNT EVERYTHING: You MUST count ALL visible items (e.g., if you see 8 pieces of sushi, count ALL 8, not just 1)
+2. PORTION MULTIPLIER: If multiple servings are visible, multiply nutritional values accordingly
+3. BE CONSERVATIVE: When uncertain, estimate HIGHER calories rather than lower (better to overestimate)
+4. IDENTIFY AMBIGUITY: If you cannot determine specifics (e.g., regular vs diet soda, dressing on/off salad), flag for clarification
 
-Respond ONLY with valid JSON:
+For valid food photos, analyze using {$journeyConfig['tone']} focused on {$journeyConfig['focus']}.
+
+If confidence is below 90% OR there are ambiguous items (beverages that could be diet/regular, sauces, dressings), respond with:
+{
+    \"needs_clarification\": true,
+    \"questions\": [
+        {
+            \"item\": \"beverage name\",
+            \"question\": \"Is this regular or diet/zero calorie?\",
+            \"options\": [\"Regular (X cal)\", \"Diet/Zero (0 cal)\"],
+            \"impact\": \"affects total calories\"
+        }
+    ],
+    \"preliminary_analysis\": {
+        \"foods_detected\": [\"list with quantities: 8x sushi rolls\", \"1x miso soup\"],
+        \"estimated_calories_range\": \"700-900\",
+        \"confidence\": (number)
+    }
+}
+
+For HIGH CONFIDENCE (90%+) analysis, respond with:
 {
     \"calcuplate\": {
         \"auto_logged\": true,
-        \"foods_detected\": [\"food1\", \"food2\", \"food3\"],
-        \"total_calories\": (number),
+        \"foods_detected\": [\"INCLUDE QUANTITIES: 8x california rolls\", \"1x miso soup\", \"2x gyoza\"],
+        \"item_count\": \"total number of individual food items\",
+        \"total_calories\": (BE ACCURATE - e.g., 8 sushi pieces = 700-900 cal, not 350),
         \"macros\": {
             \"protein\": \"XXg\",
             \"carbs\": \"XXg\",
@@ -138,13 +163,15 @@ Respond ONLY with valid JSON:
             \"fiber\": \"XXg\"
         },
         \"meal_quality_score\": \"X/10\",
-        \"portion_sizes\": \"description\",
+        \"portion_sizes\": \"Be specific: large plate, 8 pieces, 16oz drink, etc\",
         \"nutritional_completeness\": \"XX%\"
     },
-    \"confidence\": (75-95 number),
+    \"confidence\": (90-95 for high confidence only),
     \"nutrition_insights\": [\"insight1\", \"insight2\", \"insight3\"],
     \"recommendations\": [\"rec1\", \"rec2\", \"rec3\"]
-}";
+}
+
+REMEMBER: Users are PAYING for accuracy. Count ALL items. 1 sushi = ~85-115 cal, so 8 = 680-920 cal!";
 
     $userPrompt = "Time: $time
 Context: $notes
@@ -202,6 +229,37 @@ Analyze this meal photo for automatic nutritional logging with focus on {$journe
         error_log("QuietGo CalcuPlate: Non-food image detected");
         throw new Exception('This doesn\'t appear to be a meal photo. Please upload a photo of food, or use the Stool or Symptom upload options for other types of health tracking.');
     }
+    
+    // Check if AI needs clarification for ambiguous items
+    if (isset($analysisData['needs_clarification']) && $analysisData['needs_clarification'] === true) {
+        error_log("QuietGo CalcuPlate: Needs clarification for ambiguous items");
+        // For now, we'll return the preliminary analysis with a note
+        // In the future, this should trigger a clarification modal in the UI
+        $analysisData['clarification_needed'] = true;
+        $analysisData['user_message'] = 'CalcuPlate detected some ambiguous items. Using estimated values for now. Future updates will allow you to clarify specifics.';
+        
+        // Use the preliminary analysis as the main analysis for now
+        if (isset($analysisData['preliminary_analysis'])) {
+            $preliminaryData = $analysisData['preliminary_analysis'];
+            $analysisData['calcuplate'] = [
+                'auto_logged' => true,
+                'foods_detected' => $preliminaryData['foods_detected'] ?? [],
+                'total_calories' => intval(explode('-', $preliminaryData['estimated_calories_range'])[1] ?? 0), // Use higher estimate
+                'macros' => [
+                    'protein' => 'Estimated',
+                    'carbs' => 'Estimated', 
+                    'fat' => 'Estimated',
+                    'fiber' => 'Estimated'
+                ],
+                'meal_quality_score' => 'Pending clarification',
+                'portion_sizes' => 'Needs confirmation',
+                'nutritional_completeness' => 'Estimated'
+            ];
+            $analysisData['confidence'] = $preliminaryData['confidence'] ?? 75;
+            $analysisData['nutrition_insights'] = ['Clarification needed for accurate analysis'];
+            $analysisData['recommendations'] = ['Please confirm ambiguous items for better tracking'];
+        }
+    }
 
     // Check if we need to retry with better model
     if (isset($response['routing_info']) && SmartAIRouter::needsRetry($response, $response['routing_info']['tier_used'])) {
@@ -220,6 +278,16 @@ Analyze this meal photo for automatic nutritional logging with focus on {$journe
         }
     }
 
+    // Log CalcuPlate detection for debugging
+    if (isset($analysisData['calcuplate'])) {
+        error_log("QuietGo CalcuPlate Detection:");
+        error_log(" - Foods: " . json_encode($analysisData['calcuplate']['foods_detected']));
+        error_log(" - Item Count: " . ($analysisData['calcuplate']['item_count'] ?? 'N/A'));
+        error_log(" - Total Calories: " . $analysisData['calcuplate']['total_calories']);
+        error_log(" - Confidence: " . $analysisData['confidence']);
+        error_log(" - Portion Sizes: " . $analysisData['calcuplate']['portion_sizes']);
+    }
+    
     // Add journey-specific insights
     switch ($_SESSION['hub_user']['journey']) {
         case 'clinical':

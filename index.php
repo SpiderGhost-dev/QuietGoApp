@@ -195,8 +195,8 @@
             <div class="journeys-intro">
                 <h2>Your Journey, Your Way</h2>
                 <p class="subheading">
-                    Whether you're working with healthcare providers, training for peak performance, or 34
-                    ply living your best life — QuietGo adapts to your unique goals and delivers personalized insights.
+                    Whether you're working with healthcare providers, training for peak performance, or simply
+                    living your best life — QuietGo adapts to your unique goals and delivers personalized insights.
                 </p>
             </div>
 
