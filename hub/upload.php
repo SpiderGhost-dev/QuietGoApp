@@ -571,9 +571,9 @@ You will see " . count($base64Images) . " images of THE SAME MEAL taken from dif
    - Are there items partially hidden I need to account for?
 
 6. QUANTITY PRECISION:
-   - Write "2 eggs" if you see TWO egg yolks
-   - Write "6 cherry tomatoes" if you count SIX tomatoes
-   - Write "3 pieces salmon" if there are THREE distinct portions
+   - Write \"2 eggs\" if you see TWO egg yolks
+   - Write \"6 cherry tomatoes\" if you count SIX tomatoes
+   - Write \"3 pieces salmon\" if there are THREE distinct portions
    - DO NOT round down or estimate low - count what you SEE
 
 🎯 DETECTION CHECKLIST (check EACH category):
