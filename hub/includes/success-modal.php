@@ -212,6 +212,18 @@
     border: 1px solid #e74c3c;
 }
 
+.result-section img {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.result-section img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    border-color: var(--success-color) !important;
+}
+
 .success-footer {
     padding: 1.5rem 2rem;
     border-top: 1px solid var(--card-border);
@@ -279,24 +291,63 @@ function showSuccessModal(result) {
     const title = document.getElementById('success-title');
     
     const analysis = result.ai_analysis;
-    const photoType = result.metadata.photo_type;
+    const photoType = result.metadata?.photo_type || result.ai_analysis?.photo_type || 'general';
+    
+    // Build image preview section
+    let imagePreviewHTML = '';
+    if (result.thumbnail || result.thumbnails) {
+        imagePreviewHTML = '<div class="result-section" style="text-align: center;">';
+        imagePreviewHTML += '<h3 style="margin-bottom: 1rem;">📸 Analyzed Photos</h3>';
+        imagePreviewHTML += '<div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 1rem;">';
+        
+        if (result.thumbnails && Array.isArray(result.thumbnails)) {
+            // Multiple images
+            result.thumbnails.forEach((thumb, index) => {
+                if (thumb) {
+                    imagePreviewHTML += `
+                        <div style="position: relative;">
+                            <img src="${thumb}" style="max-width: 200px; max-height: 200px; border-radius: 8px; border: 2px solid var(--card-border);" 
+                                 alt="Uploaded image ${index + 1}" onclick="this.style.maxWidth = this.style.maxWidth === '200px' ? '90%' : '200px';" 
+                                 title="Click to enlarge">
+                            <div style="position: absolute; top: 5px; right: 5px; background: rgba(0,0,0,0.7); color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem;">
+                                ${index + 1}/${result.thumbnails.length}
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+        } else if (result.thumbnail) {
+            // Single image
+            imagePreviewHTML += `
+                <img src="${result.thumbnail}" style="max-width: 300px; max-height: 300px; border-radius: 8px; border: 2px solid var(--card-border);" 
+                     alt="Uploaded image" onclick="this.style.maxWidth = this.style.maxWidth === '300px' ? '90%' : '300px';" 
+                     title="Click to enlarge">
+            `;
+        }
+        
+        imagePreviewHTML += '</div>';
+        if (result.image_count && result.image_count > 1) {
+            imagePreviewHTML += `<p style="color: var(--text-muted); font-size: 0.9rem;">${result.image_count} images analyzed as complete meal</p>`;
+        }
+        imagePreviewHTML += '</div>';
+    }
     
     // Update icon and title based on photo type
     switch(photoType) {
         case 'stool':
             icon.textContent = '🚽';
             title.textContent = 'Stool Analysis Complete!';
-            body.innerHTML = renderStoolAnalysis(analysis);
+            body.innerHTML = imagePreviewHTML + renderStoolAnalysis(analysis);
             break;
         case 'meal':
             icon.textContent = '🍽️';
             title.textContent = 'Meal Analysis Complete!';
-            body.innerHTML = renderMealAnalysis(analysis);
+            body.innerHTML = imagePreviewHTML + renderMealAnalysis(analysis);
             break;
         case 'symptom':
             icon.textContent = '🩺';
             title.textContent = 'Symptom Documented!';
-            body.innerHTML = renderSymptomAnalysis(analysis);
+            body.innerHTML = imagePreviewHTML + renderSymptomAnalysis(analysis);
             break;
     }
     

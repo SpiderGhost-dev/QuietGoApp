@@ -184,6 +184,39 @@ function showClarificationModal(questions, originalData) {
     
     questionsContainer.innerHTML = '';
     
+    // Add image preview if available
+    if (originalData.thumbnail || originalData.thumbnails) {
+        const imagePreviewDiv = document.createElement('div');
+        imagePreviewDiv.className = 'clarification-question';
+        imagePreviewDiv.style.textAlign = 'center';
+        imagePreviewDiv.innerHTML = '<h4 style="margin-bottom: 1rem;">📸 Your Photos</h4>';
+        
+        const imagesContainer = document.createElement('div');
+        imagesContainer.style.cssText = 'display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; margin-bottom: 1rem;';
+        
+        if (originalData.thumbnails && Array.isArray(originalData.thumbnails)) {
+            originalData.thumbnails.forEach((thumb, index) => {
+                if (thumb) {
+                    const img = document.createElement('img');
+                    img.src = thumb;
+                    img.style.cssText = 'max-width: 120px; max-height: 120px; border-radius: 6px; border: 2px solid #404040;';
+                    img.alt = `Image ${index + 1}`;
+                    imagesContainer.appendChild(img);
+                }
+            });
+        } else if (originalData.thumbnail) {
+            const img = document.createElement('img');
+            img.src = originalData.thumbnail;
+            img.style.cssText = 'max-width: 200px; max-height: 200px; border-radius: 6px; border: 2px solid #404040;';
+            img.alt = 'Uploaded image';
+            imagesContainer.appendChild(img);
+        }
+        
+        imagePreviewDiv.appendChild(imagesContainer);
+        questionsContainer.appendChild(imagePreviewDiv);
+    }
+    
+    // Add questions
     questions.forEach((question, index) => {
         const questionDiv = document.createElement('div');
         questionDiv.className = 'clarification-question';
