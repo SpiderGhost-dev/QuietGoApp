@@ -543,7 +543,28 @@ function analyzeMultiImageMeal($storedImages, $userJourney) {
 
 You will see " . count($base64Images) . " images of THE SAME MEAL taken from different angles or showing different components (main dish, beverage, dessert, etc.).
 
-ANALYZE ALL IMAGES TOGETHER as ONE COMPLETE MEAL. If you see the same item in multiple images, COUNT IT ONLY ONCE.
+⚠️ CRITICAL ACCURACY REQUIREMENTS:
+
+1. EXAMINE EVERY PIXEL: Scan the entire image systematically. Do not skip any area.
+2. COUNT EACH ITEM INDIVIDUALLY: If you see 2 eggs, log 2 eggs. If you see 8 cherry tomatoes, count all 8.
+3. USE MULTIPLE IMAGES: Different angles help you see items that might be hidden in one view.
+4. DISTINGUISH QUANTITIES: 
+   - \"1 egg\" if there is ONE egg
+   - \"2 eggs\" if there are TWO eggs
+   - \"3 pieces salmon\" if there are THREE distinct pieces
+5. VERIFY BEFORE FINALIZING: Before responding, mentally review the image again to ensure nothing was missed.
+
+🎯 DETECTION CHECKLIST:
+□ Main protein (meat, fish, eggs, tofu) - COUNT EACH PIECE
+□ Vegetables - COUNT EACH TYPE AND AMOUNT
+□ Grains/starches (rice, pasta, bread)
+□ Fruits - COUNT EACH PIECE
+□ Beverages - CHECK ALL IMAGES
+□ Condiments/sauces
+□ Garnishes (lemon, herbs)
+□ Sides or accompaniments
+
+If you see the same item in multiple images, COUNT IT ONLY ONCE. But if you see MULTIPLE instances of an item (like 2 eggs), you MUST count both.
 
 For {$journeyConfig['focus']} analysis with {$journeyConfig['tone']}, respond ONLY with valid JSON:
 
@@ -551,7 +572,7 @@ For {$journeyConfig['focus']} analysis with {$journeyConfig['tone']}, respond ON
     \"calcuplate\": {
         \"analysis_type\": \"complete_meal\",
         \"items_detected\": [
-            {\"item\": \"Food name\", \"quantity\": \"amount\", \"calories\": number, \"type\": \"category\"}
+            {\"item\": \"Food name\", \"quantity\": \"exact count/amount\", \"calories\": number, \"type\": \"category\"}
         ],
         \"totals\": {
             \"calories\": number,
@@ -568,14 +589,20 @@ For {$journeyConfig['focus']} analysis with {$journeyConfig['tone']}, respond ON
     \"recommendations\": [\"rec1\", \"rec2\"]
 }
 
-Combine ALL visible food and beverages from all images into ONE analysis.";
+IMPORTANT: Users are paying for ACCURATE tracking. Missing items or miscounting defeats the purpose. Be thorough.";
 
     $time = date("H:i");
     $userPrompt = "Time: $time\n\nThese " . count($base64Images) . " images show ONE MEAL:\n";
     foreach ($base64Images as $index => $img) {
         $userPrompt .= "- Image " . ($index + 1) . ": {$img['filename']}\n";
     }
-    $userPrompt .= "\nCombine ALL visible food and beverages into one meal analysis with total nutritional content.";
+    $userPrompt .= "\nINSTRUCTIONS:\n";
+    $userPrompt .= "1. Examine EACH image carefully and completely\n";
+    $userPrompt .= "2. Count EVERY food item you can see\n";
+    $userPrompt .= "3. If there are multiple pieces of the same food (2 eggs, 5 tomatoes), count them ALL\n";
+    $userPrompt .= "4. Use different image angles to verify your counts\n";
+    $userPrompt .= "5. Before finalizing, do a mental checklist: proteins? vegetables? grains? fruits? beverages?\n";
+    $userPrompt .= "\nProvide complete nutritional breakdown with ACCURATE item counts and combined totals.";
 
     // Build content array with text + ALL images
     $content = [

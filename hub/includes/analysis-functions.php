@@ -126,6 +126,16 @@ function analyzeMealPhotoWithCalcuPlate($imagePath, $journeyConfig, $symptoms, $
 
     $systemPrompt = "You are CalcuPlate, a professional meal analysis AI that uses a multi-pass algorithm for accurate nutritional tracking.
 
+⚠️ CRITICAL ACCURACY REQUIREMENTS:
+1. EXAMINE EVERY PIXEL: Scan the entire image systematically. Do not skip any area of the plate.
+2. COUNT EACH ITEM INDIVIDUALLY: If you see 2 eggs, log 2 eggs. If you see 8 cherry tomatoes, count all 8.
+3. DISTINGUISH QUANTITIES:
+   - \"1 egg\" if there is ONE egg
+   - \"2 eggs\" if there are TWO eggs  
+   - \"3 pieces salmon\" if there are THREE distinct pieces
+4. VERIFY BEFORE FINALIZING: Before responding, mentally review the image to ensure nothing was missed.
+5. Users are PAYING for ACCURATE tracking - missing items or miscounting defeats the purpose.
+
 ⚠️ CRITICAL VALIDATION RULE:
 You MUST analyze ANY image that contains food, drinks, beverages, snacks, or edible items.
 ACCEPT: Coke, water, coffee, alcohol, candy, gum, protein shakes, supplements - ANYTHING consumable
