@@ -12,14 +12,14 @@ function checkAPIRateLimit($userEmail) {
     if (!is_dir($cacheDir)) {
         mkdir($cacheDir, 0755, true);
     }
-    
+
     $rateLimitFile = $cacheDir . '/rate_limit_' . md5($userEmail) . '.json';
     $currentHour = date('Y-m-d-H');
     $maxRequests = 100;
-    
+
     if (file_exists($rateLimitFile)) {
         $data = json_decode(file_get_contents($rateLimitFile), true);
-        
+
         if ($data['hour'] === $currentHour) {
             if ($data['count'] >= $maxRequests) {
                 error_log("QuietGo: Rate limit exceeded for user $userEmail");
@@ -34,7 +34,7 @@ function checkAPIRateLimit($userEmail) {
         // First request
         $data = ['hour' => $currentHour, 'count' => 1];
     }
-    
+
     file_put_contents($rateLimitFile, json_encode($data));
     return true;
 }
@@ -194,7 +194,7 @@ function makeAnthropicRequest($messages, $model = ANTHROPIC_HAIKU_MODEL, $max_to
     // Convert OpenAI message format to Anthropic format
     $anthropicMessages = [];
     $systemPrompt = '';
-    
+
     foreach ($messages as $msg) {
         if ($msg['role'] === 'system') {
             $systemPrompt = $msg['content'];
@@ -214,7 +214,7 @@ function makeAnthropicRequest($messages, $model = ANTHROPIC_HAIKU_MODEL, $max_to
                         if (preg_match('/^data:(image\/[^;]+);base64,(.+)$/', $imageUrl, $matches)) {
                             $mimeType = $matches[1];
                             $base64Data = $matches[2];
-                            
+
                             $convertedContent[] = [
                                 'type' => 'image',
                                 'source' => [
@@ -400,7 +400,7 @@ function getJourneyPromptConfig($userJourney) {
 /**
  * Rate limiting for API calls (basic implementation)
  */
-function checkAPIRateLimit($userId = null) {
+function checkBasicAPIRateLimit($userId = null) {
     $rateLimitFile = __DIR__ . '/../temp/api_rate_limit.json';
     $now = time();
     $limits = [];

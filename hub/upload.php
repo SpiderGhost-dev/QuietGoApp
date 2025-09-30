@@ -109,7 +109,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_FILES["health_item"])) {
     if ($isAjax) {
         ob_clean();
     }
-    
+
     try {
         error_log("QuietGo upload.php: Processing POST request");
 
@@ -647,7 +647,8 @@ function generateAIAnalysis($postData, $userJourney, $hasCalcuPlate, $imagePath 
 // CRITICAL: Only output HTML if NOT an AJAX request
 if ($isAjax) {
     // For AJAX, we should have already exited above with JSON
-    // If we're still here, something went wrong
+    // If we403
+    // re still here, something went wrong
     error_log("QuietGo ERROR: AJAX request reached HTML section");
     exit();
 }
@@ -1025,7 +1026,9 @@ main.hub-main section.subscription-info * {
                         <div class="form-group">
                             <label>Energy Level (1-10 scale)</label>
                             <input type="range" name="energy_level" min="1" max="10" value="5"
-                                   oninput="document.getElementById('energy_display').textContent = this.value">
+                                   oninput="document.getElementById(399
+                                   energy_display437
+                                ).textContent = this.value">
                             <div style="text-align: center; margin-top: 0.5rem;">
                                 <span style="color: var(--text-muted);">Energy: </span>
                                 <span id="energy_display" style="color: var(--text-primary); font-weight: 600;">5</span>/10

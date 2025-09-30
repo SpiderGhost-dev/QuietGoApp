@@ -15,6 +15,21 @@
 hub/uploads/
 uploads/
 temp/
+hub/temp/
+
+# User Data
+hub/QuietGoData/
+QuietGoData/
+
+# Test Files
+test-*.php
+hub/test-*.php
+hub/test_images/
+test_images/
+
+# Error Logs
+error_log.txt
+hub/error_log.txt
 
 # System Files
 .DS_Store
