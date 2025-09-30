@@ -641,16 +641,17 @@ Combine ALL visible food and beverages from all images into ONE analysis.";
             throw new Exception('Invalid analysis structure from CalcuPlate');
         }
 
-        $analysis = $analysis['calcuplate'];
+        // Keep the full structure - DO NOT extract calcuplate
+        // The success modal expects analysis.calcuplate to exist
 
-        // Add multi-image metadata
+        // Add multi-image metadata at root level
         $analysis["multi_image_meal"] = true;
         $analysis["image_count"] = count($storedImages);
         $analysis["analysis_note"] = "Multi-component meal analyzed as single dining session";
 
-        // Ensure confidence is set properly
-        if (!isset($analysis["confidence"]) || $analysis["confidence"] == 0) {
-            $analysis["confidence"] = 85; // Default reasonable confidence for multi-image
+        // Ensure confidence is set properly (check inside calcuplate)
+        if (!isset($analysis['calcuplate']["confidence"]) || $analysis['calcuplate']["confidence"] == 0) {
+            $analysis['calcuplate']["confidence"] = 85; // Default reasonable confidence for multi-image
         }
 
         return $analysis;
