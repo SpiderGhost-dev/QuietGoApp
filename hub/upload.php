@@ -231,60 +231,60 @@ function handlePhotoUpload($file, $postData, $user) {
 
     // Location data
     $locationData = null;
-    if (!empty($postData['latitude']) && !empty($postData['longitude'])) {
+    if (!empty($postData["latitude"]) && !empty($postData["longitude"])) {
         $locationData = [
-            'latitude' => floatval($postData['latitude']),
-            'longitude' => floatval($postData['longitude']),
-            'accuracy' => $postData['accuracy'] ?? null,
-            'timestamp' => time()
+            "latitude" => floatval($postData["latitude"]),
+            "longitude" => floatval($postData["longitude"]),
+            "accuracy" => $postData["accuracy"] ?? null,
+            "timestamp" => time()
         ];
     }
 
     // Prepare comprehensive metadata
     $metadata = [
-        'original_name' => $file['name'],
-        'category' => $postData['category'] ?? 'photos',
-        'photo_type' => $postData['photo_type'] ?? 'general',
-        'upload_timestamp' => time(),
-        'upload_datetime' => date('Y-m-d H:i:s'),
-        'user_email' => $user['email'],
-        'user_journey' => $userJourney,
-        'subscription_plan' => $user['subscription_plan'],
-        'has_calcuplate' => $hasCalcuPlate,
-        'location_data' => $locationData,
-        'context' => [
-            'time_of_day' => $postData['context_time'] ?? '',
-            'symptoms' => $postData['context_symptoms'] ?? '',
-            'notes' => $postData['context_notes'] ?? ''
+        "original_name" => $file["name"],
+        "category" => $postData["category"] ?? "photos",
+        "photo_type" => $postData["photo_type"] ?? "general",
+        "upload_timestamp" => time(),
+        "upload_datetime" => date("Y-m-d H:i:s"),
+        "user_email" => $user["email"],
+        "user_journey" => $userJourney,
+        "subscription_plan" => $user["subscription_plan"],
+        "has_calcuplate" => $hasCalcuPlate,
+        "location_data" => $locationData,
+        "context" => [
+            "time_of_day" => $postData["context_time"] ?? "",
+            "symptoms" => $postData["context_symptoms"] ?? "",
+            "notes" => $postData["context_notes"] ?? ""
         ],
-        'file_info' => [
-            'size' => $file['size'],
-            'mime_type' => $mimeType
+        "file_info" => [
+            "size" => $file["size"],
+            "mime_type" => $mimeType
         ]
     ];
 
     // Store photo using organized structure
-    $photoType = $postData['photo_type'] ?? 'general';
-    $storeResult = $storage->storePhoto($user['email'], $photoType, $file, $metadata);
+    $photoType = $postData["photo_type"] ?? "general";
+    $storeResult = $storage->storePhoto($user["email"], $photoType, $file, $metadata);
 
-    if (!$storeResult['success']) {
-        return ['status' => 'error', 'message' => $storeResult['error']];
+    if (!$storeResult["success"]) {
+        return ["status" => "error", "message" => $storeResult["error"]];
     }
 
     // Generate AI analysis
-    $aiAnalysis = generateAIAnalysis($postData, $userJourney, $hasCalcuPlate, $storeResult['filepath']);
+    $aiAnalysis = generateAIAnalysis($postData, $userJourney, $hasCalcuPlate, $storeResult["filepath"]);
 
     // Get/create user in database - WITH ERROR HANDLING
     $userId = null;
     try {
         error_log("QuietGo: Attempting to get/create user in database");
-        $userId = getOrCreateUser($user['email'], [
-            'name' => $user['name'] ?? 'User',
-            'journey' => $userJourney,
-            'subscription_plan' => $user['subscription_plan'] ?? 'free',
-            'subscription_status' => 'active'
+        $userId = getOrCreateUser($user["email"], [
+            "name" => $user["name"] ?? "User",
+            "journey" => $userJourney,
+            "subscription_plan" => $user["subscription_plan"] ?? "free",
+            "subscription_status" => "active"
         ]);
-        error_log("QuietGo: User ID retrieved: " . ($userId ?? 'NULL'));
+        error_log("QuietGo: User ID retrieved: " . ($userId ?? "NULL"));
     } catch (Exception $e) {
         error_log("QuietGo ERROR: Database operation failed - " . $e->getMessage());
         // Continue without database for now
@@ -295,19 +295,19 @@ function handlePhotoUpload($file, $postData, $user) {
     if ($userId) {
         try {
             $photoId = savePhoto($userId, [
-                'photo_type' => $photoType,
-                'filename' => basename($storeResult['filepath']),
-                'filepath' => $storeResult['filepath'],
-                'thumbnail_path' => $storeResult['thumbnail'] ?? null,
-                'file_size' => $file['size'],
-                'mime_type' => $mimeType,
-                'location_latitude' => $locationData['latitude'] ?? null,
-                'location_longitude' => $locationData['longitude'] ?? null,
-                'location_accuracy' => $locationData['accuracy'] ?? null,
-                'context_time' => $postData['context_time'] ?? null,
-                'context_symptoms' => $postData['context_symptoms'] ?? null,
-                'context_notes' => $postData['context_notes'] ?? null,
-                'original_filename' => $file['name']
+                "photo_type" => $photoType,
+                "filename" => basename($storeResult["filepath"]),
+                "filepath" => $storeResult["filepath"],
+                "thumbnail_path" => $storeResult["thumbnail"] ?? null,
+                "file_size" => $file["size"],
+                "mime_type" => $mimeType,
+                "location_latitude" => $locationData["latitude"] ?? null,
+                "location_longitude" => $locationData["longitude"] ?? null,
+                "location_accuracy" => $locationData["accuracy"] ?? null,
+                "context_time" => $postData["context_time"] ?? null,
+                "context_symptoms" => $postData["context_symptoms"] ?? null,
+                "context_notes" => $postData["context_notes"] ?? null,
+                "original_filename" => $file["name"]
             ]);
         } catch (Exception $e) {
             error_log("QuietGo ERROR: Failed to save photo metadata - " . $e->getMessage());
@@ -315,30 +315,30 @@ function handlePhotoUpload($file, $postData, $user) {
     }
 
     // Save analysis to database based on type
-    if (!isset($aiAnalysis['error']) && !isset($aiAnalysis['manual_logging_required']) && $userId && $photoId) {
+    if (!isset($aiAnalysis["error"]) && !isset($aiAnalysis["manual_logging_required"]) && $userId && $photoId) {
         try {
             switch ($photoType) {
-                case 'stool':
+                case "stool":
                     saveStoolAnalysis($photoId, $userId, $aiAnalysis);
                     break;
-                case 'meal':
+                case "meal":
                     if ($hasCalcuPlate) {
                         saveMealAnalysis($photoId, $userId, $aiAnalysis);
                     }
                     break;
-                case 'symptom':
+                case "symptom":
                     saveSymptomAnalysis($photoId, $userId, $aiAnalysis);
                     break;
             }
             
             // Track AI cost
-            if (isset($aiAnalysis['ai_model'])) {
+            if (isset($aiAnalysis["ai_model"])) {
                 trackAICost($userId, [
-                    'photo_type' => $photoType,
-                    'ai_model' => $aiAnalysis['ai_model'],
-                    'model_tier' => $aiAnalysis['model_tier'] ?? $aiAnalysis['ai_model'] ?? 'expensive',
-                    'tokens_used' => null,
-                    'processing_time' => $aiAnalysis['processing_time'] ?? null
+                    "photo_type" => $photoType,
+                    "ai_model" => $aiAnalysis["ai_model"],
+                    "model_tier" => $aiAnalysis["model_tier"] ?? $aiAnalysis["ai_model"] ?? "expensive",
+                    "tokens_used" => null,
+                    "processing_time" => $aiAnalysis["processing_time"] ?? null
                 ]);
             }
         } catch (Exception $e) {
@@ -348,28 +348,28 @@ function handlePhotoUpload($file, $postData, $user) {
     }
 
     // Store AI analysis in organized location (legacy file system)
-    if (!isset($aiAnalysis['error'])) {
-        $storage->storeAnalysis($user['email'], 'ai_results', [
-            'photo_type' => $photoType,
-            'analysis' => $aiAnalysis,
-            'photo_metadata' => $metadata
+    if (!isset($aiAnalysis["error"])) {
+        $storage->storeAnalysis($user["email"], "ai_results", [
+            "photo_type" => $photoType,
+            "analysis" => $aiAnalysis,
+            "photo_metadata" => $metadata
         ]);
     }
 
     $result = [
-        'status' => 'success',
-        'photo_id' => $photoId ?? null,
-        'filename' => basename($storeResult['filepath']),
-        'thumbnail' => '/hub/view-image.php?type=thumbnail&path=' . urlencode(basename($storeResult['thumbnail'])),
-        'ai_analysis' => $aiAnalysis,
-        'metadata' => $metadata,
-        'requires_manual_logging' => (!$hasCalcuPlate && $postData['photo_type'] === 'meal'),
-        'storage_path' => $storeResult['filepath']
+        "status" => "success",
+        "photo_id" => $photoId ?? null,
+        "filename" => basename($storeResult["filepath"]),
+        "thumbnail" => "/hub/view-image.php?type=thumbnail&path=" . urlencode(basename($storeResult["thumbnail"])),
+        "ai_analysis" => $aiAnalysis,
+        "metadata" => $metadata,
+        "requires_manual_logging" => (!$hasCalcuPlate && $postData["photo_type"] === "meal"),
+        "storage_path" => $storeResult["filepath"]
     ];
     
     // Store in SESSION if manual logging required (for persistence across page reload)
-    if ($result['requires_manual_logging']) {
-        $_SESSION['pending_manual_logging'] = $result;
+    if ($result["requires_manual_logging"]) {
+        $_SESSION["pending_manual_logging"] = $result;
     }
     
     return $result;
@@ -384,13 +384,13 @@ function handleMultiImageMeal($fileList, $postData, $user) {
     
     // Pro+ users ONLY - never show manual logging
     if (!$hasCalcuPlate) {
-        return ['status' => 'error', 'message' => 'Multi-image meal analysis requires Pro+ subscription'];
+        return ["status" => "error", "message" => "Multi-image meal analysis requires Pro+ subscription"];
     }
 
-    require_once __DIR__ . '/includes/storage-helper.php';
-    require_once __DIR__ . '/includes/db-operations.php';
+    require_once __DIR__ . "/includes/storage-helper.php";
+    require_once __DIR__ . "/includes/db-operations.php";
     $storage = getQuietGoStorage();
-    $storage->createUserStructure($user['email']);
+    $storage->createUserStructure($user["email"]);
 
     $storedImages = [];
     $totalSize = 0;
@@ -398,43 +398,43 @@ function handleMultiImageMeal($fileList, $postData, $user) {
     // Store all images first
     foreach ($fileList as $file) {
         // Validate each image
-        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        $allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
-        $mimeType = finfo_file($finfo, $file['tmp_name']);
+        $mimeType = finfo_file($finfo, $file["tmp_name"]);
         finfo_close($finfo);
 
         if (!in_array($mimeType, $allowedTypes)) {
-            return ['status' => 'error', 'message' => 'Invalid file type in multi-image upload'];
+            return ["status" => "error", "message" => "Invalid file type in multi-image upload"];
         }
 
-        $totalSize += $file['size'];
+        $totalSize += $file["size"];
         if ($totalSize > 50 * 1024 * 1024) {
-            return ['status' => 'error', 'message' => 'Total file size exceeds 50MB limit'];
+            return ["status" => "error", "message" => "Total file size exceeds 50MB limit"];
         }
 
         // Store each image
         $metadata = [
-            'original_name' => $file['name'],
-            'category' => 'photos',
-            'photo_type' => 'meal',
-            'upload_timestamp' => time(),
-            'user_journey' => $userJourney,
-            'subscription_plan' => $user['subscription_plan'],
-            'has_calcuplate' => true,
-            'multi_image_meal' => true,
-            'part_of_set' => count($fileList)
+            "original_name" => $file["name"],
+            "category" => "photos",
+            "photo_type" => "meal",
+            "upload_timestamp" => time(),
+            "user_journey" => $userJourney,
+            "subscription_plan" => $user["subscription_plan"],
+            "has_calcuplate" => true,
+            "multi_image_meal" => true,
+            "part_of_set" => count($fileList)
         ];
 
-        $storeResult = $storage->storePhoto($user['email'], 'meal', $file, $metadata);
-        if (!$storeResult['success']) {
-            return ['status' => 'error', 'message' => 'Failed to store image: ' . $storeResult['error']];
+        $storeResult = $storage->storePhoto($user["email"], "meal", $file, $metadata);
+        if (!$storeResult["success"]) {
+            return ["status" => "error", "message" => "Failed to store image: " . $storeResult["error"]];
         }
 
         $storedImages[] = [
-            'filepath' => $storeResult['filepath'],
-            'thumbnail' => $storeResult['thumbnail'],
-            'filename' => basename($storeResult['filepath']),
-            'metadata' => $metadata
+            "filepath" => $storeResult["filepath"],
+            "thumbnail" => $storeResult["thumbnail"],
+            "filename" => basename($storeResult["filepath"]),
+            "metadata" => $metadata
         ];
     }
 
@@ -442,52 +442,52 @@ function handleMultiImageMeal($fileList, $postData, $user) {
     $aiAnalysis = analyzeMultiImageMeal($storedImages, $userJourney);
 
     // Get/create user in database
-    $userId = getOrCreateUser($user['email'], [
-        'name' => $user['name'] ?? 'User',
-        'journey' => $userJourney,
-        'subscription_plan' => $user['subscription_plan'] ?? 'pro_plus',
-        'subscription_status' => 'active'
+    $userId = getOrCreateUser($user["email"], [
+        "name" => $user["name"] ?? "User",
+        "journey" => $userJourney,
+        "subscription_plan" => $user["subscription_plan"] ?? "pro_plus",
+        "subscription_status" => "active"
     ]);
 
     // Save the aggregated meal analysis
     $photoIds = [];
     foreach ($storedImages as $img) {
         $photoId = savePhoto($userId, [
-            'photo_type' => 'meal',
-            'filename' => $img['filename'],
-            'filepath' => $img['filepath'],
-            'thumbnail_path' => $img['thumbnail'] ?? null,
-            'file_size' => 0, // Would need to track per file
-            'mime_type' => 'image/jpeg',
-            'original_filename' => $img['metadata']['original_name'],
-            'multi_image_set' => true
+            "photo_type" => "meal",
+            "filename" => $img["filename"],
+            "filepath" => $img["filepath"],
+            "thumbnail_path" => $img["thumbnail"] ?? null,
+            "file_size" => 0, // Would need to track per file
+            "mime_type" => "image/jpeg",
+            "original_filename" => $img["metadata"]["original_name"],
+            "multi_image_set" => true
         ]);
         $photoIds[] = $photoId;
     }
 
     // Save CalcuPlate analysis for the meal
-    if (!isset($aiAnalysis['error'])) {
+    if (!isset($aiAnalysis["error"])) {
         saveMealAnalysis($photoIds[0], $userId, $aiAnalysis);
         
         // Track AI cost
         trackAICost($userId, [
-            'photo_type' => 'meal',
-            'ai_model' => $aiAnalysis['ai_model'] ?? 'gpt-4o',
-            'model_tier' => $aiAnalysis['model_tier'] ?? 'expensive',
-            'multi_image' => true,
-            'image_count' => count($storedImages)
+            "photo_type" => "meal",
+            "ai_model" => $aiAnalysis["ai_model"] ?? "gpt-4o",
+            "model_tier" => $aiAnalysis["model_tier"] ?? "expensive",
+            "multi_image" => true,
+            "image_count" => count($storedImages)
         ]);
     }
 
     return [
-        'status' => 'success',
-        'photo_ids' => $photoIds,
-        'image_count' => count($storedImages),
-        'ai_analysis' => $aiAnalysis,
-        'requires_manual_logging' => false, // NEVER for Pro+ users
-        'message' => 'CalcuPlate analyzed ' . count($storedImages) . ' images as complete meal',
-        'thumbnails' => array_map(function($img) {
-            return '/hub/view-image.php?type=thumbnail&path=' . urlencode(basename($img['thumbnail']));
+        "status" => "success",
+        "photo_ids" => $photoIds,
+        "image_count" => count($storedImages),
+        "ai_analysis" => $aiAnalysis,
+        "requires_manual_logging" => false, // NEVER for Pro+ users
+        "message" => "CalcuPlate analyzed " . count($storedImages) . " images as complete meal",
+        "thumbnails" => array_map(function($img) {
+            return "/hub/view-image.php?type=thumbnail&path=" . urlencode(basename($img["thumbnail"]));
         }, $storedImages)
     ];
 }
@@ -496,29 +496,29 @@ function handleMultiImageMeal($fileList, $postData, $user) {
  * Analyze multiple meal images together as one meal
  */
 function analyzeMultiImageMeal($storedImages, $userJourney) {
-    require_once __DIR__ . '/includes/openai-config.php';
-    require_once __DIR__ . '/includes/analysis-functions.php';
+    require_once __DIR__ . "/includes/openai-config.php";
+    require_once __DIR__ . "/includes/analysis-functions.php";
 
     // Build a combined prompt describing all images
     $imageDescriptions = [];
     foreach ($storedImages as $index => $img) {
         $imageNum = $index + 1;
-        $imageDescriptions[] = "Image {$imageNum}: {$img['metadata']['original_name']}";
+        $imageDescriptions[] = "Image {$imageNum}: {$img["metadata"]["original_name"]}";
     }
 
     $journeyConfig = getJourneyPromptConfig($userJourney);
     
     // For now, analyze the first image with a note about multiple images
     // TODO: Future enhancement - send all images to GPT-4o vision API
-    $primaryImage = $storedImages[0]['filepath'];
+    $primaryImage = $storedImages[0]["filepath"];
     
     // Add multi-image context to the prompt
     $multiImageContext = "\n\nNOTE: This is a multi-image meal with " . count($storedImages) . " images total. ";
     $multiImageContext .= "Analyze as components of a single meal. ";
-    $multiImageContext .= "Images included: " . implode(', ', $imageDescriptions);
+    $multiImageContext .= "Images included: " . implode(", ", $imageDescriptions);
     
-    $symptoms = '';
-    $time = date('H:i');
+    $symptoms = "";
+    $time = date("H:i");
     $notes = $multiImageContext;
     
     try {
@@ -526,51 +526,51 @@ function analyzeMultiImageMeal($storedImages, $userJourney) {
         $analysis = analyzeMealPhotoWithCalcuPlate($primaryImage, $journeyConfig, $symptoms, $time, $notes);
         
         // Add multi-image metadata
-        $analysis['multi_image_meal'] = true;
-        $analysis['image_count'] = count($storedImages);
-        $analysis['analysis_note'] = 'Multi-component meal analyzed as single dining session';
+        $analysis["multi_image_meal"] = true;
+        $analysis["image_count"] = count($storedImages);
+        $analysis["analysis_note"] = "Multi-component meal analyzed as single dining session";
         
         // Ensure confidence is set properly
-        if (!isset($analysis['confidence']) || $analysis['confidence'] == 0) {
-            $analysis['confidence'] = 85; // Default reasonable confidence for multi-image
+        if (!isset($analysis["confidence"]) || $analysis["confidence"] == 0) {
+            $analysis["confidence"] = 85; // Default reasonable confidence for multi-image
         }
         
         return $analysis;
     } catch (Exception $e) {
         error_log("QuietGo Multi-Image Analysis Error: " . $e->getMessage());
         return [
-            'error' => 'Failed to analyze multi-image meal',
-            'timestamp' => time(),
-            'user_journey' => $userJourney
+            "error" => "Failed to analyze multi-image meal",
+            "timestamp" => time(),
+            "user_journey" => $userJourney
         ];
     }
 }
 
 function generateAIAnalysis($postData, $userJourney, $hasCalcuPlate, $imagePath = null) {
     // Include OpenAI configuration and analysis functions
-    require_once __DIR__ . '/includes/openai-config.php';
-    require_once __DIR__ . '/includes/analysis-functions.php';
+    require_once __DIR__ . "/includes/openai-config.php";
+    require_once __DIR__ . "/includes/analysis-functions.php";
 
-    $photoType = $postData['photo_type'] ?? 'general';
-    $symptoms = $postData['context_symptoms'] ?? '';
-    $time = $postData['context_time'] ?? '';
-    $notes = $postData['context_notes'] ?? '';
+    $photoType = $postData["photo_type"] ?? "general";
+    $symptoms = $postData["context_symptoms"] ?? "";
+    $time = $postData["context_time"] ?? "";
+    $notes = $postData["context_notes"] ?? "";
     $startTime = microtime(true);
 
     // Check API rate limits
-    $userEmail = $_SESSION['hub_user']['email'] ?? 'anonymous';
+    $userEmail = $_SESSION["hub_user"]["email"] ?? "anonymous";
     if (!checkAPIRateLimit($userEmail)) {
         return [
-            'error' => 'Rate limit exceeded. Please try again in an hour.',
-            'timestamp' => time(),
-            'user_journey' => $userJourney
+            "error" => "Rate limit exceeded. Please try again in an hour.",
+            "timestamp" => time(),
+            "user_journey" => $userJourney
         ];
     }
 
     $analysis = [
-        'timestamp' => time(),
-        'user_journey' => $userJourney,
-        'photo_type' => $photoType
+        "timestamp" => time(),
+        "user_journey" => $userJourney,
+        "photo_type" => $photoType
     ];
 
     // Get journey-specific prompt configuration
@@ -578,48 +578,48 @@ function generateAIAnalysis($postData, $userJourney, $hasCalcuPlate, $imagePath 
 
     try {
         switch ($photoType) {
-            case 'stool':
+            case "stool":
                 $analysis = analyzeStoolPhoto($imagePath, $journeyConfig, $symptoms, $time, $notes);
                 break;
 
-            case 'meal':
+            case "meal":
                 if ($hasCalcuPlate) {
                     // PRO+ ONLY: CalcuPlate AI meal analysis
                     $analysis = analyzeMealPhotoWithCalcuPlate($imagePath, $journeyConfig, $symptoms, $time, $notes);
                 } else {
                     // PRO ONLY: Manual logging required
                     $analysis = [
-                        'manual_logging_required' => true,
-                        'upgrade_available' => [
-                            'feature' => 'CalcuPlate AI Meal Analysis',
-                            'price' => '+$2.99/month',
-                            'benefits' => ['Automatic food detection', 'Instant calorie calculation', 'Auto-logged nutrition data']
+                        "manual_logging_required" => true,
+                        "upgrade_available" => [
+                            "feature" => "CalcuPlate AI Meal Analysis",
+                            "price" => "+$2.99/month",
+                            "benefits" => ["Automatic food detection", "Instant calorie calculation", "Auto-logged nutrition data"]
                         ],
-                        'next_step' => 'Complete manual meal logging form to continue',
-                        'timestamp' => time(),
-                        'user_journey' => $userJourney
+                        "next_step" => "Complete manual meal logging form to continue",
+                        "timestamp" => time(),
+                        "user_journey" => $userJourney
                     ];
                 }
                 break;
 
-            case 'symptom':
+            case "symptom":
                 $analysis = analyzeSymptomPhoto($imagePath, $journeyConfig, $symptoms, $time, $notes);
                 break;
 
             default:
-                $analysis['error'] = 'Unknown photo type';
+                $analysis["error"] = "Unknown photo type";
         }
 
         // Add processing time
-        $analysis['processing_time'] = round(microtime(true) - $startTime, 2);
+        $analysis["processing_time"] = round(microtime(true) - $startTime, 2);
 
     } catch (Exception $e) {
         error_log("QuietGo AI Analysis Error: " . $e->getMessage());
         $analysis = [
-            'error' => 'AI analysis temporarily unavailable. Please try again.',
-            'timestamp' => time(),
-            'user_journey' => $userJourney,
-            'processing_time' => round(microtime(true) - $startTime, 2)
+            "error" => "AI analysis temporarily unavailable. Please try again.",
+            "timestamp" => time(),
+            "user_journey" => $userJourney,
+            "processing_time" => round(microtime(true) - $startTime, 2)
         ];
     }
 
