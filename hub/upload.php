@@ -538,78 +538,91 @@ function analyzeMultiImageMeal($storedImages, $userJourney) {
 
     error_log("QuietGo Multi-Image: Analyzing " . count($base64Images) . " images together");
 
-    // Use the FULL CalcuPlate prompt with JSON formatting requirements
-    $systemPrompt = "You are CalcuPlate, a professional meal analysis AI analyzing a multi-image meal.
+    // RESTRUCTURED: Force explicit multi-pass analysis with verification
+    $systemPrompt = "You are CalcuPlate, a professional meal analysis AI. You MUST complete a THREE-PASS analysis process and output results from EACH pass.
 
-You will see " . count($base64Images) . " images of THE SAME MEAL taken from different angles or showing different components (main dish, beverage, dessert, etc.).
+You will see " . count($base64Images) . " images of THE SAME MEAL.
 
-⚠️ CRITICAL ACCURACY REQUIREMENTS:
+🔬 MANDATORY THREE-PASS ANALYSIS PROCESS:
 
-1. EXAMINE EVERY PIXEL: Scan the entire image systematically, section by section. Look at EACH part of the plate.
+━━━ PASS 1: DETECTION & ITEM COUNTING ━━━
+Scan EVERY pixel systematically. For EACH food item, count the exact quantity:
 
-2. COUNT OVERLAPPING/TOUCHING ITEMS SEPARATELY:
-   - If you see 2 egg yolks = 2 fried eggs (NOT 1 egg)
-   - If salmon pieces are touching = count each piece individually
-   - If tomatoes are clustered = count EACH tomato
-   - Items touching each other are STILL separate items - count them ALL
+**EGGS:** Count the number of YOLKS visible. Each yolk = one egg.
+- 1 yolk visible = 1 egg
+- 2 yolks visible = 2 eggs
+- If eggs are touching/overlapping, still count EACH yolk separately
 
-3. LOOK FOR VISUAL CUES:
-   - Multiple yolks = multiple eggs
-   - Multiple stems = multiple vegetables  
-   - Distinct portions = count each one
-   - Different colors/textures = different items
+**PROTEINS:** Count distinct pieces even if touching
+**VEGETABLES:** Count each type separately (tomatoes: count each one, broccoli: estimate florets)
+**FRUITS:** Count individual pieces
+**BEVERAGES:** Identify all drinks across all images
 
-4. USE THESE IMAGES TOGETHER:
-   - Image 1 might show items that Image 2 reveals better
-   - Different angles help distinguish overlapping items
-   - Compare both images before finalizing counts
-
-5. BEFORE RESPONDING, ASK YOURSELF:
-   - Did I count the eggs correctly? (Look for multiple yolks)
-   - Did I count ALL the vegetables separately?
-   - Did I miss anything in the corners or edges?
-   - Are there items partially hidden I need to account for?
-
-6. QUANTITY PRECISION:
-   - Write \"2 eggs\" if you see TWO egg yolks
-   - Write \"6 cherry tomatoes\" if you count SIX tomatoes
-   - Write \"3 pieces salmon\" if there are THREE distinct portions
-   - DO NOT round down or estimate low - count what you SEE
-
-🎯 DETECTION CHECKLIST (check EACH category):
-□ Eggs: Count yolks visible - each yolk = one egg
-□ Proteins (meat, fish): Count distinct pieces even if touching
-□ Vegetables: Count each vegetable separately by type
-□ Grains/starches: Estimate volume/portion
-□ Fruits: Count individual pieces
-□ Beverages: Check ALL images
-□ Condiments: Note any sauces or toppings
-□ Garnishes: Include lemon, herbs, etc.
-
-For {$journeyConfig['focus']} analysis with {$journeyConfig['tone']}, respond ONLY with valid JSON:
-
+Output format for Pass 1:
 {
-    \"calcuplate\": {
-        \"analysis_type\": \"complete_meal\",
-        \"items_detected\": [
-            {\"item\": \"Food name\", \"quantity\": \"exact count/amount\", \"calories\": number, \"type\": \"category\"}
-        ],
-        \"totals\": {
-            \"calories\": number,
-            \"protein_g\": number,
-            \"carbs_g\": number,
-            \"fat_g\": number,
-            \"fiber_g\": number,
-            \"sodium_mg\": number
-        },
-        \"confidence\": number (85-95),
-        \"data_source\": \"source description\"
-    },
-    \"insights\": [\"insight1\", \"insight2\"],
-    \"recommendations\": [\"rec1\", \"rec2\"]
+  \"pass_1_detection\": {
+    \"eggs\": {\"count\": number, \"method\": \"counted X yolks\"},
+    \"salmon\": {\"count\": number, \"method\": \"distinct pieces\"},
+    \"cherry_tomatoes\": {\"count\": number, \"method\": \"counted individually\"},
+    \"broccoli\": {\"amount\": \"description\", \"method\": \"visual estimate\"},
+    ...
+  }
 }
 
-IMPORTANT: Users are paying for ACCURATE tracking. Missing items or miscounting defeats the purpose. Be thorough.";
+━━━ PASS 2: VERIFICATION & CORRECTION ━━━
+Review your Pass 1 counts. Look at the images AGAIN specifically for:
+- Did you count YOLKS for eggs, not just "an egg"?
+- Are there items partially hidden you missed?
+- Did you count touching items separately?
+- Check corners and edges of plates
+
+For EACH item from Pass 1, verify or correct:
+
+Output format for Pass 2:
+{
+  \"pass_2_verification\": {
+    \"eggs\": {\"pass_1_count\": X, \"verified_count\": Y, \"changed\": true/false, \"reason\": \"explanation\"},
+    \"salmon\": {\"pass_1_count\": X, \"verified_count\": Y, \"changed\": true/false},
+    ...
+  }
+}
+
+━━━ PASS 3: NUTRITIONAL ANALYSIS ━━━
+Using VERIFIED counts from Pass 2, calculate nutrition:
+
+For {$journeyConfig['focus']} with {$journeyConfig['tone']}, respond with this COMPLETE JSON structure:
+
+{
+  \"pass_1_detection\": {
+    \"eggs\": {\"count\": number, \"method\": \"counted X yolks\"},
+    \"salmon\": {\"count\": number, \"method\": \"description\"},
+    [... all detected items ...]
+  },
+  \"pass_2_verification\": {
+    \"eggs\": {\"pass_1_count\": X, \"verified_count\": Y, \"changed\": boolean, \"reason\": \"if changed\"},
+    [... verification for all items ...]
+  },
+  \"calcuplate\": {
+    \"analysis_type\": \"complete_meal\",
+    \"items_detected\": [
+      {\"item\": \"Fried eggs\", \"quantity\": \"VERIFIED count\", \"calories\": number, \"type\": \"protein\"}
+    ],
+    \"totals\": {
+      \"calories\": number,
+      \"protein_g\": number,
+      \"carbs_g\": number,
+      \"fat_g\": number,
+      \"fiber_g\": number,
+      \"sodium_mg\": number
+    },
+    \"confidence\": 90,
+    \"data_source\": \"source\"
+  },
+  \"insights\": [\"insight1\", \"insight2\"],
+  \"recommendations\": [\"rec1\", \"rec2\"]
+}
+
+CRITICAL: You MUST output all three passes. Users are paying for accurate tracking.";
 
     $time = date("H:i");
     $userPrompt = "Time: $time\n\nThese " . count($base64Images) . " images show ONE MEAL:\n";
