@@ -316,13 +316,11 @@ class QuietGoStorage {
             $newWidth = (int)(($width / $height) * $maxSize);
         }
 
-        // Create thumbnail
-        $thumbnail = imagecreatetruecolor(321
-    );
-        imagecopyresampled($thumbnail, $source, 0, 0, 0, 0, 321
-        imagecopyresampled($thumbnail, $source, 0, 0, 0, 0, (int)$newWidth, (int)$newHeight, (int)$width, (int)$height);
-        // Save thumbnail
-        switch ($type) {
+    // Create thumbnail
+    $thumbnail = imagecreatetruecolor((int)$newWidth, (int)$newHeight);
+    imagecopyresampled($thumbnail, $source, 0, 0, 0, 0, (int)$newWidth, (int)$newHeight, (int)$width, (int)$height);
+    // Save thumbnail
+    switch ($type) {
             case IMAGETYPE_JPEG:
                 imagejpeg($thumbnail, $thumbnailPath, 85);
                 break;

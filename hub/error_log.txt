@@ -13,3 +13,85 @@
 [30-Sep-2025 16:44:52 UTC] QuietGo upload.php: Processing POST request
 [30-Sep-2025 16:44:52 UTC] QuietGo upload.php: Photo type = meal
 [30-Sep-2025 16:44:52 UTC] PHP Fatal error:  Cannot redeclare function checkAPIRateLimit() (previously declared in /Users/davidbaker/Desktop/QuietGoApp/hub/includes/openai-config.php:9) in /Users/davidbaker/Desktop/QuietGoApp/hub/includes/openai-config.php on line 403
+[30-Sep-2025 16:52:05 UTC] QuietGo upload.php: Script started at 2025-09-30 16:52:05
+[30-Sep-2025 16:52:05 UTC] QuietGo: isAjax = false, X-Requested-With = not set
+[30-Sep-2025 16:52:13 UTC] QuietGo upload.php: Script started at 2025-09-30 16:52:13
+[30-Sep-2025 16:52:13 UTC] QuietGo: isAjax = true, X-Requested-With = XMLHttpRequest
+[30-Sep-2025 16:52:13 UTC] QuietGo upload.php: Processing POST request
+[30-Sep-2025 16:52:13 UTC] QuietGo upload.php: Photo type = meal
+[30-Sep-2025 16:52:13 UTC] PHP Fatal error:  Cannot redeclare function checkAPIRateLimit() (previously declared in /Users/davidbaker/Desktop/QuietGoApp/hub/includes/openai-config.php:9) in /Users/davidbaker/Desktop/QuietGoApp/hub/includes/openai-config.php on line 403
+[30-Sep-2025 16:52:34 UTC] QuietGo upload.php: Script started at 2025-09-30 16:52:34
+[30-Sep-2025 16:52:34 UTC] QuietGo: isAjax = true, X-Requested-With = XMLHttpRequest
+[30-Sep-2025 16:52:34 UTC] QuietGo upload.php: Processing POST request
+[30-Sep-2025 16:52:34 UTC] QuietGo upload.php: Photo type = meal
+[30-Sep-2025 16:52:34 UTC] PHP Fatal error:  Cannot redeclare function checkAPIRateLimit() (previously declared in /Users/davidbaker/Desktop/QuietGoApp/hub/includes/openai-config.php:9) in /Users/davidbaker/Desktop/QuietGoApp/hub/includes/openai-config.php on line 403
+[30-Sep-2025 16:57:10 UTC] QuietGo upload.php: Script started at 2025-09-30 16:57:10
+[30-Sep-2025 16:57:10 UTC] QuietGo: isAjax = false, X-Requested-With = not set
+[30-Sep-2025 16:57:17 UTC] QuietGo upload.php: Script started at 2025-09-30 16:57:17
+[30-Sep-2025 16:57:17 UTC] QuietGo: isAjax = true, X-Requested-With = XMLHttpRequest
+[30-Sep-2025 16:57:17 UTC] QuietGo upload.php: Processing POST request
+[30-Sep-2025 16:57:17 UTC] QuietGo upload.php: Photo type = meal
+[30-Sep-2025 16:57:17 UTC] PHP Fatal error:  Cannot redeclare function checkAPIRateLimit() (previously declared in /Users/davidbaker/Desktop/QuietGoApp/hub/includes/openai-config.php:9) in /Users/davidbaker/Desktop/QuietGoApp/hub/includes/openai-config.php on line 403
+[30-Sep-2025 16:58:00 UTC] QuietGo upload.php: Script started at 2025-09-30 16:58:00
+[30-Sep-2025 16:58:00 UTC] QuietGo: isAjax = false, X-Requested-With = not set
+[30-Sep-2025 16:58:14 UTC] QuietGo upload.php: Script started at 2025-09-30 16:58:14
+[30-Sep-2025 16:58:14 UTC] QuietGo: isAjax = true, X-Requested-With = XMLHttpRequest
+[30-Sep-2025 16:58:14 UTC] QuietGo upload.php: Processing POST request
+[30-Sep-2025 16:58:14 UTC] QuietGo upload.php: Photo type = meal
+[30-Sep-2025 16:58:14 UTC] PHP Fatal error:  Cannot redeclare function checkAPIRateLimit() (previously declared in /Users/davidbaker/Desktop/QuietGoApp/hub/includes/openai-config.php:9) in /Users/davidbaker/Desktop/QuietGoApp/hub/includes/openai-config.php on line 403
+[30-Sep-2025 17:03:20 UTC] QuietGo upload.php: Script started at 2025-09-30 17:03:20
+[30-Sep-2025 17:03:20 UTC] QuietGo: isAjax = false, X-Requested-With = not set
+[30-Sep-2025 17:03:37 UTC] QuietGo upload.php: Script started at 2025-09-30 17:03:37
+[30-Sep-2025 17:03:37 UTC] QuietGo: isAjax = true, X-Requested-With = XMLHttpRequest
+[30-Sep-2025 17:03:37 UTC] QuietGo upload.php: Processing POST request
+[30-Sep-2025 17:03:37 UTC] QuietGo upload.php: Photo type = meal
+[30-Sep-2025 17:03:37 UTC] PHP Fatal error:  Cannot redeclare function checkAPIRateLimit() (previously declared in /Users/davidbaker/Desktop/QuietGoApp/hub/includes/openai-config.php:9) in /Users/davidbaker/Desktop/QuietGoApp/hub/includes/openai-config.php on line 403
+[30-Sep-2025 17:07:15 UTC] QuietGo upload.php: Script started at 2025-09-30 17:07:15
+[30-Sep-2025 17:11:26 UTC] QuietGo upload.php: Script started at 2025-09-30 17:11:26
+[30-Sep-2025 17:11:26 UTC] QuietGo: isAjax = false, X-Requested-With = not set
+[30-Sep-2025 17:11:32 UTC] QuietGo upload.php: Script started at 2025-09-30 17:11:32
+[30-Sep-2025 17:11:32 UTC] QuietGo: isAjax = true, X-Requested-With = XMLHttpRequest
+[30-Sep-2025 17:11:32 UTC] QuietGo upload.php: Processing POST request
+[30-Sep-2025 17:11:32 UTC] QuietGo upload.php: Photo type = meal
+[30-Sep-2025 17:11:32 UTC] PHP Fatal error:  Cannot redeclare function checkAPIRateLimit() (previously declared in /Users/davidbaker/Desktop/QuietGoApp/hub/includes/openai-config.php:9) in /Users/davidbaker/Desktop/QuietGoApp/hub/includes/openai-config.php on line 403
+[30-Sep-2025 17:24:01 UTC] QuietGo upload.php: Script started at 2025-09-30 17:24:01
+[30-Sep-2025 17:24:01 UTC] QuietGo: isAjax = false, X-Requested-With = not set
+[30-Sep-2025 17:24:12 UTC] QuietGo upload.php: Script started at 2025-09-30 17:24:12
+[30-Sep-2025 17:24:12 UTC] QuietGo: isAjax = true, X-Requested-With = XMLHttpRequest
+[30-Sep-2025 17:24:12 UTC] QuietGo upload.php: Processing POST request
+[30-Sep-2025 17:24:12 UTC] QuietGo upload.php: Photo type = meal
+[30-Sep-2025 17:24:12 UTC] PHP Fatal error:  Cannot redeclare function checkAPIRateLimit() (previously declared in /Users/davidbaker/Desktop/QuietGoApp/hub/includes/openai-config.php:9) in /Users/davidbaker/Desktop/QuietGoApp/hub/includes/openai-config.php on line 403
+[30-Sep-2025 17:24:29 UTC] QuietGo upload.php: Script started at 2025-09-30 17:24:29
+[30-Sep-2025 17:24:29 UTC] QuietGo: isAjax = true, X-Requested-With = XMLHttpRequest
+[30-Sep-2025 17:24:29 UTC] QuietGo upload.php: Processing POST request
+[30-Sep-2025 17:24:29 UTC] QuietGo upload.php: Photo type = meal
+[30-Sep-2025 17:24:29 UTC] PHP Fatal error:  Cannot redeclare function checkAPIRateLimit() (previously declared in /Users/davidbaker/Desktop/QuietGoApp/hub/includes/openai-config.php:9) in /Users/davidbaker/Desktop/QuietGoApp/hub/includes/openai-config.php on line 403
+[30-Sep-2025 17:26:15 UTC] QuietGo upload.php: Script started at 2025-09-30 17:26:15
+[30-Sep-2025 17:38:10 UTC] QuietGo upload.php: Script started at 2025-09-30 17:38:10
+[30-Sep-2025 17:38:10 UTC] QuietGo: isAjax = false, X-Requested-With = not set
+[30-Sep-2025 17:38:16 UTC] QuietGo upload.php: Script started at 2025-09-30 17:38:16
+[30-Sep-2025 17:38:16 UTC] QuietGo: isAjax = true, X-Requested-With = XMLHttpRequest
+[30-Sep-2025 17:38:16 UTC] QuietGo upload.php: Processing POST request
+[30-Sep-2025 17:38:16 UTC] QuietGo upload.php: Photo type = meal
+[30-Sep-2025 17:38:16 UTC] PHP Fatal error:  Cannot redeclare function getJourneyPromptConfig() (previously declared in /Users/davidbaker/Desktop/QuietGoApp/hub/includes/openai-config.php:378) in /Users/davidbaker/Desktop/QuietGoApp/hub/includes/analysis-functions.php on line 10
+[30-Sep-2025 17:38:51 UTC] QuietGo upload.php: Script started at 2025-09-30 17:38:51
+[30-Sep-2025 17:38:51 UTC] QuietGo: isAjax = false, X-Requested-With = not set
+[30-Sep-2025 17:39:27 UTC] QuietGo upload.php: Script started at 2025-09-30 17:39:27
+[30-Sep-2025 17:39:27 UTC] QuietGo: isAjax = true, X-Requested-With = XMLHttpRequest
+[30-Sep-2025 17:39:27 UTC] QuietGo upload.php: Processing POST request
+[30-Sep-2025 17:39:27 UTC] QuietGo upload.php: Photo type = meal
+[30-Sep-2025 17:39:27 UTC] PHP Fatal error:  Cannot redeclare function getJourneyPromptConfig() (previously declared in /Users/davidbaker/Desktop/QuietGoApp/hub/includes/openai-config.php:378) in /Users/davidbaker/Desktop/QuietGoApp/hub/includes/analysis-functions.php on line 10
+[30-Sep-2025 17:52:27 UTC] QuietGo upload.php: Script started at 2025-09-30 17:52:27
+[30-Sep-2025 17:52:27 UTC] QuietGo: isAjax = false, X-Requested-With = not set
+[30-Sep-2025 17:52:39 UTC] QuietGo upload.php: Script started at 2025-09-30 17:52:39
+[30-Sep-2025 17:52:39 UTC] QuietGo: isAjax = true, X-Requested-With = XMLHttpRequest
+[30-Sep-2025 17:52:39 UTC] QuietGo upload.php: Processing POST request
+[30-Sep-2025 17:52:39 UTC] QuietGo upload.php: Photo type = meal
+[30-Sep-2025 17:52:39 UTC] PHP Parse error:  syntax error, unexpected identifier "push" in /Users/davidbaker/Desktop/QuietGoApp/hub/includes/openai-config.php on line 37
+[30-Sep-2025 17:54:47 UTC] QuietGo upload.php: Script started at 2025-09-30 17:54:47
+[30-Sep-2025 17:54:47 UTC] QuietGo: isAjax = false, X-Requested-With = not set
+[30-Sep-2025 17:54:54 UTC] QuietGo upload.php: Script started at 2025-09-30 17:54:54
+[30-Sep-2025 17:54:54 UTC] QuietGo: isAjax = true, X-Requested-With = XMLHttpRequest
+[30-Sep-2025 17:54:54 UTC] QuietGo upload.php: Processing POST request
+[30-Sep-2025 17:54:54 UTC] QuietGo upload.php: Photo type = meal
+[30-Sep-2025 17:54:54 UTC] PHP Fatal error:  Cannot redeclare function getJourneyPromptConfig() (previously declared in /Users/davidbaker/Desktop/QuietGoApp/hub/includes/openai-config.php:378) in /Users/davidbaker/Desktop/QuietGoApp/hub/includes/analysis-functions.php on line 10
