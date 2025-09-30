@@ -9,7 +9,7 @@ ini_set('log_errors', 1);
 ini_set('error_log', __DIR__ . '/error_log.txt');
 
 // Log that upload.php started
-error_log("QuietGo upload.php: Script started at " . date('Y-m-d H:i:s"));
+error_log("QuietGo upload.php: Script started at " . date("Y-m-d H:i:s"));
 
 // Hub authentication check - ONLY Pro and Pro+ users have hub access
 if (session_status() == PHP_SESSION_NONE) {
@@ -106,13 +106,13 @@ $isAjax = !empty($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtolower($_SERVER["HTTP
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_FILES["health_item"])) {
     try {
         error_log("QuietGo upload.php: Processing POST request");
-        
+
         // Handle multiple file uploads properly
         $uploadResults = [];
         $photoType = $_POST["photo_type"] ?? "general";
-        
+
         error_log("QuietGo upload.php: Photo type = $photoType");
-    
+
     // Check if files were actually uploaded
     if (is_array($_FILES["health_item"]["name"])) {
         // Multiple files - check if any files were selected
@@ -130,7 +130,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_FILES["health_item"])) {
                 ];
             }
         }
-        
+
         if (!$hasFiles) {
             $uploadResult = ["status" => "error", "message" => "No files were selected for upload."];
         } else {
@@ -144,7 +144,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_FILES["health_item"])) {
                     $result = handlePhotoUpload($fileList[$i], $_POST, $user);
                     $uploadResults[] = $result;
                 }
-                
+
                 // Use the first successful result for display
                 $uploadResult = null;
                 foreach ($uploadResults as $result) {
@@ -167,7 +167,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_FILES["health_item"])) {
             $uploadResult = ["status" => "error", "message" => "No file was selected for upload."];
         }
     }
-    
+
     // If AJAX request, return JSON and exit
     if ($isAjax && $uploadResult) {
         ob_clean();
@@ -175,11 +175,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_FILES["health_item"])) {
         echo json_encode($uploadResult);
         exit;
     }
-    
+
     } catch (Exception $e) {
         error_log("QuietGo upload.php: Exception caught - " . $e->getMessage());
         error_log("QuietGo upload.php: Stack trace - " . $e->getTraceAsString());
-        
+
         $uploadResult = [
             "status" => "error",
             "message" => "Server error: " . $e->getMessage(),
@@ -188,7 +188,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_FILES["health_item"])) {
                 "line" => $e->getLine()
             ]
         ];
-        
+
         if ($isAjax) {
             ob_clean();
             header("Content-Type: application/json");
@@ -330,7 +330,7 @@ function handlePhotoUpload($file, $postData, $user) {
                     saveSymptomAnalysis($photoId, $userId, $aiAnalysis);
                     break;
             }
-            
+
             // Track AI cost
             if (isset($aiAnalysis["ai_model"])) {
                 trackAICost($userId, [
@@ -366,12 +366,12 @@ function handlePhotoUpload($file, $postData, $user) {
         "requires_manual_logging" => (!$hasCalcuPlate && $postData["photo_type"] === "meal"),
         "storage_path" => $storeResult["filepath"]
     ];
-    
+
     // Store in SESSION if manual logging required (for persistence across page reload)
     if ($result["requires_manual_logging"]) {
         $_SESSION["pending_manual_logging"] = $result;
     }
-    
+
     return $result;
 }
 
@@ -381,7 +381,7 @@ function handlePhotoUpload($file, $postData, $user) {
  */
 function handleMultiImageMeal($fileList, $postData, $user) {
     global $hasCalcuPlate, $userJourney;
-    
+
     // Pro+ users ONLY - never show manual logging
     if (!$hasCalcuPlate) {
         return ["status" => "error", "message" => "Multi-image meal analysis requires Pro+ subscription"];
@@ -394,7 +394,7 @@ function handleMultiImageMeal($fileList, $postData, $user) {
 
     $storedImages = [];
     $totalSize = 0;
-    
+
     // Store all images first
     foreach ($fileList as $file) {
         // Validate each image
@@ -468,7 +468,7 @@ function handleMultiImageMeal($fileList, $postData, $user) {
     // Save CalcuPlate analysis for the meal
     if (!isset($aiAnalysis["error"])) {
         saveMealAnalysis($photoIds[0], $userId, $aiAnalysis);
-        
+
         // Track AI cost
         trackAICost($userId, [
             "photo_type" => "meal",
@@ -507,34 +507,34 @@ function analyzeMultiImageMeal($storedImages, $userJourney) {
     }
 
     $journeyConfig = getJourneyPromptConfig($userJourney);
-    
+
     // For now, analyze the first image with a note about multiple images
     // TODO: Future enhancement - send all images to GPT-4o vision API
     $primaryImage = $storedImages[0]["filepath"];
-    
+
     // Add multi-image context to the prompt
     $multiImageContext = "\n\nNOTE: This is a multi-image meal with " . count($storedImages) . " images total. ";
     $multiImageContext .= "Analyze as components of a single meal. ";
     $multiImageContext .= "Images included: " . implode(", ", $imageDescriptions);
-    
+
     $symptoms = "";
     $time = date("H:i");
     $notes = $multiImageContext;
-    
+
     try {
         // Use CalcuPlate to analyze the meal
         $analysis = analyzeMealPhotoWithCalcuPlate($primaryImage, $journeyConfig, $symptoms, $time, $notes);
-        
+
         // Add multi-image metadata
         $analysis["multi_image_meal"] = true;
         $analysis["image_count"] = count($storedImages);
         $analysis["analysis_note"] = "Multi-component meal analyzed as single dining session";
-        
+
         // Ensure confidence is set properly
         if (!isset($analysis["confidence"]) || $analysis["confidence"] == 0) {
             $analysis["confidence"] = 85; // Default reasonable confidence for multi-image
         }
-        
+
         return $analysis;
     } catch (Exception $e) {
         error_log("QuietGo Multi-Image Analysis Error: " . $e->getMessage());
@@ -1000,7 +1000,7 @@ main.hub-main section.subscription-info * {
                         <div class="form-group">
                             <label>Energy Level (1-10 scale)</label>
                             <input type="range" name="energy_level" min="1" max="10" value="5"
-                                   oninput="document.getElementById('energy_display').textContent = this.value">
+                                   oninput="document.getElementById("energy_display").textContent = this.value">
                             <div style="text-align: center; margin-top: 0.5rem;">
                                 <span style="color: var(--text-muted);">Energy: </span>
                                 <span id="energy_display" style="color: var(--text-primary); font-weight: 600;">5</span>/10
@@ -1044,7 +1044,7 @@ main.hub-main section.subscription-info * {
         <div class="container">
             <div class="categories-grid">
                 <!-- Stool Photos -->
-                <article class="category-card" onclick="openUploadModal('stool')">
+                <article class="category-card" onclick="openUploadModal("stool")">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
                         <div style="font-size: 3rem;">🚽</div>
                         <span style="background: var(--success-color); color: white; padding: 0.25rem 0.75rem; border-radius: 15px; font-size: 0.75rem; font-weight: 600;">AI Analysis</span>
@@ -1064,7 +1064,7 @@ main.hub-main section.subscription-info * {
                 </article>
 
                 <!-- Meal Photos -->
-                <article class="category-card" onclick="openUploadModal('meal')">
+                <article class="category-card" onclick="openUploadModal("meal")">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
                         <div style="font-size: 3rem;">🍽️</div>
                         <span style="background: <?php echo $hasCalcuPlate ? "var(--success-color)" : "var(--slate-blue)"; ?>; color: white; padding: 0.25rem 0.75rem; border-radius: 15px; font-size: 0.75rem; font-weight: 600;">
@@ -1092,7 +1092,7 @@ main.hub-main section.subscription-info * {
                 </article>
 
                 <!-- Symptom Photos -->
-                <article class="category-card" onclick="openUploadModal('symptom')">
+                <article class="category-card" onclick="openUploadModal("symptom")">
                     <div class="card-content">
                         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
                             <div style="font-size: 3rem;">🩺</div>
@@ -1114,22 +1114,22 @@ main.hub-main section.subscription-info * {
                 </article>
             </div>
 
-            <!-- Location Permission Card -->
-            <div style="display: flex; justify-content: center; margin-top: 1.5rem;">
-                <div style="background: var(--card-bg); border: 1px solid var(--accent-teal); border-radius: 12px; padding: 1.5rem; max-width: 400px; text-align: center;">
-                    <div style="font-size: 2rem; margin-bottom: 1rem;">📍</div>
-                    <h4 style="color: var(--text-primary); margin: 0 0 0.75rem 0;">Enhanced Location Tracking</h4>
-                    <p style="color: var(--text-secondary); margin: 0 0 1rem 0; font-size: 0.95rem; line-height: 1.4;">
-                        All photos are automatically time-stamped. Enable location permissions for additional location-based insights and enhanced pattern analysis.
-                    </p>
-                    <button onclick="requestLocationPermission()" style="background: var(--accent-teal); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.background='#2d7a78'" onmouseout="this.style.background='var(--accent-teal)'">
-                        Enable Location Tracking
-                    </button>
-                    <p style="color: var(--text-muted); margin: 0.75rem 0 0 0; font-size: 0.8rem;">
-                        Optional • Enhances correlation analysis
-                    </p>
-                </div>
-            </div>
+           <!-- Location Permission Card -->
+<div style="display: flex; justify-content: center; margin-top: 1.5rem;">
+    <div style="background: var(--card-bg); border: 1px solid var(--accent-teal); border-radius: 12px; padding: 1.5rem; max-width: 400px; text-align: center;">
+        <div style="font-size: 2rem; margin-bottom: 1rem;">📍</div>
+        <h4 style="color: var(--text-primary); margin: 0 0 0.75rem 0;">Enhanced Location Tracking</h4>
+        <p style="color: var(--text-secondary); margin: 0 0 1rem 0; font-size: 0.95rem; line-height: 1.4;">
+            All photos are automatically time-stamped. Enable location permissions for additional location-based insights and enhanced pattern analysis.
+        </p>
+        <button onclick="requestLocationPermission()" style="background: var(--accent-teal); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.background=&quot;#2d7a78&quot;" onmouseout="this.style.background=&quot;var(--accent-teal)&quot;">
+            Enable Location Tracking
+        </button>
+        <p style="color: var(--text-muted); margin: 0.75rem 0 0 0; font-size: 0.8rem;">
+            Optional • Enhances correlation analysis
+        </p>
+    </div>
+</div>
         </div>
     </section>
     <?php endif; ?>
@@ -1151,23 +1151,23 @@ main.hub-main section.subscription-info * {
 
             <!-- Multi-Photo Upload Area -->
             <div id="photo-upload-container">
-                <div id="initial-upload-area" style="border: 2px dashed var(--card-border); border-radius: 8px; padding: 2rem; text-align: center; margin: 1rem 0; cursor: pointer;" onclick="document.getElementById('file-input').click()">
+                <div id="initial-upload-area" style="border: 2px dashed var(--card-border); border-radius: 8px; padding: 2rem; text-align: center; margin: 1rem 0; cursor: pointer;" onclick="document.getElementById("file-input").click()">
                     <div style="font-size: 3rem; margin-bottom: 1rem;" id="upload-icon">📁</div>
                     <h4 style="color: var(--text-primary); margin: 0 0 0.5rem 0;">Choose First Photo</h4>
                     <p style="color: var(--text-secondary); margin: 0;">Click here to select your first image</p>
                 </div>
-                
+
                 <div id="photo-preview-grid" style="display: none; margin: 1rem 0;">
                     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 1rem; margin-bottom: 1rem;" id="preview-images"></div>
-                    
+
                     <div style="text-align: center;">
-                        <button type="button" id="add-more-btn" onclick="document.getElementById('file-input').click()" style="background: var(--primary-blue); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 50px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem;">
+                        <button type="button" id="add-more-btn" onclick="document.getElementById("file-input").click()" style="background: var(--primary-blue); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 50px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem;">
                             <span style="font-size: 1.2rem;">+</span> Add More Photos
                         </button>
                         <p style="color: var(--text-muted); font-size: 0.8rem; margin: 0.5rem 0 0 0;">Max 10MB per photo, 50MB total</p>
                     </div>
                 </div>
-                
+
                 <input type="file" id="file-input" name="health_item[]" accept="image/*" multiple hidden>
             </div>
 
@@ -1194,94 +1194,94 @@ let userLocation = null;
 const hasCalcuPlate = <?php echo json_encode($hasCalcuPlate); ?>;
 
 function openUploadModal(photoType) {
-    const modal = document.getElementById('upload-modal');
-    const photoTypeInput = document.getElementById('photo-type');
-    const modalTitle = document.getElementById('modal-title');
-    const modalSubtitle = document.getElementById('modal-subtitle');
-    const uploadIcon = document.getElementById('upload-icon');
+    const modal = document.getElementById("upload-modal");
+    const photoTypeInput = document.getElementById("photo-type");
+    const modalTitle = document.getElementById("modal-title");
+    const modalSubtitle = document.getElementById("modal-subtitle");
+    const uploadIcon = document.getElementById("upload-icon");
 
     photoTypeInput.value = photoType;
 
     // Update modal content based on photo type
     switch(photoType) {
-        case 'stool':
-            modalTitle.textContent = '🚽 Upload Stool Photo';
-            modalSubtitle.textContent = 'AI will analyze Bristol Scale, color, and consistency';
-            uploadIcon.textContent = '🚽';
+        case "stool":
+            modalTitle.textContent = "🚽 Upload Stool Photo";
+            modalSubtitle.textContent = "AI will analyze Bristol Scale, color, and consistency";
+            uploadIcon.textContent = "🚽";
             break;
-        case 'meal':
-            modalTitle.textContent = '🍽️ Upload Meal Photos';
+        case "meal":
+            modalTitle.textContent = "🍽️ Upload Meal Photos";
             modalSubtitle.textContent = hasCalcuPlate ?
-                'CalcuPlate will analyze all photos and automatically log your meal' :
-                'Upload multiple angles, then complete the manual logging form';
-            uploadIcon.textContent = '🍽️';
+                "CalcuPlate will analyze all photos and automatically log your meal":
+                "Upload multiple angles, then complete the manual logging form";
+            uploadIcon.textContent = "🍽️";
             break;
-        case 'symptom':
-            modalTitle.textContent = '🩺 Upload Symptom Photo';
-            modalSubtitle.textContent = 'Document physical symptoms for pattern tracking';
-            uploadIcon.textContent = '🩺';
+        case "symptom"
+            modalTitle.textContent = "🩺 Upload Symptom Photo";
+            modalSubtitle.textContent = "Document physical symptoms for pattern tracking";
+            uploadIcon.textContent = "🩺";
             break;
     }
 
     // Build context fields
     buildContextFields(photoType);
 
-    modal.style.display = 'flex';
+    modal.style.display = "flex";
 
     // Get location if available
     requestLocationPermission();
 }
 
 function buildContextFields(photoType) {
-    const container = document.getElementById('context-fields');
-    container.innerHTML = '';
-    
+    const container = document.getElementById("context-fields");
+    container.innerHTML = "";
+
     // No context fields needed - keep upload modal clean and simple
 }
 
 function closeUploadModal() {
-    const modal = document.getElementById('upload-modal');
-    const form = document.getElementById('upload-form');
-    const initialArea = document.getElementById('initial-upload-area');
-    const previewGrid = document.getElementById('photo-preview-grid');
-    const previewImages = document.getElementById('preview-images');
-    const fileInput = document.getElementById('file-input');
-    const addMoreBtn = document.getElementById('add-more-btn');
-    const submitBtn = form.querySelector('button[type="submit"]');
-    
+    const modal = document.getElementById("upload-modal");
+    const form = document.getElementById("upload-form");
+    const initialArea = document.getElementById("initial-upload-area");
+    const previewGrid = document.getElementById("photo-preview-grid");
+    const previewImages = document.getElementById("preview-images");
+    const fileInput = document.getElementById("file-input");
+    const addMoreBtn = document.getElementById("add-more-btn");
+    const submitBtn = form.querySelector("button[type="submit"]");
+
     // Hide modal
-    modal.style.display = 'none';
-    
+    modal.style.display = "none";
+
     // Reset form
     form.reset();
-    
+
     // COMPLETE RESET of all state
     allSelectedFiles = [];
     selectedFile = null;
-    
+
     // Clear preview images
     if (previewImages) {
-        previewImages.innerHTML = '';
+        previewImages.innerHTML = "";
     }
-    
+
     // Reset visibility
-    if (initialArea) initialArea.style.display = 'block';
-    if (previewGrid) previewGrid.style.display = 'none';
-    
+    if (initialArea) initialArea.style.display = "block";
+    if (previewGrid) previewGrid.style.display = "none";
+
     // Reset button text
     if (addMoreBtn) {
-        addMoreBtn.innerHTML = '<span style="font-size: 1.2rem;">+</span> Add More Photos';
+        addMoreBtn.innerHTML = "<span style="font-size: 1.2rem;">+</span> Add More Photos";
     }
-    
+
     // Reset submit button text and state
     if (submitBtn) {
-        submitBtn.textContent = '🚀 Upload & Analyze Photos';
+        submitBtn.textContent = "🚀 Upload & Analyze Photos";
         submitBtn.disabled = false;
     }
-    
+
     // Clear file input
     if (fileInput) {
-        fileInput.value = '';
+        fileInput.value = "";
     }
 }
 
@@ -1296,14 +1296,14 @@ function requestLocationPermission() {
                 };
 
                 // Update hidden form fields
-                document.getElementById('latitude').value = userLocation.latitude;
-                document.getElementById('longitude').value = userLocation.longitude;
-                document.getElementById('location-accuracy').value = userLocation.accuracy;
+                document.getElementById("latitude").value = userLocation.latitude;
+                document.getElementById("longitude").value = userLocation.longitude;
+                document.getElementById("location-accuracy").value = userLocation.accuracy;
 
-                console.log('📍 Location captured for enhanced pattern analysis');
+                console.log("📍 Location captured for enhanced pattern analysis");
             },
             function(error) {
-                console.log('📍 Location permission denied - using timestamp only');
+                console.log("📍 Location permission denied - using timestamp only");
             }
         );
     }
@@ -1312,64 +1312,64 @@ function requestLocationPermission() {
 // File input handling - MULTIPLE FILES WITH PREVIEW
 let allSelectedFiles = [];
 
-document.getElementById('file-input').addEventListener('change', function(e) {
+document.getElementById("file-input").addEventListener("change", function(e) {
     const newFiles = Array.from(e.target.files);
-    
+
     if (newFiles.length > 0) {
         // Validate all new files
         let validNewFiles = [];
-        
+
         for (let file of newFiles) {
-            if (!file.type.startsWith('image/')) {
+            if (!file.type.startsWith("image/")) {
                 alert(`${file.name} is not an image file. Please select images only.`);
-                this.value = '';
+                this.value = "";
                 return;
             }
-            
+
             if (file.size > 10 * 1024 * 1024) {
                 alert(`${file.name} is too large. Maximum size is 10MB per image.`);
-                this.value = '';
+                this.value = "";
                 return;
             }
-            
+
             validNewFiles.push(file);
         }
-        
+
         // Add to existing files
         allSelectedFiles = allSelectedFiles.concat(validNewFiles);
-        
+
         // Check total size
         let totalSize = allSelectedFiles.reduce((sum, file) => sum + file.size, 0);
         if (totalSize > 50 * 1024 * 1024) {
-            alert('Total file size too large. Maximum total size is 50MB.');
+            alert("Total file size too large. Maximum total size is 50MB.");
             allSelectedFiles = allSelectedFiles.slice(0, -validNewFiles.length); // Remove the new files
-            this.value = '';
+            this.value = "";
             return;
         }
-        
+
         updatePhotoPreview();
         selectedFile = allSelectedFiles; // Update global variable
     }
-    
+
     // Clear the input so same file can be selected again
-    this.value = '';
+    this.value = "";
 });
 
 function updatePhotoPreview() {
-    const initialArea = document.getElementById('initial-upload-area');
-    const previewGrid = document.getElementById('photo-preview-grid');
-    const previewImages = document.getElementById('preview-images');
-    
+    const initialArea = document.getElementById("initial-upload-area");
+    const previewGrid = document.getElementById("photo-preview-grid");
+    const previewImages = document.getElementById("preview-images");
+
     if (allSelectedFiles.length > 0) {
         // Hide initial area, show preview grid
-        initialArea.style.display = 'none';
-        previewGrid.style.display = 'block';
-        
+        initialArea.style.display = "none";
+        previewGrid.style.display = "block";
+
         // Clear and rebuild preview
-        previewImages.innerHTML = '';
-        
+        previewImages.innerHTML = "";
+
         allSelectedFiles.forEach((file, index) => {
-            const previewItem = document.createElement('div');
+            const previewItem = document.createElement("div");
             previewItem.style.cssText = `
                 position: relative;
                 background: var(--card-bg);
@@ -1382,9 +1382,9 @@ function updatePhotoPreview() {
                 flex-direction: column;
                 justify-content: center;
             `;
-            
+
             // Create image preview if possible
-            if (file.type.startsWith('image/')) {
+            if (file.type.startsWith("image/")) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     previewItem.innerHTML = `
@@ -1393,7 +1393,7 @@ function updatePhotoPreview() {
                             <button type="button" onclick="removePhoto(${index})" style="position: absolute; top: -8px; right: -8px; width: 20px; height: 20px; border-radius: 50%; background: #e74c3c; color: white; border: none; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center;">×</button>
                         </div>
                         <div style="font-size: 0.7rem; color: var(--text-muted); word-break: break-word;">
-                            ${file.name.length > 15 ? file.name.substring(0, 12) + '...' : file.name}
+                            ${file.name.length > 15 ? file.name.substring(0, 12) + "..." : file.name}
                         </div>
                         <div style="font-size: 0.6rem; color: var(--text-muted);">
                             ${(file.size / 1024 / 1024).toFixed(1)}MB
@@ -1408,27 +1408,27 @@ function updatePhotoPreview() {
                         <button type="button" onclick="removePhoto(${index})" style="position: absolute; top: -8px; right: -8px; width: 20px; height: 20px; border-radius: 50%; background: #e74c3c; color: white; border: none; font-size: 12px; cursor: pointer;">×</button>
                     </div>
                     <div style="font-size: 0.7rem; color: var(--text-muted); word-break: break-word;">
-                        ${file.name.length > 15 ? file.name.substring(0, 12) + '...' : file.name}
+                        ${file.name.length > 15 ? file.name.substring(0, 12) + "..." : file.name}
                     </div>
                     <div style="font-size: 0.6rem; color: var(--text-muted);">
                         ${(file.size / 1024 / 1024).toFixed(1)}MB
                     </div>
                 `;
             }
-            
+
             previewImages.appendChild(previewItem);
         });
-        
+
         // Update add more button text
-        const addMoreBtn = document.getElementById('add-more-btn');
+        const addMoreBtn = document.getElementById("add-more-btn");
         if (addMoreBtn) {
             addMoreBtn.innerHTML = `<span style="font-size: 1.2rem;">+</span> Add More (${allSelectedFiles.length} selected)`;
         }
-        
+
     } else {
         // Show initial area, hide preview
-        initialArea.style.display = 'block';
-        previewGrid.style.display = 'none';
+        initialArea.style.display = "block";
+        previewGrid.style.display = "none";
     }
 }
 
@@ -1439,65 +1439,65 @@ function removePhoto(index) {
 }
 
 // Form submission with proper FormData handling
-document.getElementById('upload-form').addEventListener('submit', function(e) {
+document.getElementById("upload-form").addEventListener("submit", function(e) {
     if (!selectedFile || selectedFile.length === 0) {
         e.preventDefault();
-        alert('Please select at least one photo first');
+        alert("Please select at least one photo first");
         return false;
     }
 
     // Create FormData object and append files manually
     e.preventDefault();
-    
+
     const formData = new FormData();
-    
+
     // Add all selected files
     selectedFile.forEach((file, index) => {
-        formData.append('health_item[]', file);
+        formData.append("health_item[]", file);
     });
-    
+
     // Add other form data
-    formData.append('photo_type', document.getElementById('photo-type').value);
-    formData.append('latitude', document.getElementById('latitude').value);
-    formData.append('longitude', document.getElementById('longitude').value);
-    formData.append('accuracy', document.getElementById('location-accuracy').value);
-    
+    formData.append("photo_type", document.getElementById("photo-type").value);
+    formData.append("latitude", document.getElementById("latitude").value);
+    formData.append("longitude", document.getElementById("longitude").value);
+    formData.append("accuracy", document.getElementById("location-accuracy").value);
+
     // Show loading state
-    const submitBtn = this.querySelector('button[type="submit"]');
+    const submitBtn = this.querySelector("button[type="submit"]");
     const originalText = submitBtn.textContent;
-    submitBtn.textContent = selectedFile.length > 1 ? 
-        `🔄 Analyzing ${selectedFile.length} photos...` : 
-        '🔄 Analyzing...';
+    submitBtn.textContent = selectedFile.length > 1 ?
+        `🔄 Analyzing ${selectedFile.length} photos...` :
+        "🔄 Analyzing...";
     submitBtn.disabled = true;
-    
+
     // Submit via fetch with AJAX header
     fetch(window.location.href, {
-        method: 'POST',
+        method: "POST",
         headers: {
-            'X-Requested-With': 'XMLHttpRequest'
+            "X-Requested-With": "XMLHttpRequest"
         },
         body: formData
     })
     .then(response => {
-        console.log('Response status:', response.status);
-        console.log('Response headers:', response.headers);
-        
+        console.log("Response status:", response.status);
+        console.log("Response headers:", response.headers);
+
         if (!response.ok) {
             // Try to get error text
             return response.text().then(text => {
-                console.error('Response body:', text);
+                console.error("Response body:", text);
                 throw new Error(`HTTP error! status: ${response.status}, body: ${text.substring(0, 500)}`);
             });
         }
         return response.json();
     })
     .then(result => {
-        console.log('Upload result:', result);
-        
-        if (result.status === 'success') {
+        console.log("Upload result:", result);
+
+        if (result.status === "success") {
             // Close upload modal
             closeUploadModal();
-            
+
             // Check if clarification is needed (Pro+ CalcuPlate)
             if (result.ai_analysis && result.ai_analysis.needs_clarification) {
                 // Show clarification modal for quick questions
@@ -1510,82 +1510,82 @@ document.getElementById('upload-form').addEventListener('submit', function(e) {
                 window.location.reload();
             }
         } else {
-            alert(result.message || 'Upload failed. Please try again.');
+            alert(result.message || "Upload failed. Please try again.");
             submitBtn.textContent = originalText;
             submitBtn.disabled = false;
         }
     })
     .catch(error => {
-        console.error('Upload error details:', error);
-        console.error('Error message:', error.message);
-        console.error('Error stack:', error.stack);
-        
+        console.error("Upload error details:", error);
+        console.error("Error message:", error.message);
+        console.error("Error stack:", error.stack);
+
         // More specific error messages
-        let errorMessage = 'Upload failed: ';
-        
-        if (error.message.includes('NetworkError') || error.message.includes('Failed to fetch')) {
-            errorMessage += 'Network connection error. Please check your internet connection.';
-        } else if (error.message.includes('HTTP error')) {
+        let errorMessage = "Upload failed: ";
+
+        if (error.message.includes("NetworkError") || error.message.includes("Failed to fetch")) {
+            errorMessage += "Network connection error. Please check your internet connection.";
+        } else if (error.message.includes("HTTP error")) {
             errorMessage += error.message;
-        } else if (error.message.includes('JSON')) {
-            errorMessage += 'Invalid response from server. Please try again.';
+        } else if (error.message.includes("JSON")) {
+            errorMessage += "Invalid response from server. Please try again.";
         } else {
-            errorMessage += error.message || 'Unknown error. Please try again.';
+            errorMessage += error.message || "Unknown error. Please try again.";
         }
-        
+
         alert(errorMessage);
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
     });
-    
+
     return false;
 });
 
-console.log('📤 Enhanced Photo Upload System Loaded');
-console.log('✅ Pro users: AI stool analysis + manual meal forms');
-console.log('⚡ Pro+ users: AI stool analysis + CalcuPlate auto-logging');
-console.log('📍 Location tracking enabled for enhanced pattern analysis');
-console.log('🎯 Journey-focused analysis: ' + <?php echo json_encode($userJourney); ?>);
+console.log("📤 Enhanced Photo Upload System Loaded");
+console.log("✅ Pro users: AI stool analysis + manual meal forms");
+console.log("⚡ Pro+ users: AI stool analysis + CalcuPlate auto-logging");
+console.log("📍 Location tracking enabled for enhanced pattern analysis");
+console.log("🎯 Journey-focused analysis: " + <?php echo json_encode($userJourney); ?>);
 
 // Manual meal form handling
-document.addEventListener('DOMContentLoaded', function() {
-    const manualMealForm = document.getElementById('manual-meal-form');
+document.addEventListener("DOMContentLoaded", function() {
+    const manualMealForm = document.getElementById("manual-meal-form");
     if (manualMealForm) {
-        manualMealForm.addEventListener('submit', function(e) {
+        manualMealForm.addEventListener("submit", function(e) {
             // Remove HTML5 validation that might cause "invalid value" errors
-            const timeInput = this.querySelector('input[name="meal_time"]');
-            const mealTypeSelect = this.querySelector('select[name="meal_type"]');
-            const portionSelect = this.querySelector('select[name="portion_size"]');
-            const mainFoodsTextarea = this.querySelector('textarea[name="main_foods"]');
+            const timeInput = this.querySelector("input[name="meal_time"]");
+            const mealTypeSelect = this.querySelector("select[name="meal_type"]");
+            const portionSelect = this.querySelector("select[name="portion_size"]");
+            const mainFoodsTextarea = this.querySelector("textarea[name="main_foods"]");
 
             // Custom validation instead of HTML5
             let errors = [];
 
             if (!mealTypeSelect.value) {
-                errors.push('Please select a meal type');
+                errors.push("Please select a meal type");
             }
 
             if (!timeInput.value) {
-                errors.push('Please select a meal time');
+                errors.push("Please select a meal time");
             }
 
             if (!portionSelect.value) {
-                errors.push('Please select a portion size');
+                errors.push("Please select a portion size");
             }
 
             if (!mainFoodsTextarea.value.trim()) {
-                errors.push('Please list the main foods');
+                errors.push("Please list the main foods");
             }
 
             if (errors.length > 0) {
                 e.preventDefault();
-                alert('Please complete all required fields:\n\n' + errors.join('\n'));
+                alert("Please complete all required fields:\n\n" + errors.join("\n"));
                 return false;
             }
 
             // Show loading state
-            const submitBtn = document.getElementById('complete-meal-btn');
-            submitBtn.textContent = '🔄 Saving Meal Log...';
+            const submitBtn = document.getElementById("complete-meal-btn");
+            submitBtn.textContent = "🔄 Saving Meal Log...";
             submitBtn.disabled = true;
         });
     }
