@@ -535,7 +535,37 @@ function analyzeMultiImageMeal($storedImages, $userJourney) {
 
     error_log("QuietGo Multi-Image: Analyzing " . count($base64Images) . " images together");
 
-    $systemPrompt = "You are CalcuPlate analyzing a multi-image meal. You will see " . count($base64Images) . " images of THE SAME MEAL taken from different angles or showing different components (main dish, beverage, dessert, etc.).\n\nANALYZE ALL IMAGES TOGETHER as ONE COMPLETE MEAL. Combine all food items, beverages, and components into a single comprehensive analysis.\n\nIf you see the same item in multiple images, COUNT IT ONLY ONCE. Use multiple angles to improve accuracy of portion estimates.\n\n" . "For {$journeyConfig['focus']} analysis with {$journeyConfig['tone']}, provide complete nutritional breakdown.";
+    // Use the FULL CalcuPlate prompt with JSON formatting requirements
+    $systemPrompt = "You are CalcuPlate, a professional meal analysis AI analyzing a multi-image meal.
+
+You will see " . count($base64Images) . " images of THE SAME MEAL taken from different angles or showing different components (main dish, beverage, dessert, etc.).
+
+ANALYZE ALL IMAGES TOGETHER as ONE COMPLETE MEAL. If you see the same item in multiple images, COUNT IT ONLY ONCE.
+
+For {$journeyConfig['focus']} analysis with {$journeyConfig['tone']}, respond ONLY with valid JSON:
+
+{
+    \"calcuplate\": {
+        \"analysis_type\": \"complete_meal\",
+        \"items_detected\": [
+            {\"item\": \"Food name\", \"quantity\": \"amount\", \"calories\": number, \"type\": \"category\"}
+        ],
+        \"totals\": {
+            \"calories\": number,
+            \"protein_g\": number,
+            \"carbs_g\": number,
+            \"fat_g\": number,
+            \"fiber_g\": number,
+            \"sodium_mg\": number
+        },
+        \"confidence\": number (85-95),
+        \"data_source\": \"source description\"
+    },
+    \"insights\": [\"insight1\", \"insight2\"],
+    \"recommendations\": [\"rec1\", \"rec2\"]
+}
+
+Combine ALL visible food and beverages from all images into ONE analysis.";
 
     $time = date("H:i");
     $userPrompt = "Time: $time\n\nThese " . count($base64Images) . " images show ONE MEAL:\n";
