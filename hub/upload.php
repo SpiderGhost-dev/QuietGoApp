@@ -102,8 +102,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["photo_filename"]) && 
 
 // Check if this is an AJAX request - return JSON instead of HTML
 $isAjax = !empty($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtolower($_SERVER["HTTP_X_REQUESTED_WITH"]) == "xmlhttprequest";
+error_log("QuietGo: isAjax = " . ($isAjax ? "true" : "false") . ", X-Requested-With = " . ($_SERVER["HTTP_X_REQUESTED_WITH"] ?? "not set"));
 
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_FILES["health_item"])) {
+    // CRITICAL: For AJAX requests, ensure clean JSON response
+    if ($isAjax) {
+        ob_clean();
+    }
+    
     try {
         error_log("QuietGo upload.php: Processing POST request");
 
@@ -170,10 +176,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_FILES["health_item"])) {
 
     // If AJAX request, return JSON and exit
     if ($isAjax && $uploadResult) {
-        ob_clean();
+        error_log("QuietGo: Sending JSON response for AJAX request");
+        error_log("QuietGo: uploadResult status = " . $uploadResult["status"]);
+        while (ob_get_level()) {
+            ob_end_clean();
+        }
+        ob_start();
         header("Content-Type: application/json");
-        echo json_encode($uploadResult);
-        exit;
+        $jsonResponse = json_encode($uploadResult);
+        error_log("QuietGo: JSON response length = " . strlen($jsonResponse));
+        echo $jsonResponse;
+        exit();
     }
 
     } catch (Exception $e) {
@@ -190,11 +203,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_FILES["health_item"])) {
         ];
 
         if ($isAjax) {
-            ob_clean();
+            while (ob_get_level()) {
+                ob_end_clean();
+            }
+            ob_start();
             header("Content-Type: application/json");
             http_response_code(500);
             echo json_encode($uploadResult);
-            exit;
+            exit();
         }
     }
 }
@@ -628,7 +644,9 @@ function generateAIAnalysis($postData, $userJourney, $hasCalcuPlate, $imagePath 
 
 // Analysis functions now in /includes/analysis-functions.php
 
-include __DIR__ . "/includes/header-hub.php";
+// CRITICAL: Don't include header for AJAX requests
+if (!$isAjax) {
+    include __DIR__ . "/includes/header-hub.php";
 ?>
 
 <style>
@@ -1603,4 +1621,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <?php include __DIR__ . "/includes/footer-hub.php"; ?>
 
 <!-- AI Support Chatbot -->
-<?php include __DIR__ . "/../includes/chatbot-widget.php"; ?>
+<?php 
+    include __DIR__ . "/../includes/chatbot-widget.php";
+} // End of if (!$isAjax)
+?>
