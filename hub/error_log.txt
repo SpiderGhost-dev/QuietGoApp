@@ -358,3 +358,23 @@ iously declared in /Users/davidbaker/Desktop/QuietGoApp/hub/includes/openai-conf
 [30-Sep-2025 18:24:06 UTC] QuietGo: Sending JSON response for AJAX request
 [30-Sep-2025 18:24:06 UTC] QuietGo: uploadResult status = success
 [30-Sep-2025 18:24:06 UTC] QuietGo: JSON response length = 1072
+[30-Sep-2025 19:11:13 UTC] QuietGo upload.php: Script started at 2025-09-30 19:11:13
+[30-Sep-2025 19:11:13 UTC] QuietGo: isAjax = false, X-Requested-With = not set
+[30-Sep-2025 19:11:31 UTC] QuietGo upload.php: Script started at 2025-09-30 19:11:31
+[30-Sep-2025 19:11:31 UTC] QuietGo: isAjax = true, X-Requested-With = XMLHttpRequest
+[30-Sep-2025 19:11:31 UTC] QuietGo upload.php: Processing POST request
+[30-Sep-2025 19:11:31 UTC] QuietGo upload.php: Photo type = meal
+[30-Sep-2025 19:11:31 UTC] QuietGo CalcuPlate: Starting analysis for: /Users/davidbaker/Desktop/QuietGoApp/hub/includes/../QuietGoData/users/admin@quietgo.app/photos/meal/2025-09/20250930_191131_68dc2b63357ed.jpg
+[30-Sep-2025 19:11:31 UTC] QuietGo Image: Encoded 9509 bytes for AI analysis
+[30-Sep-2025 19:11:31 UTC] QuietGo CalcuPlate: Image encoded successfully, preparing prompt
+[30-Sep-2025 19:11:31 UTC] QuietGo CalcuPlate: Using direct OpenAI call
+[30-Sep-2025 19:11:31 UTC] QuietGo AI Request: Model=gpt-4o, Messages=2, MaxTokens=1000
+[30-Sep-2025 19:11:32 UTC] QuietGo AI Success: Tokens used=1535
+[30-Sep-2025 19:11:32 UTC] QuietGo CalcuPlate: Response received, has error: NO
+[30-Sep-2025 19:11:32 UTC] QuietGo CalcuPlate: Non-food image detected
+[30-Sep-2025 19:11:32 UTC] QuietGo Multi-Image Analysis Error: This doesn't appear to be a meal photo. Please upload a photo of food, or use the Stool or Symptom upload options for other types of health tracking.
+[30-Sep-2025 19:11:32 UTC] QuietGo DB: Connected successfully to MySQL - quietgo_local
+[30-Sep-2025 19:11:32 UTC] QuietGo: Sending JSON response for AJAX request
+[30-Sep-2025 19:11:32 UTC] QuietGo: uploadResult status = success
+[30-Sep-2025 19:11:32 UTC] QuietGo: JSON response length = 444
+[30-Sep-2025 19:11:40 UTC] QuietGo upload.php: Script started at 2025-09-30 19:11:40
