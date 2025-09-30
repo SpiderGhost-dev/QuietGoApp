@@ -4,46 +4,20 @@
  * Contains stool, meal, and symptom analysis functions
  */
 
-/**
- * Get journey-specific prompt configuration
- */
-function getJourneyPromptConfig($userJourney) {
-    $configs = [
-        'clinical' => [
-            'tone' => 'clinical and precise language',
-            'focus' => 'symptom correlations and medical documentation',
-            'meal_focus' => 'potential trigger foods and digestive impact',
-            'recommendations' => 'healthcare provider communication insights'
-        ],
-        'performance' => [
-            'tone' => 'athletic and performance-oriented language',
-            'focus' => 'nutrition optimization for training and recovery',
-            'meal_focus' => 'macronutrient timing and energy availability',
-            'recommendations' => 'performance enhancement strategies'
-        ],
-        'best_life' => [
-            'tone' => 'supportive and lifestyle-focused language',
-            'focus' => 'overall wellness and energy optimization',
-            'meal_focus' => 'balanced nutrition and sustained energy',
-            'recommendations' => 'practical wellness improvements'
-        ]
-    ];
-    
-    return $configs[$userJourney] ?? $configs['best_life'];
-}
+// Function already defined in openai-config.php - no need to redeclare
 
 /**
  * Analyze Stool Photo using Bristol Stool Scale
  */
 function analyzeStoolPhoto($imagePath, $journeyConfig, $symptoms, $time, $notes) {
     error_log("QuietGo: analyzeStoolPhoto called for: $imagePath");
-    
+
     $base64Image = encodeImageForOpenAI($imagePath);
     if (!$base64Image) {
         error_log("QuietGo ERROR: Failed to encode image for stool analysis");
         throw new Exception('Failed to process image for AI analysis');
     }
-    
+
     error_log("QuietGo: Image encoded successfully, preparing AI request");
 
     $systemPrompt = "You are a professional digestive health AI assistant specialized in Bristol Stool Scale analysis.
@@ -104,12 +78,12 @@ Analyze this stool photo using the Bristol Stool Scale and provide {$journeyConf
 
     $aiContent = $response['choices'][0]['message']['content'];
     error_log("QuietGo: AI content length: " . strlen($aiContent));
-    
+
     // Strip markdown code blocks if present
     $aiContent = preg_replace('/^```json\s*/m', '', $aiContent);
     $aiContent = preg_replace('/\s*```$/m', '', $aiContent);
     $aiContent = trim($aiContent);
-    
+
     $analysisData = json_decode($aiContent, true);
 
     if (json_last_error() !== JSON_ERROR_NONE) {
@@ -117,7 +91,7 @@ Analyze this stool photo using the Bristol Stool Scale and provide {$journeyConf
         error_log("AI Response: " . $aiContent);
         throw new Exception('Invalid AI response format');
     }
-    
+
     error_log("QuietGo: Stool analysis parsed successfully. Bristol: " . ($analysisData['bristol_scale'] ?? 'NULL') . ", Confidence: " . ($analysisData['confidence'] ?? 'NULL'));
 
     // Add metadata
@@ -134,20 +108,20 @@ Analyze this stool photo using the Bristol Stool Scale and provide {$journeyConf
  */
 function analyzeMealPhotoWithCalcuPlate($imagePath, $journeyConfig, $symptoms, $time, $notes) {
     error_log("QuietGo CalcuPlate: Starting analysis for: $imagePath");
-    
+
     // Try smart router first, but have fallback
     $useSmartRouter = false; // Temporarily disable smart router to isolate issue
-    
+
     if ($useSmartRouter && file_exists(__DIR__ . '/smart-ai-router.php')) {
         require_once __DIR__ . '/smart-ai-router.php';
     }
-    
+
     $base64Image = encodeImageForOpenAI($imagePath);
     if (!$base64Image) {
         error_log("QuietGo CalcuPlate ERROR: Failed to encode image");
         throw new Exception('Failed to process image for AI analysis');
     }
-    
+
     error_log("QuietGo CalcuPlate: Image encoded successfully, preparing prompt");
 
     $systemPrompt = "You are CalcuPlate, a professional meal analysis AI that uses a multi-pass algorithm for accurate nutritional tracking.
@@ -164,7 +138,7 @@ function analyzeMealPhotoWithCalcuPlate($imagePath, $journeyConfig, $symptoms, $
 ━━━ PASS 2: CLASSIFICATION & RECOGNITION ━━━
 SUSHI DISTINCTION IS CRITICAL:
 • Roll slices: 6-8 connected pieces = 1 roll = 200-400 cal total
-• Nigiri: Individual fish on rice = 50-100 cal EACH piece  
+• Nigiri: Individual fish on rice = 50-100 cal EACH piece
 • Sashimi: Just fish, no rice = 25-40 cal per piece
 • Mixed plates: Identify each type separately
 
@@ -288,20 +262,20 @@ Analyze this meal photo for automatic nutritional logging with focus on {$journe
         error_log("QuietGo CalcuPlate: Using direct OpenAI call");
         $response = makeOpenAIRequest($messages, OPENAI_VISION_MODEL, 1000);
     }
-    
-    error_log("QuietGo CalcuPlate: Response received, has error: " . (isset($response['error']) ? 'YES' : 'NO"));
+
+    error_log("QuietGo CalcuPlate: Response received, has error: " . (isset($response['error']) ? 'YES' : 'NO'));
 
     if (isset($response['error'])) {
         throw new Exception($response['error']);
     }
 
     $aiContent = $response['choices'][0]['message']['content'];
-    
+
     // Strip markdown code blocks if present (GPT-4o-mini sometimes wraps JSON)
     $aiContent = preg_replace('/^```json\s*/m', '', $aiContent);
     $aiContent = preg_replace('/\s*```$/m', '', $aiContent);
     $aiContent = trim($aiContent);
-    
+
     $analysisData = json_decode($aiContent, true);
 
     if (json_last_error() !== JSON_ERROR_NONE) {
@@ -309,51 +283,51 @@ Analyze this meal photo for automatic nutritional logging with focus on {$journe
         error_log("AI Response: " . $aiContent);
         throw new Exception('Invalid CalcuPlate response format');
     }
-    
+
     // Check if AI detected non-food content
     if (isset($analysisData['error']) && $analysisData['error'] === 'not_food') {
         error_log("QuietGo CalcuPlate: Non-food image detected");
         throw new Exception('This doesn\'t appear to be a meal photo. Please upload a photo of food, or use the Stool or Symptom upload options for other types of health tracking.');
     }
-    
+
     // Check if AI needs clarification for ambiguous items
     if (isset($analysisData['needs_clarification']) && $analysisData['needs_clarification'] === true) {
         error_log("QuietGo CalcuPlate: Needs clarification for ambiguous items");
-        
+
         // Log detected items
         if (isset($analysisData['detected_items'])) {
             error_log(" - Confirmed: " . json_encode($analysisData['detected_items']['confirmed'] ?? []));
             error_log(" - Ambiguous: " . json_encode($analysisData['detected_items']['ambiguous'] ?? []));
         }
-        
+
         // Log questions
         if (isset($analysisData['questions'])) {
             foreach ($analysisData['questions'] as $q) {
                 error_log(" - Question: {$q['question']} (Impact: {$q['impact']})");
             }
         }
-        
+
         // For now, use preliminary totals with conservative estimates
         // TODO: Future enhancement - trigger clarification modal in UI
         $analysisData['clarification_needed'] = true;
         $analysisData['user_message'] = 'Some items need clarification. Using higher estimates for now.';
-        
+
         // Build analysis from preliminary data
         if (isset($analysisData['preliminary_totals'])) {
             $preliminaryTotals = $analysisData['preliminary_totals'];
             $detectedItems = $analysisData['detected_items'] ?? [];
-            
+
             // Use the higher estimate from range
             $calorieRange = $preliminaryTotals['estimated_range'] ?? '0';
             preg_match('/(\d+)-(\d+)/', $calorieRange, $matches);
             $higherCalories = isset($matches[2]) ? intval($matches[2]) : intval($preliminaryTotals['confirmed_calories'] ?? 0);
-            
+
             // Build food list from detected items
             $foods = array_merge(
                 $detectedItems['confirmed'] ?? [],
                 $detectedItems['ambiguous'] ?? []
             );
-            
+
             $analysisData['calcuplate'] = [
                 'analysis_type' => 'needs_clarification',
                 'items_detected' => [], // Would be populated after clarification
@@ -371,7 +345,7 @@ Analyze this meal photo for automatic nutritional logging with focus on {$journe
                 ],
                 'confidence' => $preliminaryTotals['confidence'] ?? 75
             ];
-            
+
             $analysisData['confidence'] = $preliminaryTotals['confidence'] ?? 75;
             $analysisData['nutrition_insights'] = ['Some items need confirmation for accurate tracking'];
             $analysisData['recommendations'] = ['Clarify ambiguous items for better analysis'];
@@ -381,11 +355,11 @@ Analyze this meal photo for automatic nutritional logging with focus on {$journe
     // Check if we need to retry with better model
     if (isset($response['routing_info']) && SmartAIRouter::needsRetry($response, $response['routing_info']['tier_used'])) {
         error_log("QuietGo: Retrying with higher tier model");
-        
+
         // Force expensive tier
         $messages[0]['content'] .= "\n\nIMPORTANT: This is a retry request. Provide the most accurate analysis possible.";
         $retryResponse = makeOpenAIRequest($messages, OPENAI_VISION_MODEL, 1000);
-        
+
         if (!isset($retryResponse['error'])) {
             $aiContent = $retryResponse['choices'][0]['message']['content'];
             $aiContent = preg_replace('/^```json\s*/m', '', $aiContent);
@@ -399,7 +373,7 @@ Analyze this meal photo for automatic nutritional logging with focus on {$journe
     if (isset($analysisData['calcuplate'])) {
         error_log("QuietGo CalcuPlate Analysis Complete:");
         error_log(" - Analysis Type: " . ($analysisData['calcuplate']['analysis_type'] ?? 'unknown'));
-        
+
         // Log detailed items if available
         if (isset($analysisData['calcuplate']['items_detected'])) {
             foreach ($analysisData['calcuplate']['items_detected'] as $item) {
@@ -409,7 +383,7 @@ Analyze this meal photo for automatic nutritional logging with focus on {$journe
             // Fallback to legacy format
             error_log(" - Foods: " . json_encode($analysisData['calcuplate']['foods_detected'] ?? []));
         }
-        
+
         // Log condiments analysis
         if (isset($analysisData['calcuplate']['condiments_analysis'])) {
             $condiments = $analysisData['calcuplate']['condiments_analysis'];
@@ -423,7 +397,7 @@ Analyze this meal photo for automatic nutritional logging with focus on {$journe
                 error_log(" - Condiments Uncertain: " . json_encode($condiments['uncertain']));
             }
         }
-        
+
         // Log totals
         if (isset($analysisData['calcuplate']['totals'])) {
             $totals = $analysisData['calcuplate']['totals'];
@@ -436,18 +410,18 @@ Analyze this meal photo for automatic nutritional logging with focus on {$journe
             // Fallback to legacy format
             error_log(" - Total Calories: " . ($analysisData['calcuplate']['total_calories'] ?? 'N/A'));
         }
-        
+
         error_log(" - Confidence: " . ($analysisData['confidence'] ?? $analysisData['calcuplate']['confidence'] ?? 'N/A'));
         error_log(" - Data Source: " . ($analysisData['calcuplate']['data_source'] ?? 'Generic database'));
     }
-    
+
     // Ensure backward compatibility with UI
     if (isset($analysisData['calcuplate'])) {
         // Make sure legacy fields exist for UI compatibility
         if (!isset($analysisData['calcuplate']['auto_logged'])) {
             $analysisData['calcuplate']['auto_logged'] = true;
         }
-        
+
         // Convert new totals format to legacy macros format if needed
         if (isset($analysisData['calcuplate']['totals']) && !isset($analysisData['calcuplate']['macros'])) {
             $totals = $analysisData['calcuplate']['totals'];
@@ -459,12 +433,12 @@ Analyze this meal photo for automatic nutritional logging with focus on {$journe
                 'sodium' => ($totals['sodium_mg'] ?? 0) . 'mg'
             ];
         }
-        
+
         // Ensure total_calories exists for legacy UI
         if (!isset($analysisData['calcuplate']['total_calories']) && isset($analysisData['calcuplate']['totals']['calories'])) {
             $analysisData['calcuplate']['total_calories'] = $analysisData['calcuplate']['totals']['calories'];
         }
-        
+
         // Build legacy foods_detected from items_detected if needed
         if (!isset($analysisData['calcuplate']['foods_detected']) && isset($analysisData['calcuplate']['items_detected'])) {
             $foods = [];
@@ -473,7 +447,7 @@ Analyze this meal photo for automatic nutritional logging with focus on {$journe
             }
             $analysisData['calcuplate']['foods_detected'] = $foods;
         }
-        
+
         // Add default quality metrics if missing
         if (!isset($analysisData['calcuplate']['meal_quality_score'])) {
             $analysisData['calcuplate']['meal_quality_score'] = '7/10';
@@ -482,7 +456,7 @@ Analyze this meal photo for automatic nutritional logging with focus on {$journe
             $analysisData['calcuplate']['nutritional_completeness'] = '75%';
         }
     }
-    
+
     // Add journey-specific insights
     switch ($_SESSION['hub_user']['journey']) {
         case 'clinical':
@@ -500,7 +474,7 @@ Analyze this meal photo for automatic nutritional logging with focus on {$journe
     if (!isset($analysisData['nutrition_insights']) && isset($analysisData['insights'])) {
         $analysisData['nutrition_insights'] = $analysisData['insights'];
     }
-    
+
     // Ensure recommendations exist
     if (!isset($analysisData['recommendations']) || empty($analysisData['recommendations'])) {
         $analysisData['recommendations'] = [
@@ -509,7 +483,7 @@ Analyze this meal photo for automatic nutritional logging with focus on {$journe
             'Track patterns over time for best insights'
         ];
     }
-    
+
     $analysisData['timestamp'] = time();
     $analysisData['ai_model'] = $response['routing_info']['tier_used'] ?? 'unknown';
     $analysisData['model_confidence'] = $response['routing_info']['confidence'] ?? null;
@@ -579,12 +553,12 @@ Document this symptom photo for pattern tracking.";
     }
 
     $aiContent = $response['choices'][0]['message']['content'];
-    
+
     // Strip markdown code blocks if present
     $aiContent = preg_replace('/^```json\s*/m', '', $aiContent);
     $aiContent = preg_replace('/\s*```$/m', '', $aiContent);
     $aiContent = trim($aiContent);
-    
+
     $analysisData = json_decode($aiContent, true);
 
     if (json_last_error() !== JSON_ERROR_NONE) {
