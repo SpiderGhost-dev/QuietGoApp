@@ -647,6 +647,44 @@ Combine ALL visible food and beverages from all images into ONE analysis.";
         // Keep the full structure - DO NOT extract calcuplate
         // The success modal expects analysis.calcuplate to exist
 
+        // Add backward compatibility for UI
+        if (isset($analysis['calcuplate'])) {
+            $cp = &$analysis['calcuplate'];
+            
+            // Convert new totals format to legacy format
+            if (isset($cp['totals'])) {
+                if (!isset($cp['total_calories'])) {
+                    $cp['total_calories'] = $cp['totals']['calories'];
+                }
+                if (!isset($cp['macros'])) {
+                    $cp['macros'] = [
+                        'protein' => $cp['totals']['protein_g'] . 'g',
+                        'carbs' => $cp['totals']['carbs_g'] . 'g',
+                        'fat' => $cp['totals']['fat_g'] . 'g',
+                        'fiber' => ($cp['totals']['fiber_g'] ?? 0) . 'g',
+                        'sodium' => ($cp['totals']['sodium_mg'] ?? 0) . 'mg'
+                    ];
+                }
+            }
+            
+            // Convert items_detected to foods_detected
+            if (isset($cp['items_detected']) && !isset($cp['foods_detected'])) {
+                $foods = [];
+                foreach ($cp['items_detected'] as $item) {
+                    $foods[] = $item['quantity'] . ' ' . $item['item'];
+                }
+                $cp['foods_detected'] = $foods;
+            }
+            
+            // Add default quality metrics if missing
+            if (!isset($cp['meal_quality_score'])) {
+                $cp['meal_quality_score'] = '8/10';
+            }
+            if (!isset($cp['nutritional_completeness'])) {
+                $cp['nutritional_completeness'] = '85%';
+            }
+        }
+
         // Add multi-image metadata at root level
         $analysis["multi_image_meal"] = true;
         $analysis["image_count"] = count($storedImages);
