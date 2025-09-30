@@ -281,6 +281,12 @@ Analyze this meal photo for automatic nutritional logging with focus on {$journe
     $aiContent = preg_replace('/\s*```$/m', '', $aiContent);
     $aiContent = trim($aiContent);
 
+    // Fix common JSON errors from AI
+    // Fix: "quantity": 1 portion" -> "quantity": "1 portion"
+    $aiContent = preg_replace('/"quantity":\s*(\d+\s+[^,}"]+)"/', '"quantity": "$1"', $aiContent);
+    // Fix: "quantity": 5 spears -> "quantity": "5 spears"
+    $aiContent = preg_replace('/"quantity":\s*([^,}"]+)([,}])/', '"quantity": "$1"$2', $aiContent);
+
     $analysisData = json_decode($aiContent, true);
 
     if (json_last_error() !== JSON_ERROR_NONE) {
