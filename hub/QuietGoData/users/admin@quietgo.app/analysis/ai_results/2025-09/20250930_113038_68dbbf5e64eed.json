@@ -1,0 +1,96 @@
+{
+    "photo_type": "meal",
+    "analysis": {
+        "calcuplate": {
+            "analysis_type": "complete_meal",
+            "items_detected": [
+                {
+                    "item": "Tuna sushi roll",
+                    "quantity": 1,
+                    "calories": 300,
+                    "type": "sushi_roll"
+                },
+                {
+                    "item": "Soy sauce",
+                    "quantity": "1 tbsp",
+                    "calories": 10,
+                    "type": "condiment"
+                }
+            ],
+            "condiments_analysis": {
+                "used": [
+                    "Soy sauce (1 tbsp, 10 cal, 920mg sodium)"
+                ],
+                "unused": [],
+                "uncertain": []
+            },
+            "totals": {
+                "calories": 310,
+                "protein_g": 20,
+                "carbs_g": 40,
+                "fat_g": 10,
+                "fiber_g": 2,
+                "sodium_mg": 920
+            },
+            "portion_assessment": "1 full roll with soy sauce",
+            "confidence": 90,
+            "data_source": "Generic sushi database",
+            "auto_logged": true,
+            "macros": {
+                "protein": "20g",
+                "carbs": "40g",
+                "fat": "10g",
+                "fiber": "2g",
+                "sodium": "920mg"
+            },
+            "total_calories": 310,
+            "foods_detected": [
+                "1x Tuna sushi roll",
+                "1 tbspx Soy sauce"
+            ],
+            "meal_quality_score": "7\/10",
+            "nutritional_completeness": "75%"
+        },
+        "insights": [
+            "Balanced meal with good protein and moderate carbohydrates",
+            "Watch sodium intake from soy sauce"
+        ],
+        "meal_timing_note": "Log as single meal",
+        "wellness_nutrition": "Logged for energy pattern analysis",
+        "nutrition_insights": [
+            "Balanced meal with good protein and moderate carbohydrates",
+            "Watch sodium intake from soy sauce"
+        ],
+        "recommendations": [
+            "Stay hydrated with water between meals",
+            "Consider adding more vegetables for fiber",
+            "Track patterns over time for best insights"
+        ],
+        "timestamp": 1759231838,
+        "ai_model": "medium",
+        "model_confidence": 0.78,
+        "cost_tier": "$0.005",
+        "processing_time": 2.94
+    },
+    "photo_metadata": {
+        "original_name": "Meal5.jpg",
+        "category": "photos",
+        "photo_type": "meal",
+        "upload_timestamp": 1759231835,
+        "upload_datetime": "2025-09-30 11:30:35",
+        "user_email": "admin@quietgo.app",
+        "user_journey": "best_life",
+        "subscription_plan": "pro_plus",
+        "has_calcuplate": true,
+        "location_data": null,
+        "context": {
+            "time_of_day": "",
+            "symptoms": "",
+            "notes": ""
+        },
+        "file_info": {
+            "size": 12562,
+            "mime_type": "image\/jpeg"
+        }
+    }
+}

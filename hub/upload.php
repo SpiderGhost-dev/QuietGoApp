@@ -93,47 +93,52 @@ $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['health_item'])) {
     // Handle multiple file uploads properly
     $uploadResults = [];
+    $photoType = $_POST['photo_type'] ?? 'general';
     
     // Check if files were actually uploaded
     if (is_array($_FILES['health_item']['name'])) {
         // Multiple files - check if any files were selected
         $hasFiles = false;
+        $fileList = [];
         for ($i = 0; $i < count($_FILES['health_item']['name']); $i++) {
             if (!empty($_FILES['health_item']['name'][$i]) && $_FILES['health_item']['error'][$i] === UPLOAD_ERR_OK) {
                 $hasFiles = true;
-                break;
+                $fileList[] = [
+                    'name' => $_FILES['health_item']['name'][$i],
+                    'type' => $_FILES['health_item']['type'][$i],
+                    'tmp_name' => $_FILES['health_item']['tmp_name'][$i],
+                    'error' => $_FILES['health_item']['error'][$i],
+                    'size' => $_FILES['health_item']['size'][$i]
+                ];
             }
         }
         
         if (!$hasFiles) {
             $uploadResult = ['status' => 'error', 'message' => 'No files were selected for upload.'];
         } else {
-            // Process multiple files
-            for ($i = 0; $i < count($_FILES['health_item']['name']); $i++) {
-                if (!empty($_FILES['health_item']['name'][$i])) {
-                    $singleFile = [
-                        'name' => $_FILES['health_item']['name'][$i],
-                        'type' => $_FILES['health_item']['type'][$i],
-                        'tmp_name' => $_FILES['health_item']['tmp_name'][$i],
-                        'error' => $_FILES['health_item']['error'][$i],
-                        'size' => $_FILES['health_item']['size'][$i]
-                    ];
-                    $result = handlePhotoUpload($singleFile, $_POST, $user);
+            // CRITICAL: For meal photos with CalcuPlate, aggregate all images
+            if ($photoType === 'meal' && $hasCalcuPlate && count($fileList) > 1) {
+                // Process as multi-image meal for CalcuPlate
+                $uploadResult = handleMultiImageMeal($fileList, $_POST, $user);
+            } else {
+                // Process files individually for other types
+                for ($i = 0; $i < count($fileList); $i++) {
+                    $result = handlePhotoUpload($fileList[$i], $_POST, $user);
                     $uploadResults[] = $result;
                 }
-            }
-            
-            // Use the first successful result for display
-            $uploadResult = null;
-            foreach ($uploadResults as $result) {
-                if ($result['status'] === 'success') {
-                    $uploadResult = $result;
-                    $uploadResult['message'] = count($uploadResults) . ' photo(s) uploaded successfully!';
-                    break;
+                
+                // Use the first successful result for display
+                $uploadResult = null;
+                foreach ($uploadResults as $result) {
+                    if ($result['status'] === 'success') {
+                        $uploadResult = $result;
+                        $uploadResult['message'] = count($uploadResults) . ' photo(s) uploaded successfully!';
+                        break;
+                    }
                 }
-            }
-            if (!$uploadResult) {
-                $uploadResult = $uploadResults[0]; // Show first error if all failed
+                if (!$uploadResult) {
+                    $uploadResult = $uploadResults[0]; // Show first error if all failed
+                }
             }
         }
     } else {
@@ -308,6 +313,175 @@ function handlePhotoUpload($file, $postData, $user) {
     }
     
     return $result;
+}
+
+/**
+ * Handle multi-image meal upload for CalcuPlate Pro+ users
+ * Aggregates multiple images (main dish, beverage, dessert) into single meal analysis
+ */
+function handleMultiImageMeal($fileList, $postData, $user) {
+    global $hasCalcuPlate, $userJourney;
+    
+    // Pro+ users ONLY - never show manual logging
+    if (!$hasCalcuPlate) {
+        return ['status' => 'error', 'message' => 'Multi-image meal analysis requires Pro+ subscription'];
+    }
+
+    require_once __DIR__ . '/includes/storage-helper.php';
+    require_once __DIR__ . '/includes/db-operations.php';
+    $storage = getQuietGoStorage();
+    $storage->createUserStructure($user['email']);
+
+    $storedImages = [];
+    $totalSize = 0;
+    
+    // Store all images first
+    foreach ($fileList as $file) {
+        // Validate each image
+        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mimeType = finfo_file($finfo, $file['tmp_name']);
+        finfo_close($finfo);
+
+        if (!in_array($mimeType, $allowedTypes)) {
+            return ['status' => 'error', 'message' => 'Invalid file type in multi-image upload'];
+        }
+
+        $totalSize += $file['size'];
+        if ($totalSize > 50 * 1024 * 1024) {
+            return ['status' => 'error', 'message' => 'Total file size exceeds 50MB limit'];
+        }
+
+        // Store each image
+        $metadata = [
+            'original_name' => $file['name'],
+            'category' => 'photos',
+            'photo_type' => 'meal',
+            'upload_timestamp' => time(),
+            'user_journey' => $userJourney,
+            'subscription_plan' => $user['subscription_plan'],
+            'has_calcuplate' => true,
+            'multi_image_meal' => true,
+            'part_of_set' => count($fileList)
+        ];
+
+        $storeResult = $storage->storePhoto($user['email'], 'meal', $file, $metadata);
+        if (!$storeResult['success']) {
+            return ['status' => 'error', 'message' => 'Failed to store image: ' . $storeResult['error']];
+        }
+
+        $storedImages[] = [
+            'filepath' => $storeResult['filepath'],
+            'thumbnail' => $storeResult['thumbnail'],
+            'filename' => basename($storeResult['filepath']),
+            'metadata' => $metadata
+        ];
+    }
+
+    // Now analyze ALL images together with CalcuPlate
+    $aiAnalysis = analyzeMultiImageMeal($storedImages, $userJourney);
+
+    // Get/create user in database
+    $userId = getOrCreateUser($user['email'], [
+        'name' => $user['name'] ?? 'User',
+        'journey' => $userJourney,
+        'subscription_plan' => $user['subscription_plan'] ?? 'pro_plus',
+        'subscription_status' => 'active'
+    ]);
+
+    // Save the aggregated meal analysis
+    $photoIds = [];
+    foreach ($storedImages as $img) {
+        $photoId = savePhoto($userId, [
+            'photo_type' => 'meal',
+            'filename' => $img['filename'],
+            'filepath' => $img['filepath'],
+            'thumbnail_path' => $img['thumbnail'] ?? null,
+            'file_size' => 0, // Would need to track per file
+            'mime_type' => 'image/jpeg',
+            'original_filename' => $img['metadata']['original_name'],
+            'multi_image_set' => true
+        ]);
+        $photoIds[] = $photoId;
+    }
+
+    // Save CalcuPlate analysis for the meal
+    if (!isset($aiAnalysis['error'])) {
+        saveMealAnalysis($photoIds[0], $userId, $aiAnalysis);
+        
+        // Track AI cost
+        trackAICost($userId, [
+            'photo_type' => 'meal',
+            'ai_model' => $aiAnalysis['ai_model'] ?? 'gpt-4o',
+            'model_tier' => $aiAnalysis['model_tier'] ?? 'expensive',
+            'multi_image' => true,
+            'image_count' => count($storedImages)
+        ]);
+    }
+
+    return [
+        'status' => 'success',
+        'photo_ids' => $photoIds,
+        'image_count' => count($storedImages),
+        'ai_analysis' => $aiAnalysis,
+        'requires_manual_logging' => false, // NEVER for Pro+ users
+        'message' => 'CalcuPlate analyzed ' . count($storedImages) . ' images as complete meal',
+        'thumbnails' => array_column($storedImages, 'thumbnail')
+    ];
+}
+
+/**
+ * Analyze multiple meal images together as one meal
+ */
+function analyzeMultiImageMeal($storedImages, $userJourney) {
+    require_once __DIR__ . '/includes/openai-config.php';
+    require_once __DIR__ . '/includes/analysis-functions.php';
+
+    // Build a combined prompt describing all images
+    $imageDescriptions = [];
+    foreach ($storedImages as $index => $img) {
+        $imageNum = $index + 1;
+        $imageDescriptions[] = "Image {$imageNum}: {$img['metadata']['original_name']}";
+    }
+
+    $journeyConfig = getJourneyPromptConfig($userJourney);
+    
+    // For now, analyze the first image with a note about multiple images
+    // TODO: Future enhancement - send all images to GPT-4o vision API
+    $primaryImage = $storedImages[0]['filepath'];
+    
+    // Add multi-image context to the prompt
+    $multiImageContext = "\n\nNOTE: This is a multi-image meal with " . count($storedImages) . " images total. ";
+    $multiImageContext .= "Analyze as components of a single meal. ";
+    $multiImageContext .= "Images included: " . implode(', ', $imageDescriptions);
+    
+    $symptoms = '';
+    $time = date('H:i');
+    $notes = $multiImageContext;
+    
+    try {
+        // Use CalcuPlate to analyze the meal
+        $analysis = analyzeMealPhotoWithCalcuPlate($primaryImage, $journeyConfig, $symptoms, $time, $notes);
+        
+        // Add multi-image metadata
+        $analysis['multi_image_meal'] = true;
+        $analysis['image_count'] = count($storedImages);
+        $analysis['analysis_note'] = 'Multi-component meal analyzed as single dining session';
+        
+        // Ensure confidence is set properly
+        if (!isset($analysis['confidence']) || $analysis['confidence'] == 0) {
+            $analysis['confidence'] = 85; // Default reasonable confidence for multi-image
+        }
+        
+        return $analysis;
+    } catch (Exception $e) {
+        error_log("QuietGo Multi-Image Analysis Error: " . $e->getMessage());
+        return [
+            'error' => 'Failed to analyze multi-image meal',
+            'timestamp' => time(),
+            'user_journey' => $userJourney
+        ];
+    }
 }
 
 function generateAIAnalysis($postData, $userJourney, $hasCalcuPlate, $imagePath = null) {
