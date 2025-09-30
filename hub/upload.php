@@ -502,6 +502,9 @@ function handleMultiImageMeal($fileList, $postData, $user) {
         "ai_analysis" => $aiAnalysis,
         "requires_manual_logging" => false, // NEVER for Pro+ users
         "message" => "CalcuPlate analyzed " . count($storedImages) . " images as complete meal",
+        "metadata" => [
+            "photo_type" => "meal"
+        ],
         "thumbnails" => array_map(function($img) {
             return "/hub/view-image.php?type=thumbnail&path=" . urlencode(basename($img["thumbnail"]));
         }, $storedImages)
@@ -648,6 +651,7 @@ Combine ALL visible food and beverages from all images into ONE analysis.";
         $analysis["multi_image_meal"] = true;
         $analysis["image_count"] = count($storedImages);
         $analysis["analysis_note"] = "Multi-component meal analyzed as single dining session";
+        $analysis["photo_type"] = "meal"; // CRITICAL: Success modal needs this to render correctly
 
         // Ensure confidence is set properly (check inside calcuplate)
         if (!isset($analysis['calcuplate']["confidence"]) || $analysis['calcuplate']["confidence"] == 0) {
