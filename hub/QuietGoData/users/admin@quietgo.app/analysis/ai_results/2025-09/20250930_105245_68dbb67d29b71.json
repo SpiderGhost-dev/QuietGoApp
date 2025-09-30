@@ -1,0 +1,60 @@
+{
+    "photo_type": "meal",
+    "analysis": {
+        "calcuplate": {
+            "auto_logged": true,
+            "foods_detected": [
+                "10x sushi rolls"
+            ],
+            "item_count": "10",
+            "total_calories": 850,
+            "macros": {
+                "protein": "30g",
+                "carbs": "120g",
+                "fat": "20g",
+                "fiber": "5g"
+            },
+            "meal_quality_score": "8\/10",
+            "portion_sizes": "10 pieces of sushi, small sauce dish",
+            "nutritional_completeness": "75%"
+        },
+        "confidence": 95,
+        "nutrition_insights": [
+            "Rich in protein from the tuna, which supports muscle health.",
+            "Contains healthy fats from the fish, beneficial for heart health.",
+            "High in carbs from rice, providing quick energy."
+        ],
+        "recommendations": [
+            "Consider adding a side of vegetables for more fiber.",
+            "Pair with a green tea for added antioxidants.",
+            "Use low-sodium soy sauce to reduce sodium intake."
+        ],
+        "wellness_nutrition": "Logged for energy pattern analysis",
+        "timestamp": 1759229565,
+        "ai_model": "medium",
+        "model_confidence": 0.78,
+        "cost_tier": "$0.005",
+        "processing_time": 3.03
+    },
+    "photo_metadata": {
+        "original_name": "Meal5.jpg",
+        "category": "photos",
+        "photo_type": "meal",
+        "upload_timestamp": 1759229562,
+        "upload_datetime": "2025-09-30 10:52:42",
+        "user_email": "admin@quietgo.app",
+        "user_journey": "best_life",
+        "subscription_plan": "pro_plus",
+        "has_calcuplate": true,
+        "location_data": null,
+        "context": {
+            "time_of_day": "",
+            "symptoms": "",
+            "notes": ""
+        },
+        "file_info": {
+            "size": 12562,
+            "mime_type": "image\/jpeg"
+        }
+    }
+}

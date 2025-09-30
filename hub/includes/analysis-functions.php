@@ -123,29 +123,55 @@ function analyzeMealPhotoWithCalcuPlate($imagePath, $journeyConfig, $symptoms, $
 
 Respond with: {\"error\": \"not_food\", \"message\": \"This doesn't appear to be a meal photo\"}
 
-📊 ACCURACY REQUIREMENTS FOR FOOD ANALYSIS:
-1. COUNT EVERYTHING: You MUST count ALL visible items (e.g., if you see 8 pieces of sushi, count ALL 8, not just 1)
-2. PORTION MULTIPLIER: If multiple servings are visible, multiply nutritional values accordingly
-3. BE CONSERVATIVE: When uncertain, estimate HIGHER calories rather than lower (better to overestimate)
-4. IDENTIFY AMBIGUITY: If you cannot determine specifics (e.g., regular vs diet soda, dressing on/off salad), flag for clarification
+🧠 INTELLIGENT ANALYSIS GUIDELINES:
+
+1. UNDERSTAND PORTION REALITY:
+   - 6-8 sushi PIECES = 1 roll (200-400 cal total), NOT 6-8 separate rolls
+   - Count actual serving units: 1 burger, 2 tacos, 20 fries, etc.
+   - Recognize standard cuts: pizza slices, sandwich halves, sushi pieces
+
+2. IDENTIFY EVERYTHING IN FRAME:
+   - Main foods with accurate quantities
+   - ALL beverages (specify size: 12oz can, 16oz glass, etc.)
+   - Condiments/sauces (note if used or unused)
+   - Side items and accompaniments
+
+3. CONDIMENT INTELLIGENCE:
+   - Unopened packets → Ask if used
+   - Visible dipping/usage → Include in calories
+   - Soy sauce, ketchup, ranch = significant calories/sodium
+   - Be specific: \"soy sauce container (unused)\" vs \"ketchup on plate (used)\"
+
+4. CLARIFICATION TRIGGERS:
+   - Ambiguous beverages (could be diet or regular)
+   - Unused condiments visible (packets, containers)
+   - Dressing on side (how much used?)
+   - Unclear portions or items
 
 For valid food photos, analyze using {$journeyConfig['tone']} focused on {$journeyConfig['focus']}.
 
-If confidence is below 90% OR there are ambiguous items (beverages that could be diet/regular, sauces, dressings), respond with:
+If clarification needed, respond with:
 {
     \"needs_clarification\": true,
     \"questions\": [
         {
-            \"item\": \"beverage name\",
-            \"question\": \"Is this regular or diet/zero calorie?\",
-            \"options\": [\"Regular (X cal)\", \"Diet/Zero (0 cal)\"],
-            \"impact\": \"affects total calories\"
+            \"item\": \"Cola beverage\",
+            \"question\": \"Is this regular or diet/zero?\",
+            \"options\": [\"Regular Coke (140 cal)\", \"Diet/Zero (0 cal)\"],
+            \"impact\": \"140 calories, 39g sugar\"
+        },
+        {
+            \"item\": \"Soy sauce\",
+            \"question\": \"Did you use the soy sauce?\",
+            \"options\": [\"Yes, heavily\", \"Yes, lightly\", \"No\"],
+            \"impact\": \"920-2300mg sodium\"
         }
     ],
     \"preliminary_analysis\": {
-        \"foods_detected\": [\"list with quantities: 8x sushi rolls\", \"1x miso soup\"],
-        \"estimated_calories_range\": \"700-900\",
-        \"confidence\": (number)
+        \"main_foods\": [\"1 tuna roll (8 pieces, ~300 cal)\", \"1 medium cola (~140 cal if regular)\"],
+        \"condiments_visible\": [\"soy sauce (unused?)\", \"ginger\", \"wasabi\"],
+        \"estimated_calories_range\": \"300-450 depending on beverage and condiments\",
+        \"confidence\": 75
     }
 }
 
@@ -153,25 +179,28 @@ For HIGH CONFIDENCE (90%+) analysis, respond with:
 {
     \"calcuplate\": {
         \"auto_logged\": true,
-        \"foods_detected\": [\"INCLUDE QUANTITIES: 8x california rolls\", \"1x miso soup\", \"2x gyoza\"],
-        \"item_count\": \"total number of individual food items\",
-        \"total_calories\": (BE ACCURATE - e.g., 8 sushi pieces = 700-900 cal, not 350),
+        \"foods_detected\": [\"1 tuna roll (8 pieces)\", \"1 medium Coke (12oz)\"],
+        \"condiments_included\": [\"soy sauce (light use)\"],
+        \"condiments_not_used\": [\"wasabi packet\"],
+        \"total_calories\": (ACCURATE based on actual portions),
         \"macros\": {
             \"protein\": \"XXg\",
             \"carbs\": \"XXg\",
             \"fat\": \"XXg\",
-            \"fiber\": \"XXg\"
+            \"fiber\": \"XXg\",
+            \"sodium\": \"XXXXmg (important if condiments used)\"
         },
         \"meal_quality_score\": \"X/10\",
-        \"portion_sizes\": \"Be specific: large plate, 8 pieces, 16oz drink, etc\",
+        \"portion_sizes\": \"1 roll cut into 8 pieces, 12oz beverage\",
         \"nutritional_completeness\": \"XX%\"
     },
-    \"confidence\": (90-95 for high confidence only),
+    \"confidence\": (90-95 only if truly confident),
     \"nutrition_insights\": [\"insight1\", \"insight2\", \"insight3\"],
     \"recommendations\": [\"rec1\", \"rec2\", \"rec3\"]
 }
 
-REMEMBER: Users are PAYING for accuracy. Count ALL items. 1 sushi = ~85-115 cal, so 8 = 680-920 cal!";
+CRITICAL: Be smart about portions! 8 sushi pieces ≠ 8 rolls. Include ALL beverages. Note condiment usage.";
+
 
     $userPrompt = "Time: $time
 Context: $notes
@@ -233,31 +262,51 @@ Analyze this meal photo for automatic nutritional logging with focus on {$journe
     // Check if AI needs clarification for ambiguous items
     if (isset($analysisData['needs_clarification']) && $analysisData['needs_clarification'] === true) {
         error_log("QuietGo CalcuPlate: Needs clarification for ambiguous items");
-        // For now, we'll return the preliminary analysis with a note
-        // In the future, this should trigger a clarification modal in the UI
-        $analysisData['clarification_needed'] = true;
-        $analysisData['user_message'] = 'CalcuPlate detected some ambiguous items. Using estimated values for now. Future updates will allow you to clarify specifics.';
         
-        // Use the preliminary analysis as the main analysis for now
+        // Log what needs clarification
+        if (isset($analysisData['questions'])) {
+            foreach ($analysisData['questions'] as $q) {
+                error_log(" - Question: {$q['question']} (Impact: {$q['impact']})");
+            }
+        }
+        
+        // For now, we'll return the preliminary analysis with a note
+        // TODO: Future enhancement - trigger clarification modal in UI
+        $analysisData['clarification_needed'] = true;
+        $analysisData['user_message'] = 'CalcuPlate detected ambiguous items (beverages/condiments). Using higher estimates for now.';
+        
+        // Build analysis from preliminary data
         if (isset($analysisData['preliminary_analysis'])) {
             $preliminaryData = $analysisData['preliminary_analysis'];
+            
+            // Parse calorie range and use the higher estimate
+            $calorieRange = $preliminaryData['estimated_calories_range'] ?? '0';
+            preg_match('/(\d+)-(\d+)/', $calorieRange, $matches);
+            $higherCalories = isset($matches[2]) ? intval($matches[2]) : intval($calorieRange);
+            
             $analysisData['calcuplate'] = [
                 'auto_logged' => true,
-                'foods_detected' => $preliminaryData['foods_detected'] ?? [],
-                'total_calories' => intval(explode('-', $preliminaryData['estimated_calories_range'])[1] ?? 0), // Use higher estimate
+                'foods_detected' => $preliminaryData['main_foods'] ?? [],
+                'condiments_included' => ['Estimated usage based on typical patterns'],
+                'condiments_not_used' => $preliminaryData['condiments_visible'] ?? [],
+                'total_calories' => $higherCalories,
                 'macros' => [
-                    'protein' => 'Estimated',
-                    'carbs' => 'Estimated', 
-                    'fat' => 'Estimated',
-                    'fiber' => 'Estimated'
+                    'protein' => 'Needs confirmation',
+                    'carbs' => 'Needs confirmation', 
+                    'fat' => 'Needs confirmation',
+                    'fiber' => 'Needs confirmation',
+                    'sodium' => 'Needs confirmation'
                 ],
-                'meal_quality_score' => 'Pending clarification',
-                'portion_sizes' => 'Needs confirmation',
+                'meal_quality_score' => '~/10',
+                'portion_sizes' => 'Needs verification',
                 'nutritional_completeness' => 'Estimated'
             ];
             $analysisData['confidence'] = $preliminaryData['confidence'] ?? 75;
-            $analysisData['nutrition_insights'] = ['Clarification needed for accurate analysis'];
-            $analysisData['recommendations'] = ['Please confirm ambiguous items for better tracking'];
+            $analysisData['nutrition_insights'] = [
+                'Ambiguous items detected - using conservative estimates',
+                'Please confirm beverage type and condiment usage for accuracy'
+            ];
+            $analysisData['recommendations'] = ['Future: Confirm specifics for better tracking'];
         }
     }
 
@@ -282,10 +331,18 @@ Analyze this meal photo for automatic nutritional logging with focus on {$journe
     if (isset($analysisData['calcuplate'])) {
         error_log("QuietGo CalcuPlate Detection:");
         error_log(" - Foods: " . json_encode($analysisData['calcuplate']['foods_detected']));
-        error_log(" - Item Count: " . ($analysisData['calcuplate']['item_count'] ?? 'N/A'));
+        if (isset($analysisData['calcuplate']['condiments_included'])) {
+            error_log(" - Condiments Used: " . json_encode($analysisData['calcuplate']['condiments_included']));
+        }
+        if (isset($analysisData['calcuplate']['condiments_not_used'])) {
+            error_log(" - Condiments Unused: " . json_encode($analysisData['calcuplate']['condiments_not_used']));
+        }
         error_log(" - Total Calories: " . $analysisData['calcuplate']['total_calories']);
         error_log(" - Confidence: " . $analysisData['confidence']);
         error_log(" - Portion Sizes: " . $analysisData['calcuplate']['portion_sizes']);
+        if (isset($analysisData['calcuplate']['macros']['sodium'])) {
+            error_log(" - Sodium: " . $analysisData['calcuplate']['macros']['sodium']);
+        }
     }
     
     // Add journey-specific insights
