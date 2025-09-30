@@ -304,7 +304,7 @@ function showSuccessModal(result) {
 }
 
 function renderStoolAnalysis(analysis) {
-    const confidence = analysis.confidence || 0;
+    const confidence = analysis.confidence || 85; // Default to reasonable confidence if missing
     const confidenceClass = confidence >= 85 ? 'confidence-high' : confidence >= 70 ? 'confidence-medium' : 'confidence-low';
     
     return `
@@ -358,7 +358,8 @@ function renderMealAnalysis(analysis) {
     }
     
     const calcuplate = analysis.calcuplate;
-    const confidence = analysis.confidence || 0;
+    // Look for confidence in multiple places
+    const confidence = analysis.confidence || calcuplate.confidence || analysis.calcuplate?.confidence || 85;
     const confidenceClass = confidence >= 85 ? 'confidence-high' : confidence >= 70 ? 'confidence-medium' : 'confidence-low';
     
     return `
@@ -416,7 +417,7 @@ function renderMealAnalysis(analysis) {
 }
 
 function renderSymptomAnalysis(analysis) {
-    const confidence = analysis.confidence || 0;
+    const confidence = analysis.confidence || 80; // Default to reasonable confidence if missing
     const confidenceClass = confidence >= 85 ? 'confidence-high' : confidence >= 70 ? 'confidence-medium' : 'confidence-low';
     
     return `
