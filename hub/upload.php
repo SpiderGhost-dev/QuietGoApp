@@ -1738,8 +1738,11 @@ document.getElementById("upload-form").addEventListener("submit", function(e) {
             if (result.ai_analysis && result.ai_analysis.needs_clarification) {
                 // Show clarification modal for quick questions
                 showClarificationModal(result.ai_analysis.questions, result);
+            } else if (!result.requires_manual_logging && result.ai_analysis && result.ai_analysis.pass_1_detection) {
+                // Show VERIFICATION modal for CalcuPlate results (Pro+ only)
+                showVerificationModal(result);
             } else if (!result.requires_manual_logging) {
-                // Show success modal with AI results
+                // Show success modal directly (stool/symptom photos)
                 showSuccessModal(result);
             } else {
                 // For Pro users with meal photos, reload to show manual logging form
@@ -1830,6 +1833,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
 <!-- Success Modal -->
 <?php include __DIR__ . "/includes/success-modal.php"; ?>
+
+<!-- CalcuPlate Verification Modal (Pro+ only) -->
+<?php if ($hasCalcuPlate): ?>
+<?php include __DIR__ . "/includes/verification-modal.php"; ?>
+<?php endif; ?>
 
 <!-- Clarification Modal for CalcuPlate Pro+ -->
 <?php if ($hasCalcuPlate): ?>
