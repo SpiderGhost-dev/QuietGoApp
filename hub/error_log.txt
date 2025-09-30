@@ -7,7 +7,10 @@
 [30-Sep-2025 16:44:12 UTC] QuietGo upload.php: Script started at 2025-09-30 16:44:12
 [30-Sep-2025 16:44:12 UTC] QuietGo upload.php: Processing POST request
 [30-Sep-2025 16:44:12 UTC] QuietGo upload.php: Photo type = meal
-[30-Sep-2025 16:44:12 UTC] PHP Fatal error:  Cannot redeclare function checkAPIRateLimit() (previously declared in /Users/davidbaker/Desktop/QuietGoApp/hub/includes/openai-config.php:9) in /Users/davidbaker/Desktop/QuietGoApp/hub/includes/openai-config.php on line 403
+[30-Sep-2025 16:44:12 UTC] PHP Fatal error:  Cannot redeclare function checkAPIRateLimit() (pregit add hub/includes/analysis-functions.php
+git commit -m "Fix CalcuPlate validation - accept ANY food/beverage even with backgrounds"
+git push
+iously declared in /Users/davidbaker/Desktop/QuietGoApp/hub/includes/openai-config.php:9) in /Users/davidbaker/Desktop/QuietGoApp/hub/includes/openai-config.php on line 403
 [30-Sep-2025 16:44:27 UTC] QuietGo upload.php: Script started at 2025-09-30 16:44:27
 [30-Sep-2025 16:44:52 UTC] QuietGo upload.php: Script started at 2025-09-30 16:44:52
 [30-Sep-2025 16:44:52 UTC] QuietGo upload.php: Processing POST request
