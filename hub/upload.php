@@ -509,37 +509,109 @@ function handleMultiImageMeal($fileList, $postData, $user) {
 }
 
 /**
- * Analyze multiple meal images together as one meal
+ * Analyze multiple meal images together as one meal - SENDS ALL IMAGES
  */
 function analyzeMultiImageMeal($storedImages, $userJourney) {
     require_once __DIR__ . "/includes/openai-config.php";
     require_once __DIR__ . "/includes/analysis-functions.php";
 
-    // Build a combined prompt describing all images
-    $imageDescriptions = [];
-    foreach ($storedImages as $index => $img) {
-        $imageNum = $index + 1;
-        $imageDescriptions[] = "Image {$imageNum}: {$img["metadata"]["original_name"]}";
-    }
-
     $journeyConfig = getJourneyPromptConfig($userJourney);
 
-    // For now, analyze the first image with a note about multiple images
-    // TODO: Future enhancement - send all images to GPT-4o vision API
-    $primaryImage = $storedImages[0]["filepath"];
+    // Encode ALL images
+    $base64Images = [];
+    foreach ($storedImages as $index => $img) {
+        $base64Image = encodeImageForOpenAI($img["filepath"]);
+        if ($base64Image) {
+            $base64Images[] = [
+                'base64' => $base64Image,
+                'filename' => $img["metadata"]["original_name"]
+            ];
+        }
+    }
 
-    // Add multi-image context to the prompt
-    $multiImageContext = "\n\nNOTE: This is a multi-image meal with " . count($storedImages) . " images total. ";
-    $multiImageContext .= "Analyze as components of a single meal. ";
-    $multiImageContext .= "Images included: " . implode(", ", $imageDescriptions);
+    if (empty($base64Images)) {
+        throw new Exception('Failed to process images for AI analysis');
+    }
 
-    $symptoms = "";
+    error_log("QuietGo Multi-Image: Analyzing " . count($base64Images) . " images together");
+
+    $systemPrompt = "You are CalcuPlate analyzing a multi-image meal. You will see " . count($base64Images) . " images of THE SAME MEAL taken from different angles or showing different components (main dish, beverage, dessert, etc.).\n\nANALYZE ALL IMAGES TOGETHER as ONE COMPLETE MEAL. Combine all food items, beverages, and components into a single comprehensive analysis.\n\nIf you see the same item in multiple images, COUNT IT ONLY ONCE. Use multiple angles to improve accuracy of portion estimates.\n\n" . "For {$journeyConfig['focus']} analysis with {$journeyConfig['tone']}, provide complete nutritional breakdown.";
+
     $time = date("H:i");
-    $notes = $multiImageContext;
+    $userPrompt = "Time: $time\n\nThese " . count($base64Images) . " images show ONE MEAL:\n";
+    foreach ($base64Images as $index => $img) {
+        $userPrompt .= "- Image " . ($index + 1) . ": {$img['filename']}\n";
+    }
+    $userPrompt .= "\nCombine ALL visible food and beverages into one meal analysis with total nutritional content.";
+
+    // Build content array with text + ALL images
+    $content = [
+        [
+            'type' => 'text',
+            'text' => $userPrompt
+        ]
+    ];
+
+    // Add ALL images to the request
+    foreach ($base64Images as $img) {
+        $content[] = [
+            'type' => 'image_url',
+            'image_url' => [
+                'url' => $img['base64'],
+                'detail' => 'high'
+            ]
+        ];
+    }
+
+    $messages = [
+        [
+            'role' => 'system',
+            'content' => $systemPrompt
+        ],
+        [
+            'role' => 'user',
+            'content' => $content
+        ]
+    ];
 
     try {
-        // Use CalcuPlate to analyze the meal
-        $analysis = analyzeMealPhotoWithCalcuPlate($primaryImage, $journeyConfig, $symptoms, $time, $notes);
+        // Call OpenAI with ALL images
+        $response = makeOpenAIRequest($messages, OPENAI_VISION_MODEL, 1000);
+
+        if (isset($response['error'])) {
+            throw new Exception($response['error']);
+        }
+
+        $aiContent = $response['choices'][0]['message']['content'];
+
+        // Strip markdown
+        $aiContent = preg_replace('/^```json\s*/m', '', $aiContent);
+        $aiContent = preg_replace('/\s*```$/m', '', $aiContent);
+        $aiContent = trim($aiContent);
+
+        // Fix common JSON errors
+        $aiContent = preg_replace('/"quantity":\s*(\d+\s+[^,}"]+)"/', '"quantity": "$1"', $aiContent);
+        $aiContent = preg_replace('/"quantity":\s*([^,}"]+)([,}])/', '"quantity": "$1"$2', $aiContent);
+
+        $analysis = json_decode($aiContent, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            error_log("QuietGo Multi-Image JSON Error: " . json_last_error_msg());
+            error_log("AI Response: " . $aiContent);
+            throw new Exception('Invalid CalcuPlate response format');
+        }
+
+        // Check for non-food detection
+        if (isset($analysis['error']) && $analysis['error'] === 'not_food') {
+            throw new Exception('This doesn\'t appear to be a meal photo. Please upload photos of food or beverages.');
+        }
+
+        // Ensure proper structure
+        if (!isset($analysis['calcuplate'])) {
+            throw new Exception('Invalid analysis structure from CalcuPlate');
+        }
+
+        $analysis = $analysis['calcuplate'];
 
         // Add multi-image metadata
         $analysis["multi_image_meal"] = true;
