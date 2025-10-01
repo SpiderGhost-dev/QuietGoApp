@@ -516,9 +516,6 @@ function handleMultiImageMeal($fileList, $postData, $user) {
  */
 function analyzeMultiImageMeal($storedImages, $userJourney) {
     require_once __DIR__ . "/includes/openai-config.php";
-    require_once __DIR__ . "/includes/analysis-functions.php";
-
-    $journeyConfig = getJourneyPromptConfig($userJourney);
 
     // Encode ALL images
     $base64Images = [];
@@ -559,7 +556,7 @@ A) COUNT-BASED (for intact, discrete items):
    - Whole pieces of meat/fish → Count pieces
    - Cherry tomatoes, strawberries, cookies → Count each one
    - Whole vegetables (carrots, broccoli florets if large) → Count pieces
-   
+
 B) PORTION-BASED (for scrambled/chopped/piled foods):
    - Scrambled eggs → Estimate by volume (\"looks like 2-3 eggs worth\")
    - Ground/shredded meat → Estimate weight (\"4 oz\", \"6 oz\")
@@ -744,7 +741,7 @@ CRITICAL: You MUST output all three passes. Users are paying for accurate tracki
         // Add backward compatibility for UI
         if (isset($analysis['calcuplate'])) {
             $cp = &$analysis['calcuplate'];
-            
+
             // Convert new totals format to legacy format
             if (isset($cp['totals'])) {
                 if (!isset($cp['total_calories'])) {
@@ -760,16 +757,42 @@ CRITICAL: You MUST output all three passes. Users are paying for accurate tracki
                     ];
                 }
             }
-            
-            // Convert items_detected to foods_detected
-            if (isset($cp['items_detected']) && !isset($cp['foods_detected'])) {
+
+            // Convert cp.v1 items to foods_detected (BOTH formats supported)
+            if (!isset($cp['foods_detected'])) {
                 $foods = [];
-                foreach ($cp['items_detected'] as $item) {
-                    $foods[] = $item['quantity'] . ' ' . $item['item'];
+
+                // Try cp.v1 format first (items array)
+                if (isset($cp['items']) && is_array($cp['items'])) {
+                    foreach ($cp['items'] as $item) {
+                        $name = $item['name'] ?? 'Unknown';
+
+                        // Build quantity string from available fields
+                        if (isset($item['count']) && $item['count'] !== null) {
+                            $qty = $item['count'];
+                        } elseif (isset($item['est_volume_ml'])) {
+                            $qty = round($item['est_volume_ml']) . 'ml';
+                        } elseif (isset($item['est_weight_g'])) {
+                            $qty = round($item['est_weight_g']) . 'g';
+                        } else {
+                            $qty = '1';
+                        }
+
+                        $foods[] = $qty . ' ' . $name;
+                    }
                 }
+                // Fallback to old format (items_detected array)
+                elseif (isset($cp['items_detected']) && is_array($cp['items_detected'])) {
+                    foreach ($cp['items_detected'] as $item) {
+                        $qty = $item['quantity'] ?? '1';
+                        $name = $item['item'] ?? 'Unknown';
+                        $foods[] = $qty . ' ' . $name;
+                    }
+                }
+
                 $cp['foods_detected'] = $foods;
             }
-            
+
             // Add default quality metrics if missing
             if (!isset($cp['meal_quality_score'])) {
                 $cp['meal_quality_score'] = '8/10';
@@ -805,12 +828,30 @@ function generateAIAnalysis($postData, $userJourney, $hasCalcuPlate, $imagePath 
     // Include OpenAI configuration and analysis functions
     require_once __DIR__ . "/includes/openai-config.php";
     require_once __DIR__ . "/includes/analysis-functions.php";
+    require_once __DIR__ . "/includes/image-analyzer.php";
+    require_once __DIR__ . "/includes/smart-ai-router.php";
 
     $photoType = $postData["photo_type"] ?? "general";
     $symptoms = $postData["context_symptoms"] ?? "";
     $time = $postData["context_time"] ?? "";
     $notes = $postData["context_notes"] ?? "";
     $startTime = microtime(true);
+
+    // Analyze image for depth, EXIF, and complexity (v3.2 enhancement)
+    $imageAnalysis = null;
+    $depthData = null;
+    if ($imagePath && file_exists($imagePath)) {
+        $imageAnalysis = CalcuPlateImageAnalyzer::analyzeComplete($imagePath);
+
+        // Extract depth data if available
+        if ($imageAnalysis['depth']['available'] === true && isset($imageAnalysis['depth']['depth_map'])) {
+            $depthData = $imageAnalysis['depth']['depth_map'];
+        }
+
+        error_log("QuietGo: Image analysis complete - Device: " . ($imageAnalysis['exif']['device'] ?? 'unknown') .
+                  ", Has LiDAR: " . ($imageAnalysis['exif']['has_lidar'] ? 'yes' : 'no') .
+                  ", Brand detected: " . ($imageAnalysis['brand_hints']['detected'][0] ?? 'none'));
+    }
 
     // Check API rate limits
     $userEmail = $_SESSION["hub_user"]["email"] ?? "anonymous";
@@ -839,8 +880,8 @@ function generateAIAnalysis($postData, $userJourney, $hasCalcuPlate, $imagePath 
 
             case "meal":
                 if ($hasCalcuPlate) {
-                    // PRO+ ONLY: CalcuPlate AI meal analysis
-                    $analysis = analyzeMealPhotoWithCalcuPlate($imagePath, $journeyConfig, $symptoms, $time, $notes);
+                    // PRO+ ONLY: CalcuPlate AI meal analysis with depth data
+                    $analysis = analyzeMealPhotoWithCalcuPlate($imagePath, $journeyConfig, $symptoms, $time, $notes, $depthData);
                 } else {
                     // PRO ONLY: Manual logging required
                     $analysis = [
