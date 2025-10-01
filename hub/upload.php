@@ -538,25 +538,59 @@ function analyzeMultiImageMeal($storedImages, $userJourney) {
 
     error_log("QuietGo Multi-Image: Analyzing " . count($base64Images) . " images together");
 
-    // RESTRUCTURED: Force explicit multi-pass analysis with verification
-    $systemPrompt = "You are CalcuPlate, a professional meal analysis AI. You MUST complete a THREE-PASS analysis process and output results from EACH pass.
+    // RESTRUCTURED: Preparation-method aware CalcuPlate analysis
+    $systemPrompt = "You are CalcuPlate, a professional meal analysis AI with preparation-method awareness. You MUST complete a THREE-PASS analysis process.
 
 You will see " . count($base64Images) . " images of THE SAME MEAL.
 
 MANDATORY THREE-PASS ANALYSIS PROCESS:
 
-=== PASS 1: DETECTION & ITEM COUNTING ===
-Scan EVERY pixel systematically. For EACH food item, count the exact quantity:
+=== PASS 1: SMART DETECTION & MEASUREMENT ===
+For EACH food item, follow this decision process:
 
-**EGGS:** Count the number of YOLKS visible. Each yolk = one egg.
-- 1 yolk visible = 1 egg
-- 2 yolks visible = 2 eggs
-- If eggs are touching/overlapping, still count EACH yolk separately
+1. IDENTIFY: What is the food?
+2. OBSERVE PREPARATION: How is it prepared/served?
+3. CHOOSE MEASUREMENT STRATEGY:
 
-**PROTEINS:** Count distinct pieces even if touching
-**VEGETABLES:** Count each type separately (tomatoes: count each one, broccoli: estimate florets)
-**FRUITS:** Count individual pieces
-**BEVERAGES:** Identify all drinks across all images
+**MEASUREMENT STRATEGY RULES:**
+
+A) COUNT-BASED (for intact, discrete items):
+   - Whole eggs (fried/poached/hard-boiled) → Count yolks/whole eggs
+   - Whole pieces of meat/fish → Count pieces
+   - Cherry tomatoes, strawberries, cookies → Count each one
+   - Whole vegetables (carrots, broccoli florets if large) → Count pieces
+   
+B) PORTION-BASED (for scrambled/chopped/piled foods):
+   - Scrambled eggs → Estimate by volume (\"looks like 2-3 eggs worth\")
+   - Ground/shredded meat → Estimate weight (\"4 oz\", \"6 oz\")
+   - Peas, corn, beans, rice, pasta → Estimate volume (\"1/2 cup\", \"1 cup\")
+   - Leafy greens → Volume (\"2 cups\", \"handful\")
+   - Chopped vegetables → Volume (\"1/2 cup diced\")
+   - Sauces, dressings → Tablespoons or ounces
+   - Mashed/pureed foods → Portion size (\"1/2 cup\")
+
+**CRITICAL EXAMPLES:**
+
+EGGS:
+- Fried with visible yolks → Count yolks (2 yolks = 2 eggs)
+- Scrambled → Estimate portion (\"appears to be 2-3 eggs scrambled\")
+- Omelet → Estimate by size (\"3-egg omelet based on thickness\")
+
+MEAT/FISH:
+- Whole chicken breast → Count pieces (\"1 chicken breast\")
+- Chopped chicken → Estimate (\"6 oz chopped chicken\")
+- Whole salmon fillet → Count (\"1 salmon fillet, ~5 oz\")
+- Ground beef → Estimate (\"4 oz ground beef\")
+
+VEGETABLES:
+- Whole cherry tomatoes → Count each (\"9 cherry tomatoes\")
+- Peas in a pile → Volume (\"1/2 cup peas\")
+- Broccoli florets (large) → Count if <10, else estimate (\"5 florets\" or \"1 cup\")
+- Spinach → Volume (\"2 cups fresh spinach\")
+
+BEVERAGES:
+- Identify type AND size (\"12 oz can Cola\", \"8 oz glass milk\")
+- Note if diet/regular/zero matters for calories
 
 Output format for Pass 1:
 {
