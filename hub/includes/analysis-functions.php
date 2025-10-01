@@ -129,7 +129,8 @@ function analyzeMealPhotoWithCalcuPlate($imagePath, $journeyConfig, $symptoms, $
 MANDATORY THREE-PASS ANALYSIS PROCESS:
 
 === PASS 1: SMART DETECTION & MEASUREMENT ===
-For EACH food item, follow this decision process:
+Scan the ENTIRE image systematically - check center, edges, background.
+Do NOT skip ANY visible food items. For EACH food item:
 
 1. IDENTIFY: What is the food?
 2. OBSERVE PREPARATION: How is it prepared/served?
@@ -178,13 +179,19 @@ BEVERAGES:
 Output format for Pass 1:
 {
   \"pass_1_detection\": {
-    \"eggs\": {\"count\": number, \"method\": \"counted X yolks\"},
-    \"salmon\": {\"count\": number, \"method\": \"distinct pieces\"},
-    \"cherry_tomatoes\": {\"count\": number, \"method\": \"counted individually\"},
-    \"broccoli\": {\"amount\": \"description\", \"method\": \"visual estimate\"},
+    \"eggs\": {\"count\": 2, \"method\": \"counted 2 yolks\"},
+    \"salmon\": {\"count\": 5, \"method\": \"5 distinct pieces\"},
+    \"cherry_tomatoes\": {\"count\": 7, \"method\": \"counted individually\"},
+    \"broccoli\": {\"count\": \"1 cup\", \"method\": \"visual estimate of florets\"},
+    \"peas\": {\"count\": \"1/2 cup\", \"method\": \"portion estimate - NOT counting individual peas\"},
+    \"spinach\": {\"count\": \"1 cup\", \"method\": \"volume estimate of leaves\"},
     ...
   }
 }
+
+CRITICAL: Use \"count\" field for BOTH numeric counts AND portion estimates.
+NEVER set count to 0 unless the item truly doesn't exist.
+For piled/small foods, ALWAYS estimate portions (\"1/2 cup\", \"1 cup\") NOT individual counts.
 
 === PASS 2: VERIFICATION & CORRECTION ===
 Review your Pass 1 counts. Look at the image AGAIN specifically for:
@@ -221,9 +228,11 @@ For {$journeyConfig['focus']} with {$journeyConfig['tone']}, respond with this C
 
 {
   \"pass_1_detection\": {
-    \"eggs\": {\"count\": number, \"method\": \"counted X yolks\"},
-    \"salmon\": {\"count\": number, \"method\": \"description\"},
-    [... all detected items ...]
+    \"eggs\": {\"count\": 2, \"method\": \"counted 2 yolks\"},
+    \"salmon\": {\"count\": 5, \"method\": \"5 distinct pieces\"},
+    \"peas\": {\"count\": \"1/2 cup\", \"method\": \"portion estimate NOT individual count\"},
+    \"broccoli\": {\"count\": \"1 cup\", \"method\": \"visual estimate\"},
+    [... EVERY visible food item must be listed ...]
   },
   \"pass_2_verification\": {
     \"eggs\": {\"pass_1_count\": X, \"verified_count\": Y, \"changed\": boolean, \"reason\": \"if changed\"},
