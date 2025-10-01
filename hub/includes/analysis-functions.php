@@ -162,8 +162,12 @@ EGGS:
 
 MEAT/FISH:
 - Whole chicken breast → Count pieces (\"1 chicken breast\")
+- Sliced/fanned presentation → Count as ONE piece (\"1 salmon fillet, sliced\" NOT \"5 pieces\")
+- Multiple separate fillets → Count actual separate pieces
 - Chopped chicken → Estimate (\"6 oz chopped chicken\")
 - Whole salmon fillet → Count (\"1 salmon fillet, ~5 oz\")
+- Salmon cut into portions but from SAME piece → Count as 1 total
+- Sashimi/sushi slices → Count each if truly separate pieces
 - Ground beef → Estimate (\"4 oz ground beef\")
 
 VEGETABLES:
@@ -180,7 +184,7 @@ Output format for Pass 1:
 {
   \"pass_1_detection\": {
     \"eggs\": {\"count\": 2, \"method\": \"counted 2 yolks\"},
-    \"salmon\": {\"count\": 5, \"method\": \"5 distinct pieces\"},
+    \"salmon\": {\"count\": 1, \"method\": \"1 fillet, sliced for presentation\"},
     \"cherry_tomatoes\": {\"count\": 7, \"method\": \"counted individually\"},
     \"broccoli\": {\"count\": \"1 cup\", \"method\": \"visual estimate of florets\"},
     \"peas\": {\"count\": \"1/2 cup\", \"method\": \"portion estimate - NOT counting individual peas\"},
@@ -229,7 +233,7 @@ For {$journeyConfig['focus']} with {$journeyConfig['tone']}, respond with this C
 {
   \"pass_1_detection\": {
     \"eggs\": {\"count\": 2, \"method\": \"counted 2 yolks\"},
-    \"salmon\": {\"count\": 5, \"method\": \"5 distinct pieces\"},
+    \"salmon\": {\"count\": 1, \"method\": \"1 fillet, sliced for presentation\"},
     \"peas\": {\"count\": \"1/2 cup\", \"method\": \"portion estimate NOT individual count\"},
     \"broccoli\": {\"count\": \"1 cup\", \"method\": \"visual estimate\"},
     [... EVERY visible food item must be listed ...]
