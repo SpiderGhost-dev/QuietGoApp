@@ -128,7 +128,22 @@ try {
     if (isset($cp['items_detected']) && !isset($cp['foods_detected'])) {
         $foods = [];
         foreach ($cp['items_detected'] as $item) {
-            $foods[] = $item['quantity'] . ' ' . $item['item'];
+            // Clean up quantity (might be "2", "2 eggs", or just a number)
+            $quantity = trim($item['quantity'] ?? '');
+            $itemName = trim($item['item'] ?? '');
+            
+            // If quantity already contains the item name, just use it
+            if (stripos($quantity, $itemName) !== false) {
+                $foods[] = $quantity;
+            }
+            // If item name already contains quantity, just use it
+            elseif (preg_match('/^\d+/', $itemName)) {
+                $foods[] = $itemName;
+            }
+            // Otherwise combine them
+            else {
+                $foods[] = $quantity . ' ' . $itemName;
+            }
         }
         $cp['foods_detected'] = $foods;
     }
