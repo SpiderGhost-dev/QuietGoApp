@@ -161,14 +161,14 @@ EGGS:
 - Omelet → Estimate by size (\"3-egg omelet based on thickness\")
 
 MEAT/FISH:
-- Whole chicken breast → Count pieces (\"1 chicken breast\")
-- Sliced/fanned presentation → Count as ONE piece (\"1 salmon fillet, sliced\" NOT \"5 pieces\")
-- Multiple separate fillets → Count actual separate pieces
-- Chopped chicken → Estimate (\"6 oz chopped chicken\")
-- Whole salmon fillet → Count (\"1 salmon fillet, ~5 oz\")
-- Salmon cut into portions but from SAME piece → Count as 1 total
-- Sashimi/sushi slices → Count each if truly separate pieces
-- Ground beef → Estimate (\"4 oz ground beef\")
+- Whole proteins → Count AND estimate size (\"1 chicken breast, ~6 oz\")
+- Sliced/fanned presentation → Count as ONE + size (\"1 salmon fillet, ~5 oz\" NOT \"5 pieces\")
+- Multiple separate fillets → Count each with sizes (\"2 chicken breasts, ~4 oz each\")
+- Chopped/diced meat → Total weight estimate (\"6 oz chopped chicken\")
+- Ground meat → Weight estimate (\"4 oz ground beef\")
+- Steak/chops → Count + size (\"1 pork chop, ~5 oz\")
+- Sashimi/sushi → Count pieces + estimate per piece
+- ALWAYS estimate weight: small (~3-4 oz), medium (~5-6 oz), large (~7-8 oz)
 
 VEGETABLES:
 - Whole cherry tomatoes → Count each (\"9 cherry tomatoes\")
@@ -184,7 +184,7 @@ Output format for Pass 1:
 {
   \"pass_1_detection\": {
     \"eggs\": {\"count\": 2, \"method\": \"counted 2 yolks\"},
-    \"salmon\": {\"count\": 1, \"method\": \"1 fillet, sliced for presentation\"},
+    \"salmon\": {\"count\": \"1 piece, ~6 oz\", \"method\": \"1 fillet sliced, estimated weight\"},
     \"cherry_tomatoes\": {\"count\": 7, \"method\": \"counted individually\"},
     \"broccoli\": {\"count\": \"1 cup\", \"method\": \"visual estimate of florets\"},
     \"peas\": {\"count\": \"1/2 cup\", \"method\": \"portion estimate - NOT counting individual peas\"},
@@ -233,7 +233,7 @@ For {$journeyConfig['focus']} with {$journeyConfig['tone']}, respond with this C
 {
   \"pass_1_detection\": {
     \"eggs\": {\"count\": 2, \"method\": \"counted 2 yolks\"},
-    \"salmon\": {\"count\": 1, \"method\": \"1 fillet, sliced for presentation\"},
+    \"salmon\": {\"count\": \"1 piece, ~6 oz\", \"method\": \"1 fillet sliced, estimated medium portion\"},
     \"peas\": {\"count\": \"1/2 cup\", \"method\": \"portion estimate NOT individual count\"},
     \"broccoli\": {\"count\": \"1 cup\", \"method\": \"visual estimate\"},
     [... EVERY visible food item must be listed ...]
