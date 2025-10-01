@@ -881,7 +881,7 @@ function generateAIAnalysis($postData, $userJourney, $hasCalcuPlate, $imagePath 
             case "meal":
                 if ($hasCalcuPlate) {
                     // PRO+ ONLY: CalcuPlate AI meal analysis with depth data
-                    $analysis = analyzeMealPhotoWithCalcuPlate($imagePath, $journeyConfig, $symptoms, $time, $notes, $depthData);
+                    $analysis = analyzeMealPhotoWithCalcuPlate($imagePath, $journeyConfig, $symptoms, $time, $notes);
                 } else {
                     // PRO ONLY: Manual logging required
                     $analysis = [
@@ -1815,7 +1815,7 @@ document.getElementById("upload-form").addEventListener("submit", function(e) {
                 showClarificationModal(result.ai_analysis.questions, result);
             } else if (!result.requires_manual_logging && result.ai_analysis && result.ai_analysis.pass_1_detection) {
                 // Show VERIFICATION modal for CalcuPlate results (Pro+ only)
-                showVerificationModal(result);
+                showVerifyModal();
             } else if (!result.requires_manual_logging) {
                 // Show success modal directly (stool/symptom photos)
                 showSuccessModal(result);
