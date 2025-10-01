@@ -4,6 +4,16 @@
  * Called from verification modal when user adjusts AI-detected counts
  */
 
+// CRITICAL: Clean output buffer to prevent JSON parse errors
+while (ob_get_level()) {
+    ob_end_clean();
+}
+ob_start();
+
+// Suppress any PHP warnings/notices that could break JSON
+error_reporting(0);
+ini_set('display_errors', 0);
+
 session_start();
 
 // Authentication check
@@ -131,14 +141,20 @@ try {
         $cp['nutritional_completeness'] = '90%';
     }
 
+    // Clean any stray output and send pure JSON
+    ob_end_clean();
+    header('Content-Type: application/json');
     echo json_encode($result);
+    exit;
 
 } catch (Exception $e) {
     error_log("QuietGo Recalculation Error: " . $e->getMessage());
+    ob_end_clean();
     http_response_code(500);
+    header('Content-Type: application/json');
     echo json_encode([
         "error" => "Failed to recalculate nutrition",
         "message" => $e->getMessage()
     ]);
+    exit;
 }
-?>
